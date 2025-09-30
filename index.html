@@ -77,99 +77,98 @@
     </button>
     <!-- Scroll-top-end-->
     <!-- header-area -->
-    <header id="header" class="transparent-header">
-        <div id="header-fixed-height"></div>
-        <div id="sticky-header" class="tg-header__area">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="tgmenu__wrap">
-                            <nav class="tgmenu__nav">
-                                <div class="logo">
-                                    <a href="/index.html" class="logo-text" style="font-size: 28px; font-weight: var(--tg-fw-bold); color: var(--tg-theme-secondary); text-decoration: none; text-transform: uppercase; letter-spacing: 2px;">qfs</a>
-                                </div>
+   
+<!-- header-area -->
+<header id="header" class="transparent-header">
+  <div id="header-fixed-height"></div>
+  <div id="sticky-header" class="tg-header__area">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="tgmenu__wrap">
+            <nav class="tgmenu__nav">
+              <!-- Logo -->
+              <div class="logo">
+                <a href="/index.html" class="logo-text">qfs</a>
+              </div>
 
-                                <div class="tgmenu__navbar-wrap tgmenu__main-menu d-none d-xl-flex">
-                                    <ul class="navigation">
-                                        <li class="active"><a href="/index.html">Home</a></li>
-                                        <li><a href="/#features" class="section-link">features</a></li>
-                                        <li><a href="/#roadmap" class="section-link">roadmap</a></li>
-                                        <li><a href="/#faq" class="section-link">faq</a></li>
-                                        <li class="menu-item-has-children">
-                                            <a href="/blog.html">Blog</a>
-                                            <ul class="sub-menu">
-                                                <li><a href="/blog.html">Our Blog</a></li>
-                                                <li><a href="/blog-details.html">Blog Details</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="/#contact" class="section-link">Contact</a></li>
-                                    </ul>
-                                </div>
-                                <div class="tgmenu__action">
-                                    <ul class="list-wrap">
-                                        <li class="header-btn">
-                                            <a href="/#contact" class="tg-btn">
-                                                <i class="fas fa-rocket"></i>
-                                                <span>Get Started</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    
-                                    <div class="mobile-nav-toggler">
-                                        <i class="fas fa-bars"></i>
-                                    </div>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+              <!-- Desktop Navigation -->
+              <div class="tgmenu__navbar-wrap d-none d-xl-flex">
+                <ul class="navigation">
+                  <li class="active"><a href="/index.html">Home</a></li>
+                  <li><a href="/#features" class="section-link">Features</a></li>
+                  <li><a href="/#roadmap" class="section-link">About Us</a></li>
+                  <li><a href="/#faq" class="section-link">FAQ</a></li>
+                  <li><a href="/#contact" class="section-link">Contact</a></li>
+                </ul>
+              </div>
 
-        <!-- Mobile Menu  -->
-        <div class="tgmobile__menu">
-            <nav class="tgmobile__menu-box">
-                <div class="close-btn"><i class="fas fa-times"></i></div>
-                <div class="nav-logo">
-                    <a href="/index.html" class="logo-text" style="font-size: 28px; font-weight: var(--tg-fw-bold); color: var(--tg-theme-secondary); text-decoration: none; text-transform: uppercase; letter-spacing: 2px;">qfs</a>
-                </div>
-                <div class="tgmobile__search">
-                    <form action="/#">
-                        <input type="text" placeholder="Search here...">
-                        <button><i class="fas fa-search"></i></button>
-                    </form>
-                </div>
-                <div class="tgmobile__menu-outer">
-                    <ul class="navigation">
-                        <li class="active"><a href="/index.html">Home</a></li>
-                        <li><a href="#features" class="section-link">features</a></li>
-                        <li><a href="/#roadmap" class="section-link">roadmap</a></li>
-                        <li><a href="/#faq" class="section-link">faq</a></li>
-                        <li class="menu-item-has-children">
-                            <a href="/blog.html">Blog</a>
-                            <ul class="sub-menu">
-                                <li><a href="/blog.html">Our Blog</a></li>
-                                <li><a href="/blog-details.html">Blog Details</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/#contact" class="section-link">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="social-links">
-                    <ul class="list-wrap">
-                        <li><a href="/#"><i class="fab fa-facebook-f"></i></a></li>
-                        <li><a href="/#"><i class="fab fa-twitter"></i></a></li>
-                        <li><a href="/#"><i class="fab fa-instagram"></i></a></li>
-                        <li><a href="/#"><i class="fab fa-linkedin-in"></i></a></li>
-                        <li><a href="/#"><i class="fab fa-youtube"></i></a></li>
-                    </ul>
-                </div>
+              <!-- Desktop Button -->
+              <div class="tgmenu__action d-none d-xl-block">
+                <ul class="list-wrap">
+                  <li class="header-btn">
+                    <a href="/login.html" class="tg-btn">
+                      <span>
+                        <i class="fas fa-rocket"></i>
+                        Register
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Mobile Menu Toggle -->
+              <div class="mobile-nav-toggler d-xl-none">
+                <i class="fas fa-bars"></i>
+              </div>
             </nav>
+          </div>
         </div>
-        <div class="tgmobile__menu-backdrop"></div>
-        <!-- End Mobile Menu -->
-    </header>
-    <!-- header-area-end -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="tgmobile__menu">
+    <nav class="tgmobile__menu-box">
+      <!-- Close Button -->
+      <div class="close-btn">
+        <i class="fas fa-times"></i>
+      </div>
+
+      <!-- Mobile Logo -->
+      <div class="nav-logo">
+        <a href="/index.html" class="logo-text">qfs</a>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div class="tgmobile__menu-outer">
+        <ul class="navigation">
+          <li class="active"><a href="/index.html">Home</a></li>
+          <li><a href="/#features" class="section-link">Features</a></li>
+          <li><a href="/#roadmap" class="section-link">About Us</a></li>
+          <li><a href="/#faq" class="section-link">FAQ</a></li>
+          <li><a href="/#contact" class="section-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Mobile Social Links -->
+      <div class="social-links">
+        <ul class="list-wrap">
+          <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+          <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+          <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+          <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Backdrop -->
+  <div class="tgmobile__menu-backdrop"></div>
+</header>
+```
 
 
 <!-- main-area -->
@@ -1007,90 +1006,132 @@
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="js/mobile-header.js"></script>
    <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Typed Text Animation
-    new Typed("#typed-text", {
-        strings: ["Quantum Financial System"],
-        typeSpeed: 80,
-        backSpeed: 40,
-        loop: false,
-        showCursor: true
-    });
+    if (document.getElementById("typed-text")) {
+        new Typed("#typed-text", {
+            strings: ["Quantum Financial System"],
+            typeSpeed: 80,
+            backSpeed: 40,
+            loop: false,
+            showCursor: true,
+            cursorChar: '|'
+        });
+    }
 
     // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         const themeIcon = themeToggle.querySelector('i');
         
-        themeToggle.addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            
-            if (currentTheme === 'light') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-moon';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                themeIcon.className = 'fas fa-sun';
-                localStorage.setItem('theme', 'light');
-            }
-        });
-
-        // Load saved theme
+        // Load saved theme or default to dark
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
         themeIcon.className = savedTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            themeIcon.className = newTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('theme', newTheme);
+        });
     }
 
-    // Mobile Menu Toggle
+    // Mobile Menu Functionality
     const mobileNavToggler = document.querySelector('.mobile-nav-toggler');
     const mobileMenu = document.querySelector('.tgmobile__menu');
     const mobileMenuBackdrop = document.querySelector('.tgmobile__menu-backdrop');
-    const closeBtn = document.querySelector('.close-btn');
+    const closeBtn = document.querySelector('.tgmobile__menu .close-btn');
 
-    function toggleMobileMenu() {
-        mobileMenu.classList.toggle('active');
-        mobileMenuBackdrop.classList.toggle('active');
-        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : 'auto';
+    function openMobileMenu() {
+        if (mobileMenu) mobileMenu.classList.add('active');
+        if (mobileMenuBackdrop) mobileMenuBackdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
     }
 
     function closeMobileMenu() {
-        mobileMenu.classList.remove('active');
-        mobileMenuBackdrop.classList.remove('active');
-        document.body.style.overflow = 'auto';
+        if (mobileMenu) mobileMenu.classList.remove('active');
+        if (mobileMenuBackdrop) mobileMenuBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
     }
 
+    function toggleMobileMenu() {
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    }
+
+    // Event listeners for mobile menu
     if (mobileNavToggler) {
         mobileNavToggler.addEventListener('click', toggleMobileMenu);
     }
+
     if (closeBtn) {
         closeBtn.addEventListener('click', closeMobileMenu);
     }
+
     if (mobileMenuBackdrop) {
         mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
     }
 
-    // Smooth scrolling for section links
-    document.querySelectorAll('.section-link').forEach(link => {
+    // Close menu when clicking on navigation links
+    const mobileMenuLinks = document.querySelectorAll('.tgmobile__menu a[href]');
+    mobileMenuLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth'
-                });
+            // Only close for anchor links and internal navigation
+            const href = this.getAttribute('href');
+            if (href.startsWith('#') || href.startsWith('/#')) {
                 closeMobileMenu();
             }
         });
     });
 
-    // Sticky header
-    window.addEventListener('scroll', function() {
+    // Handle ESC key to close menu
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeMobileMenu();
+        }
+    });
+
+    // Smooth scrolling for section links
+    document.querySelectorAll('a[href*="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only handle internal anchor links
+            if (href.startsWith('#') && href.length > 1) {
+                e.preventDefault();
+                const targetId = href;
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const headerHeight = document.querySelector('#sticky-header')?.offsetHeight || 0;
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    closeMobileMenu();
+                }
+            }
+        });
+    });
+
+    // Sticky header functionality
+    function handleStickyHeader() {
         const header = document.getElementById('sticky-header');
         const headerHeight = document.getElementById('header-fixed-height');
         
@@ -1103,7 +1144,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 headerHeight.classList.remove('active-height');
             }
         }
-    });
+    }
+
+    // Initialize sticky header and add scroll listener
+    handleStickyHeader();
+    window.addEventListener('scroll', handleStickyHeader);
 
     // Slider functionality
     const sliderTrack = document.querySelector('.slider-track');
@@ -1115,7 +1160,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (sliderTrack && sliderItems.length > 0 && dotsContainer) {
         let currentSlide = 0;
         let slidesPerView = 1;
-        let autoSlide;
+        let autoSlideInterval;
         
         // Create dots
         sliderItems.forEach((_, index) => {
@@ -1137,11 +1182,10 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 slidesPerView = 1;
             }
+            goToSlide(currentSlide); // Recalculate position on resize
         }
         
         function goToSlide(slideIndex) {
-            if (window.innerWidth >= 992) return;
-            
             const maxSlide = Math.max(0, sliderItems.length - slidesPerView);
             currentSlide = Math.max(0, Math.min(slideIndex, maxSlide));
             
@@ -1149,7 +1193,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const translateX = -currentSlide * itemWidth;
             
             sliderTrack.style.transform = `translateX(${translateX}px)`;
+            sliderTrack.style.transition = 'transform 0.5s ease-in-out';
             
+            // Update dots
             dots.forEach((dot, index) => {
                 dot.classList.toggle('active', index === currentSlide);
             });
@@ -1160,7 +1206,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (currentSlide < maxSlide) {
                 goToSlide(currentSlide + 1);
             } else {
-                goToSlide(0);
+                goToSlide(0); // Loop back to start
             }
         }
         
@@ -1169,11 +1215,11 @@ document.addEventListener("DOMContentLoaded", function() {
             if (currentSlide > 0) {
                 goToSlide(currentSlide - 1);
             } else {
-                goToSlide(maxSlide);
+                goToSlide(maxSlide); // Loop to end
             }
         }
         
-        // Event listeners for arrows (if they exist)
+        // Event listeners for arrows
         if (prevArrow) {
             prevArrow.addEventListener('click', prevSlide);
         }
@@ -1181,25 +1227,142 @@ document.addEventListener("DOMContentLoaded", function() {
             nextArrow.addEventListener('click', nextSlide);
         }
         
-        // Initialize
-        updateSlidesPerView();
-        window.addEventListener('resize', () => {
-            updateSlidesPerView();
-            goToSlide(currentSlide);
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+        
+        sliderTrack.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
         });
         
-        // Auto-slide
-        autoSlide = setInterval(nextSlide, 5000);
+        sliderTrack.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
         
-        // Pause auto-slide on hover
-        const slider = document.querySelector('.features-slider');
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide(); // Swipe left
+                } else {
+                    prevSlide(); // Swipe right
+                }
+            }
+        }
+        
+        // Initialize slider
+        updateSlidesPerView();
+        window.addEventListener('resize', updateSlidesPerView);
+        
+        // Auto-slide functionality
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(nextSlide, 5000);
+        }
+        
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+        
+        startAutoSlide();
+        
+        // Pause auto-slide on hover/touch
+        const slider = document.querySelector('.features-slider') || sliderTrack.parentElement;
         if (slider) {
-            slider.addEventListener('mouseenter', () => clearInterval(autoSlide));
-            slider.addEventListener('mouseleave', () => {
-                autoSlide = setInterval(nextSlide, 5000);
+            slider.addEventListener('mouseenter', stopAutoSlide);
+            slider.addEventListener('mouseleave', startAutoSlide);
+            slider.addEventListener('touchstart', stopAutoSlide);
+            slider.addEventListener('touchend', () => {
+                setTimeout(startAutoSlide, 3000);
             });
         }
     }
+
+    // FAQ Accordion functionality (if exists on page)
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        if (question) {
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active', !isActive);
+            });
+        }
+    });
+
+    // Form submission handling (example)
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add your form submission logic here
+            console.log('Form submitted');
+        });
+    }
+
+    // Lazy loading for images
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+
+    // Add loading state management
+    window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+    });
+
+    // Performance optimization: Debounce resize events
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            // Recalculate anything that depends on window size
+            if (sliderTrack) {
+                updateSlidesPerView();
+            }
+        }, 250);
+    });
 });
+
+// Global error handling
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+});
+
+// Service Worker registration (if needed)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+                console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+                console.log('SW registration failed: ', registrationError);
+            });
+    });
+}
 </script>
 <div id="sqrx-content-container"><div class="squarex_ext_modal"><div class="squarex_ext_dialog-container"></div></div></div></body></html>
