@@ -21,47 +21,49 @@ import { errorHandler, notFound } from './middlewares/errorHandler';
 const app = express();
 
 // Security middleware
-// In your app.ts - update the Helmet CSP
-app.use(helmet({
-  contentSecurityPolicy: {
+app.use(
+  helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
+
+      // ✅ Allow scripts from your server + CDNs
       scriptSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
+        "'self'",
+        "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com",
-        "https://fonts.googleapis.com",
-        "https://fonts.gstatic.com"
+        "https://code.jquery.com"
       ],
+
+      // ✅ Allow styles from self, jsdelivr, cdnjs, Google Fonts
       styleSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
+        "'self'",
+        "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com",
         "https://fonts.googleapis.com",
-        "https://fonts.gstatic.com"
+        "'unsafe-inline'" // ⚠️ optional, only if inline styles needed
       ],
+
+      // ✅ Allow fonts (Google Fonts, jsdelivr, cdnjs)
       fontSrc: [
-        "'self'", 
-        "data:", 
-        "https://cdnjs.cloudflare.com",
-        "https://fonts.gstatic.com"
+        "'self'",
+        "https://fonts.gstatic.com",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com"
       ],
+
+      // ✅ Allow images from self, data URIs, and CDN flags
       imgSrc: [
-        "'self'", 
-        "data:", 
-        "https:",
-        "http:"
+        "'self'",
+        "data:",
+        "https://cdnjs.cloudflare.com"
       ],
-      connectSrc: [
-        "'self'", 
-        "http://localhost:3000", // Allow API calls to your own server
-        "ws://localhost:3000"    // Allow WebSocket connections if needed
-      ],
+
+      connectSrc: ["'self'"], // AJAX, APIs
+      objectSrc: ["'none'"], // block Flash/objects
+      upgradeInsecureRequests: [], // auto upgrade http → https
     },
-  },
-}));
-
-
+  })
+);
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
 app.use(cors());
