@@ -8,14 +8,14 @@ import {
   dismissNotification,
   getQuickActions
 } from '../controllers/dashboardController';
-import { authenticate } from '../middlewares/authMiddleware';
+import { webAuthenticate, authenticate } from '../middlewares/authMiddleware';
 
 const router = Router();
 
-// Main dashboard page
-router.get('/', authenticate, getDashboard);
+// Main dashboard page - web auth (redirects to login if not authenticated)
+router.get('/', webAuthenticate, getDashboard);
 
-// API endpoints for dashboard components
+// API endpoints - API auth (returns JSON if not authenticated)
 router.get('/stats', authenticate, getDashboardStats);
 router.get('/notifications', authenticate, getNotifications);
 router.get('/quick-actions', authenticate, getQuickActions);

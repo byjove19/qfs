@@ -4,7 +4,6 @@ import { body } from 'express-validator';
 import { 
   register, 
   login, 
-  verifyEmail, 
   getProfile, 
   updateProfile 
 } from '../controllers/authController';
@@ -37,7 +36,6 @@ router.post('/login',
   login
 );
 
-router.get('/verify-email', verifyEmail);
 router.get('/profile', authenticate, getProfile);
 router.put('/profile', authenticate, updateProfile);
 

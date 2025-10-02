@@ -114,22 +114,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 const result = await response.json();
 
                 if (response.ok) {
-                    // Success
-                    showMessage(result.message || "Registration successful! Redirecting...", "success");
+                    // Success - store tokens and redirect to dashboard
+                    showMessage(result.message || "Registration successful! Redirecting to dashboard...", "success");
                     
-                    // Store token if provided
-                    if (result.token) {
-                        localStorage.setItem('authToken', result.token);
+                    // Store tokens in localStorage
+                    if (result.data.token) {
+                        localStorage.setItem('authToken', result.data.token);
+                        localStorage.setItem('refreshToken', result.data.refreshToken);
                     }
                     
-                    // Redirect to login or dashboard
+                    // Redirect to dashboard
                     setTimeout(() => {
-                        if (result.token) {
-                            window.location.href = "/dashboard";
-                        } else {
-                            window.location.href = "/login";
-                        }
-                    }, 2000);
+                        window.location.href = "/dashboard";
+                    }, 1500);
                     
                 } else {
                     // Error from server

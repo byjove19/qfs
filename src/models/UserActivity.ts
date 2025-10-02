@@ -1,7 +1,7 @@
-// src/models/UserActivity.ts
 import { Schema, model, Document, Types } from 'mongoose';
 
-export type ActivityType = 'login' | 'transaction' | 'investment' | 'withdrawal' | 'deposit' | 'profile_update';
+// Add 'page_view' to the ActivityType enum
+export type ActivityType = 'login' | 'transaction' | 'investment' | 'withdrawal' | 'deposit' | 'profile_update' | 'page_view';
 
 export interface IUserActivity extends Document {
   user: Types.ObjectId;
@@ -25,7 +25,8 @@ const userActivitySchema = new Schema<IUserActivity>({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   type: {
     type: String,
-    enum: ['login', 'transaction', 'investment', 'withdrawal', 'deposit', 'profile_update'],
+    // Add 'page_view' to the enum array
+    enum: ['login', 'transaction', 'investment', 'withdrawal', 'deposit', 'profile_update', 'page_view'],
     required: true
   },
   description: { type: String, required: true },

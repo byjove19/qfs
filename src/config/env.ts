@@ -5,6 +5,7 @@ export default {
   JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'your-refresh-secret',
   NODE_ENV: process.env.NODE_ENV || 'development',
+  SESSION_SECRET: process.env.SESSION_SECRET ||'your-secret-key',
   
   // Email configuration
   EMAIL_HOST: process.env.EMAIL_HOST,

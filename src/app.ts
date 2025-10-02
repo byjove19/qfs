@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import config from './config/env';
 import flash from 'express-flash';
+import session from 'express-session';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -15,6 +16,7 @@ import adminRoutes from './routes/admin';
 import investmentRoutes from './routes/investment';
 import ticketRoutes from './routes/ticket';
 import disputeRoutes from './routes/dispute';
+import dashboardRouter from './routes/dashboard';
 // Import middleware
 import { errorHandler, notFound } from './middlewares/errorHandler';
 
@@ -67,6 +69,16 @@ app.use(
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
 app.use(cors());
+// Add session middleware
+app.use(session({
+  secret: config.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 3600000 // 1 hour
+  }
+}));
 
 
 
@@ -97,6 +109,10 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/investments', investmentRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/disputes', disputeRoutes);
+app.use('/dashboard', dashboardRouter);
+
+// Flash messages
+app.use(flash());
 
 // Basic route for health check
 app.get('/health', (req, res) => {
@@ -125,9 +141,6 @@ app.get('/signup', (req, res) => {
   res.render('signup');
 });
 
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard', { title: 'Dashboard' });
-});
 
 // Error handling middleware
 app.use(notFound);
