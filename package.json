@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/server.js",
-  "scripts": {
-    "build": "tsc && cp -r src/views dist/views && cp -r src/public dist/public",
-    "start": "node dist/server.js",
-    "dev": "ts-node-dev src/server.ts",
-    "test": "jest"
-  },
+"scripts": {
+  "build": "tsc && cp -r src/views dist/views",
+  "start": "node dist/server.js",
+  "dev": "ts-node-dev src/server.ts",
+  "test": "jest"
+}
+,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/byjove19/qfs.git"
