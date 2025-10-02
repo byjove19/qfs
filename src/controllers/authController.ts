@@ -355,3 +355,32 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
   }
 };
+// Add this function to your existing authController
+export const logoutUser = async (req: AuthRequest, res: Response) => {
+  try {
+    // Clear session if you're using sessions
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          console.error('Session destruction error:', err);
+        }
+      });
+    }
+
+    // Clear cookies
+    res.clearCookie('token');
+    res.clearCookie('connect.sid');
+
+    res.json({
+      success: true,
+      message: 'Logout successful'
+    });
+
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error during logout'
+    });
+  }
+};

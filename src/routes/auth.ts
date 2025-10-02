@@ -1,13 +1,13 @@
-// src/routes/auth.ts
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { 
   register, 
   login, 
   getProfile, 
-  updateProfile 
+  updateProfile,
+  logoutUser 
 } from '../controllers/authController';
-import { authenticate } from '../middlewares/authMiddleware';
+import { authenticate } from '../middlewares/authMiddleware'; // Use your existing middleware
 
 const router = Router();
 
@@ -38,5 +38,6 @@ router.post('/login',
 
 router.get('/profile', authenticate, getProfile);
 router.put('/profile', authenticate, updateProfile);
+router.post('/logout', authenticate, logoutUser); // Use 'authenticate' instead of 'authMiddleware'
 
 export default router;
