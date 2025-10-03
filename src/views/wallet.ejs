@@ -5,21 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="twoone.tech">
-    <meta name="csrf-token" content="tiLfEIdLpapV8KvHXwRBGHJgLZFODUJqcXaCWPKM">
+    <meta name="csrf-token" content="25BYbh04ywsyJEKOSgmEqK03W1akIOOHgJUtAkRg">
 
     <title>Wallet List |  QFS</title>
 
     <!-- css -->
-    <link rel="stylesheet" href="/wallet/css/bootstrap.min.css">
-<link rel="stylesheet" href="/wallet/css/select2.min.css">
-<link rel="stylesheet" href="/wallet/css/style.min.css">
+    <link rel="stylesheet" href="/Wallet List _ QFS_files/bootstrap.min.css">
+<link rel="stylesheet" href="/Wallet List _ QFS_files/select2.min.css">
+<link rel="stylesheet" href="/Wallet List _ QFS_files/style.min.css">
     <!-- end css -->
     
-    <!-- favicon -->
-  
-     <link rel="icon" type="image/png" href="/images/logo.png">
+   <link rel="icon" type="image/png" href="/images/logo.png">
 
-  </head>
+    <script>
+      'use strict';
+      var SITE_URL = "";
+      var FIATDP = "0.00";
+      var CRYPTODP = "0.00000000";
+
+      if (localStorage.getItem('dark') === '1') {
+        document.documentElement.classList.add('dark');
+      }
+
+      if (localStorage.getItem('lang') == 'ar') {
+        document.getElementsByTagName("html")[0].setAttribute("dir", "rtl");
+        document.querySelector("html").setAttribute("dir", "rtl");
+      } else {
+        document.querySelector("html").removeAttribute("dir", "rtl");
+      }
+    </script>
+  <script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/sqrx-email-notifier.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/" data-stencil-namespace="sqrx-email-notifier" id="sqrx-email-notifier"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/sqrx-notification-bar.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/" data-stencil-namespace="sqrx-notification-bar" id="sqrx-notification-bar"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/sqrx-dialog.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/" data-stencil-namespace="sqrx-dialog" id="sqrx-dialog"></script></head>
   <body>
 
     <!-- sidebar section -->
@@ -27,7 +42,7 @@
 <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
     <div class="bg-secondary vh-100 position-fixed d-flex flex-column w-inherit drop-parent">
         <div>
-            <a href="/index"><img class="ml-40 mt-20 pay-logo img-fluid" src="/wallet/images/1698017319_logo.png" alt="QFS"></a>
+            <a href="/"><img class="ml-40 mt-20 pay-logo img-fluid" src="/Wallet List _ QFS_files/1698017319_logo.png" alt="QFS"></a>
         </div>
         <div class="flex-grow-1 px-4 px-res mt-43 bg-secondary position-relative overflow-auto hide-thin-scrollbar thin-scrollbar">
             <ul class="list-unstyled ps-0 accordion accordion-flush position-absolute w-268" id="accordion-menu">
@@ -44,7 +59,7 @@
 
                 <!-- Wallets -->
                 <li>
-                    <a href="/wallet-list" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-white bg-info">
+                    <a href="/wallet" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-white bg-info">
                         <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M7.44369 5.6875L16.9313 5.6875C17.3596 5.68749 17.7291 5.68748 18.0335 5.71234C18.3547 5.73859 18.6742 5.79653 18.9816 5.95317C19.4402 6.18687 19.8131 6.55976 20.0468 7.0184C20.2035 7.32583 20.2614 7.64532 20.2877 7.96654C20.3125 8.27088 20.3125 8.64037 20.3125 9.06867V10.2956C21.1151 10.5791 21.7213 11.2668 21.8907 12.1182C21.938 12.3562 21.9378 12.6225 21.9375 12.9319C21.9375 12.9543 21.9375 12.9771 21.9375 13C21.9375 13.023 21.9375 13.0457 21.9375 13.0682C21.9378 13.3775 21.938 13.6438 21.8907 13.8818C21.7213 14.7332 21.1151 15.4209 20.3125 15.7044V16.9313C20.3125 17.3596 20.3125 17.7291 20.2877 18.0335C20.2614 18.3547 20.2035 18.6742 20.0468 18.9816C19.8131 19.4402 19.4402 19.8131 18.9816 20.0468C18.6742 20.2035 18.3547 20.2614 18.0335 20.2877C17.7291 20.3125 17.3596 20.3125 16.9313 20.3125L7.44367 20.3125C7.01537 20.3125 6.64588 20.3125 6.34154 20.2877C6.02032 20.2614 5.70083 20.2035 5.3934 20.0468C4.93475 19.8131 4.56186 19.4402 4.32817 18.9816C4.17153 18.6742 4.11358 18.3547 4.08734 18.0335C4.06247 17.7291 4.06249 17.3596 4.0625 16.9313V9.06868C4.06249 8.64038 4.06247 8.27088 4.08734 7.96654C4.11358 7.64532 4.17153 7.32583 4.32817 7.0184C4.56186 6.55975 4.93475 6.18686 5.3934 5.95317C5.70083 5.79653 6.02032 5.73858 6.34154 5.71234C6.64588 5.68747 7.01538 5.68749 7.44369 5.6875ZM18.6875 15.8438H17.4688C17.4458 15.8438 17.4231 15.8438 17.4006 15.8438C17.0913 15.844 16.8249 15.8442 16.587 15.7969C15.62 15.6046 14.8642 14.8487 14.6718 13.8818C14.6245 13.6438 14.6247 13.3775 14.625 13.0682C14.625 13.0457 14.625 13.023 14.625 13C14.625 12.9771 14.625 12.9543 14.625 12.9318C14.6247 12.6225 14.6245 12.3562 14.6718 12.1182C14.8642 11.1513 15.62 10.3954 16.587 10.2031C16.8249 10.1558 17.0913 10.156 17.4006 10.1562C17.4231 10.1562 17.4458 10.1563 17.4688 10.1563H18.6875V9.1C18.6875 8.63155 18.6869 8.32908 18.6681 8.09887C18.65 7.87814 18.6194 7.79631 18.5989 7.75613C18.521 7.60325 18.3968 7.47896 18.2439 7.40106C18.2037 7.38059 18.1219 7.34998 17.9011 7.33194C17.6709 7.31313 17.3684 7.3125 16.9 7.3125H7.475C7.00655 7.3125 6.70408 7.31313 6.47387 7.33194C6.25314 7.34998 6.17131 7.38059 6.13113 7.40106C5.97825 7.47896 5.85396 7.60325 5.77606 7.75613C5.75559 7.79631 5.72498 7.87814 5.70694 8.09887C5.68813 8.32908 5.6875 8.63155 5.6875 9.1V16.9C5.6875 17.3685 5.68813 17.6709 5.70694 17.9011C5.72498 18.1219 5.75559 18.2037 5.77606 18.2439C5.85396 18.3967 5.97825 18.521 6.13113 18.5989C6.17131 18.6194 6.25314 18.65 6.47387 18.6681C6.70408 18.6869 7.00655 18.6875 7.475 18.6875L16.9 18.6875C17.3685 18.6875 17.6709 18.6869 17.9011 18.6681C18.1219 18.65 18.2037 18.6194 18.2439 18.5989C18.3968 18.521 18.521 18.3967 18.5989 18.2439C18.6194 18.2037 18.65 18.1219 18.6681 17.9011C18.6869 17.6709 18.6875 17.3685 18.6875 16.9V15.8438ZM17.4688 11.7813C17.0523 11.7813 16.9627 11.7852 16.904 11.7969C16.5817 11.861 16.3297 12.1129 16.2656 12.4352C16.2539 12.4939 16.25 12.5835 16.25 13C16.25 13.4165 16.2539 13.5061 16.2656 13.5648C16.3297 13.8871 16.5817 14.139 16.904 14.2031C16.9627 14.2148 17.0523 14.2188 17.4688 14.2188H19.0938C19.5102 14.2188 19.5998 14.2148 19.6585 14.2031C19.9808 14.139 20.2328 13.8871 20.2969 13.5648C20.3086 13.5061 20.3125 13.4165 20.3125 13C20.3125 12.5835 20.3086 12.4939 20.2969 12.4352C20.2328 12.1129 19.9808 11.861 19.6585 11.7969C19.5998 11.7852 19.5102 11.7813 19.0938 11.7813H17.4688Z" fill="#FFAF30"></path>
                         </svg></span>
@@ -53,7 +68,7 @@
                 </li>
                 <!-- Cards -->
                 <li>
-                    <a href="/virtualcard/index" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
+                    <a href="/virtual" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
                         <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M7.44369 5.6875L16.9313 5.6875C17.3596 5.68749 17.7291 5.68748 18.0335 5.71234C18.3547 5.73859 18.6742 5.79653 18.9816 5.95317C19.4402 6.18687 19.8131 6.55976 20.0468 7.0184C20.2035 7.32583 20.2614 7.64532 20.2877 7.96654C20.3125 8.27088 20.3125 8.64037 20.3125 9.06867V10.2956C21.1151 10.5791 21.7213 11.2668 21.8907 12.1182C21.938 12.3562 21.9378 12.6225 21.9375 12.9319C21.9375 12.9543 21.9375 12.9771 21.9375 13C21.9375 13.023 21.9375 13.0457 21.9375 13.0682C21.9378 13.3775 21.938 13.6438 21.8907 13.8818C21.7213 14.7332 21.1151 15.4209 20.3125 15.7044V16.9313C20.3125 17.3596 20.3125 17.7291 20.2877 18.0335C20.2614 18.3547 20.2035 18.6742 20.0468 18.9816C19.8131 19.4402 19.4402 19.8131 18.9816 20.0468C18.6742 20.2035 18.3547 20.2614 18.0335 20.2877C17.7291 20.3125 17.3596 20.3125 16.9313 20.3125L7.44367 20.3125C7.01537 20.3125 6.64588 20.3125 6.34154 20.2877C6.02032 20.2614 5.70083 20.2035 5.3934 20.0468C4.93475 19.8131 4.56186 19.4402 4.32817 18.9816C4.17153 18.6742 4.11358 18.3547 4.08734 18.0335C4.06247 17.7291 4.06249 17.3596 4.0625 16.9313V9.06868C4.06249 8.64038 4.06247 8.27088 4.08734 7.96654C4.11358 7.64532 4.17153 7.32583 4.32817 7.0184C4.56186 6.55975 4.93475 6.18686 5.3934 5.95317C5.70083 5.79653 6.02032 5.73858 6.34154 5.71234C6.64588 5.68747 7.01538 5.68749 7.44369 5.6875ZM18.6875 15.8438H17.4688C17.4458 15.8438 17.4231 15.8438 17.4006 15.8438C17.0913 15.844 16.8249 15.8442 16.587 15.7969C15.62 15.6046 14.8642 14.8487 14.6718 13.8818C14.6245 13.6438 14.6247 13.3775 14.625 13.0682C14.625 13.0457 14.625 13.023 14.625 13C14.625 12.9771 14.625 12.9543 14.625 12.9318C14.6247 12.6225 14.6245 12.3562 14.6718 12.1182C14.8642 11.1513 15.62 10.3954 16.587 10.2031C16.8249 10.1558 17.0913 10.156 17.4006 10.1562C17.4231 10.1562 17.4458 10.1563 17.4688 10.1563H18.6875V9.1C18.6875 8.63155 18.6869 8.32908 18.6681 8.09887C18.65 7.87814 18.6194 7.79631 18.5989 7.75613C18.521 7.60325 18.3968 7.47896 18.2439 7.40106C18.2037 7.38059 18.1219 7.34998 17.9011 7.33194C17.6709 7.31313 17.3684 7.3125 16.9 7.3125H7.475C7.00655 7.3125 6.70408 7.31313 6.47387 7.33194C6.25314 7.34998 6.17131 7.38059 6.13113 7.40106C5.97825 7.47896 5.85396 7.60325 5.77606 7.75613C5.75559 7.79631 5.72498 7.87814 5.70694 8.09887C5.68813 8.32908 5.6875 8.63155 5.6875 9.1V16.9C5.6875 17.3685 5.68813 17.6709 5.70694 17.9011C5.72498 18.1219 5.75559 18.2037 5.77606 18.2439C5.85396 18.3967 5.97825 18.521 6.13113 18.5989C6.17131 18.6194 6.25314 18.65 6.47387 18.6681C6.70408 18.6869 7.00655 18.6875 7.475 18.6875L16.9 18.6875C17.3685 18.6875 17.6709 18.6869 17.9011 18.6681C18.1219 18.65 18.2037 18.6194 18.2439 18.5989C18.3968 18.521 18.521 18.3967 18.5989 18.2439C18.6194 18.2037 18.65 18.1219 18.6681 17.9011C18.6869 17.6709 18.6875 17.3685 18.6875 16.9V15.8438ZM17.4688 11.7813C17.0523 11.7813 16.9627 11.7852 16.904 11.7969C16.5817 11.861 16.3297 12.1129 16.2656 12.4352C16.2539 12.4939 16.25 12.5835 16.25 13C16.25 13.4165 16.2539 13.5061 16.2656 13.5648C16.3297 13.8871 16.5817 14.139 16.904 14.2031C16.9627 14.2148 17.0523 14.2188 17.4688 14.2188H19.0938C19.5102 14.2188 19.5998 14.2148 19.6585 14.2031C19.9808 14.139 20.2328 13.8871 20.2969 13.5648C20.3086 13.5061 20.3125 13.4165 20.3125 13C20.3125 12.5835 20.3086 12.4939 20.2969 12.4352C20.2328 12.1129 19.9808 11.861 19.6585 11.7969C19.5998 11.7852 19.5102 11.7813 19.0938 11.7813H17.4688Z" fill="#FFAF30"></path>
                         </svg></span>
@@ -255,7 +270,7 @@
             <div class="item">
                 <div class="d-flex align-items-center">
                     <div class="d-flex align-items-center justify-content-center user-list">
-                        <img src="/wallet/images/1759158223.png" alt="Profile" class="img-fluid">
+                        <img src="/Wallet List _ QFS_files/1759158223.png" alt="Profile" class="img-fluid">
                     </div>
                     <div class="ml-12 d-flex align-items-center h-78 w-134">
                         <p class="mb-0 f-14 text-dark gilroy-Semibold">gerald alex</p>
@@ -269,7 +284,7 @@
                 <ul class="open-notify open-drop bg-white" style="display: none;">
                     <li class="d-flex align-items-center bg-secondary h-78 px-3">
                         <div class="d-flex align-items-center justify-content-center user-dp">
-                            <img src="/wallet/images/1759158223.png" alt="Profile" class="img-fluid">
+                            <img src="/Wallet List _ QFS_files/1759158223.png" alt="Profile" class="img-fluid">
                         </div>
                         <div class="ms-3 text-white">
                             <p class="mb-0 f-15 gilroy-medium text-white">gerald alex</p>
@@ -331,7 +346,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/icons8-us-dollar-64.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/icons8-us-dollar-64.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -382,7 +397,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698104977.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698104977.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -433,7 +448,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698104836.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698104836.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -484,7 +499,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698104729.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698104729.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -535,7 +550,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698104560.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698104560.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -586,7 +601,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/walletimages/1698104378.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698104378.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -637,7 +652,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698011100.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698011100.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -688,7 +703,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698103966.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698103966.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -739,7 +754,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698103759.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698103759.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -790,7 +805,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="wallet-left-box d-flex gap-18">
                                     <div class="curency-box d-flex align-items-center justify-content-center">
-                                        <img src="/wallet/images/1698105102.png" alt="Currency">             
+                                        <img src="/Wallet List _ QFS_files/1698105102.png" alt="Currency">             
                                     </div>
                                     <div class="mt-n3p span-currency">
                                         <span class="f-15 gilroy-medium text-gray">Fiat</span>
@@ -856,7 +871,7 @@
             <div class="d-flex align-items-center text-gray-100 f-13 blink-w sp" id="select_language">
                 <div class="form-group selectParent f-13">
                     <select class="select2 form-control f-13 mb-2n select2-hidden-accessible" data-minimum-results-for-search="Infinity" id="select-height" data-select2-id="select2-data-select-height" tabindex="-1" aria-hidden="true">
-                                                    <option class="f-13 gilroy-medium" selected="" value="en" data-select2-id="select2-data-2-txmf">English</option>
+                                                    <option class="f-13 gilroy-medium" selected="" value="en" data-select2-id="select2-data-2-7v6z">English</option>
                                                     <option class="f-13 gilroy-medium" value="ar">عربى</option>
                                                     <option class="f-13 gilroy-medium" value="fr">Français</option>
                                                     <option class="f-13 gilroy-medium" value="pt">Português</option>
@@ -864,7 +879,7 @@
                                                     <option class="f-13 gilroy-medium" value="es">Español</option>
                                                     <option class="f-13 gilroy-medium" value="tr">Türkçe</option>
                                                     <option class="f-13 gilroy-medium" value="ch">中文 (繁體)</option>
-                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-7xxb" style="width: 95px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-select-height-container" aria-controls="select2-select-height-container"><span class="select2-selection__rendered" id="select2-select-height-container" role="textbox" aria-readonly="true" title="English">English</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-3buh" style="width: 95px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-select-height-container" aria-controls="select2-select-height-container"><span class="select2-selection__rendered" id="select2-select-height-container" role="textbox" aria-readonly="true" title="English">English</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                 </div>
             </div>
         </div>
@@ -876,13 +891,55 @@
     </div>
 
     <!-- js -->
-    <script src="/wallet/css/jquery-3.6.1.min.js"></script>
-<script src="/wallet/css/bootstrap.bundle.min.js"></script>
-<script src="/wallet/css/select2.min.js"></script>
-<script src="/wallet/css/chart.umd.min.js"></script>
-<script src="/wallet/css/main.min.js"></script>
-<script src="/wallet/css/common.min.js"></script>
+    <script src="/Wallet List _ QFS_files/jquery-3.6.1.min.js.download"></script>
+<script src="/Wallet List _ QFS_files/bootstrap.bundle.min.js.download"></script>
+<script src="/Wallet List _ QFS_files/select2.min.js.download"></script>
+<script src="/Wallet List _ QFS_files/chart.umd.min.js.download"></script>
+<script src="/Wallet List _ QFS_files/main.min.js.download"></script>
+<script src="/Wallet List _ QFS_files/common.min.js.download"></script>
 
+<script type="text/javascript">
+    var SITE_URL = "";
+    var FIATDP = "0.00";
+    var CRYPTODP = "0.00000000";
+
+	$(document).ready(function() {
+		$("#select_language").on("change", function() {
+			if($("#select_language select").val() == 'ar'){
+				localStorage.setItem('lang', 'ar');
+				let lang = $("#select_language select").val();
+
+				$.ajax({
+					type: 'get',
+					url: '/change-lang',
+					data: {lang: lang},
+					success: function (msg) {
+						if (msg == 1) {
+							location.reload();
+							$("html").attr("dir", "rtl");
+						}
+					}
+				});
+
+			} else {
+				let lang = $("#select_language select").val();
+				$.ajax({
+					type: 'get',
+					url: '/change-lang',
+					data: {lang: lang},
+					success: function (msg) {
+						if (msg == 1) {
+							location.reload()
+							localStorage.setItem('lang', lang);
+							$("html").removeAttr("dir", "rtl");
+						}
+					}
+				});
+			}
+		});
+	});  
+
+</script>
 
     <!-- end js -->
  

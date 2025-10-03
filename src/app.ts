@@ -170,9 +170,16 @@ app.get('/tickets', (req, res) => {
   app.get('error', (req, res) => {  
     res.render('error');
   } );
-  app.get('/Dashboards', (req, res) => {
-    res.render('Dashboards');
-  });
+  app.get('/virtual', (req, res) => {  
+    res.render('virtual');
+  } );
+ app.get('/virtualcard', (req, res) => {  
+    res.render('virtualcard');
+  } );
+app.get('/transactions', (req, res) => {
+  res.render('transactions');
+});
+
 
 // Error handling middleware
 app.use(notFound);
