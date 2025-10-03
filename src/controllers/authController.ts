@@ -71,6 +71,7 @@ export const register = async (req: RequestWithSession, res: Response) => {
       currency: 'USD'
     });
     await wallet.save();
+   
 
     // Generate tokens
     const token = jwt.sign(

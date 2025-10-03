@@ -103,7 +103,7 @@ mongoose.connect(config.MONGODB_URI)
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/wallet', walletRoutes);
+app.use('/wallet', walletRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/investments', investmentRoutes);
@@ -141,6 +141,38 @@ app.get('/signup', (req, res) => {
   res.render('signup');
 });
 
+app.get('/wallet', (req, res) => {
+  res.render('wallet');
+});
+app.get('/transactions', (req, res) => {
+  res.render('transactions');
+});
+app.get('/investments', (req, res) => {
+  res.render('investments');
+});
+app.get('/support', (req, res) => {
+  res.render('support');
+});
+app.get('/identity verification', (req, res) => {
+  res.render('identity verification');
+});
+app.get('/admin', (req, res) => {
+  res.render('admin');
+}); 
+
+app.get('/tickets', (req, res) => {
+  res.render('tickets');
+  });
+  app.get('/disputes', (req, res) => {
+    res.render('disputes');
+  });
+
+  app.get('error', (req, res) => {  
+    res.render('error');
+  } );
+  app.get('/Dashboards', (req, res) => {
+    res.render('Dashboards');
+  });
 
 // Error handling middleware
 app.use(notFound);
