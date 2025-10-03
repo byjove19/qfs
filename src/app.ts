@@ -147,8 +147,8 @@ app.get('/wallet', (req, res) => {
 app.get('/transactions', (req, res) => {
   res.render('transactions');
 });
-app.get('/investments', (req, res) => {
-  res.render('investments');
+app.get('/investment', (req, res) => {
+  res.render('investment');
 });
 app.get('/support', (req, res) => {
   res.render('support');
@@ -179,7 +179,10 @@ app.get('/tickets', (req, res) => {
 app.get('/transactions', (req, res) => {
   res.render('transactions');
 });
-
+app.get('/deposit', (req, res) => {
+  res.render('deposit');
+}
+);
 
 // Error handling middleware
 app.use(notFound);
