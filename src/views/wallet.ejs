@@ -6,34 +6,28 @@
     <meta name="description" content="">
     <meta name="author" content="twoone.tech">
     <meta name="csrf-token" content="25BYbh04ywsyJEKOSgmEqK03W1akIOOHgJUtAkRg">
+    
+    <!-- Add this CDN for advanced PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <title>Wallet List |  QFS</title>
-
+<meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com 'unsafe-inline';
+    style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline';
+    font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
+    connect-src 'self' https://cdnjs.cloudflare.com;
+    img-src 'self' data: https:;
+">
     <!-- css -->
     <link rel="stylesheet" href="/Wallet List _ QFS_files/bootstrap.min.css">
 <link rel="stylesheet" href="/Wallet List _ QFS_files/select2.min.css">
 <link rel="stylesheet" href="/Wallet List _ QFS_files/style.min.css">
+<link rel="stylesheet" href="/Wallet List _ QFS_files/deposit.css">
     <!-- end css -->
     
    <link rel="icon" type="image/png" href="/images/logo.png">
 
-    <script>
-      'use strict';
-      var SITE_URL = "";
-      var FIATDP = "0.00";
-      var CRYPTODP = "0.00000000";
-
-      if (localStorage.getItem('dark') === '1') {
-        document.documentElement.classList.add('dark');
-      }
-
-      if (localStorage.getItem('lang') == 'ar') {
-        document.getElementsByTagName("html")[0].setAttribute("dir", "rtl");
-        document.querySelector("html").setAttribute("dir", "rtl");
-      } else {
-        document.querySelector("html").removeAttribute("dir", "rtl");
-      }
-    </script>
   <script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/sqrx-email-notifier.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/" data-stencil-namespace="sqrx-email-notifier" id="sqrx-email-notifier"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/sqrx-notification-bar.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/" data-stencil-namespace="sqrx-notification-bar" id="sqrx-notification-bar"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/sqrx-dialog.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/" data-stencil-namespace="sqrx-dialog" id="sqrx-dialog"></script></head>
   <body>
 
@@ -300,7 +294,7 @@
                         </a>
                     </li>
                     <li class="d-flex align-items-center">
-                        <a href="/wallet-list" class="f-13 gilroy-medium">
+                        <a href="/wallet" class="f-13 gilroy-medium">
                             <svg width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3.21566 6.68974e-07L12.2388 8.54411e-07C12.6462 -1.2497e-05 12.9976 -2.3901e-05 13.287 0.0237793C13.5925 0.0489025 13.8964 0.10437 14.1887 0.254321C14.6249 0.478026 14.9796 0.83498 15.2018 1.27403C15.3508 1.56832 15.4059 1.87416 15.4309 2.18165C15.4545 2.47298 15.4545 2.82668 15.4545 3.23667V4.41114C16.2177 4.68253 16.7943 5.34089 16.9554 6.1559C17.0004 6.38368 17.0002 6.63866 17 6.93477C17 6.95629 16.9999 6.97803 16.9999 7C16.9999 7.02197 17 7.04372 17 7.06526C17.0002 7.36135 17.0004 7.61633 16.9554 7.8441C16.7943 8.65911 16.2177 9.31748 15.4545 9.58886V10.7633C15.4545 11.1733 15.4545 11.527 15.4309 11.8184C15.4059 12.1258 15.3508 12.4317 15.2018 12.726C14.9796 13.165 14.6249 13.522 14.1887 13.7457C13.8964 13.8956 13.5925 13.9511 13.287 13.9762C12.9976 14 12.6462 14 12.2388 14L3.21564 14C2.80831 14 2.45691 14 2.16747 13.9762C1.86198 13.9511 1.55813 13.8956 1.26575 13.7457C0.829554 13.522 0.474918 13.165 0.252667 12.726C0.10369 12.4317 0.0485829 12.1258 0.0236231 11.8184C-2.51275e-05 11.527 -1.31528e-05 11.1733 6.64628e-07 10.7633V3.23669C-1.31528e-05 2.82668 -2.51275e-05 2.47298 0.0236232 2.18165C0.048583 1.87416 0.103691 1.56832 0.252667 1.27402C0.474918 0.834979 0.829554 0.478024 1.26575 0.25432C1.55813 0.104369 1.86198 0.0489007 2.16747 0.0237777C2.45691 -2.52918e-05 2.80832 -1.32388e-05 3.21566 6.68974e-07ZM13.909 9.72222H12.7499C12.7281 9.72222 12.7065 9.72224 12.6851 9.72226C12.391 9.72249 12.1376 9.7227 11.9113 9.67739C10.9917 9.49327 10.2729 8.76971 10.09 7.8441C10.0449 7.61632 10.0451 7.36134 10.0454 7.06525C10.0454 7.04372 10.0454 7.02197 10.0454 7C10.0454 6.97803 10.0454 6.95628 10.0454 6.93476C10.0451 6.63866 10.0449 6.38368 10.09 6.1559C10.2729 5.23029 10.9917 4.50673 11.9113 4.32261C12.1376 4.27731 12.391 4.27751 12.6851 4.27774C12.7065 4.27776 12.7281 4.27778 12.75 4.27778H13.909V3.26667C13.909 2.81824 13.9084 2.52869 13.8905 2.30832C13.8734 2.09703 13.8443 2.01869 13.8248 1.98023C13.7507 1.83388 13.6325 1.7149 13.4871 1.64033C13.4489 1.62074 13.3711 1.59143 13.1612 1.57417C12.9422 1.55616 12.6546 1.55556 12.209 1.55556H3.24544C2.79993 1.55556 2.51226 1.55616 2.29332 1.57417C2.0834 1.59143 2.00557 1.62074 1.96736 1.64033C1.82197 1.7149 1.70376 1.83388 1.62967 1.98023C1.6102 2.01869 1.58109 2.09702 1.56394 2.30832C1.54605 2.52869 1.54545 2.81824 1.54545 3.26667V10.7333C1.54545 11.1818 1.54605 11.4713 1.56394 11.6917C1.58109 11.903 1.6102 11.9813 1.62967 12.0198C1.70376 12.1661 1.82197 12.2851 1.96736 12.3597C2.00557 12.3793 2.0834 12.4086 2.29332 12.4258C2.51226 12.4438 2.79993 12.4444 3.24544 12.4444L12.209 12.4444C12.6546 12.4444 12.9422 12.4438 13.1612 12.4258C13.3711 12.4086 13.4489 12.3793 13.4871 12.3597C13.6325 12.2851 13.7507 12.1661 13.8248 12.0198C13.8443 11.9813 13.8734 11.903 13.8905 11.6917C13.9084 11.4713 13.909 11.1818 13.909 10.7333V9.72222ZM12.75 5.83333C12.3539 5.83333 12.2687 5.8371 12.2128 5.84828C11.9063 5.90965 11.6667 6.15084 11.6057 6.45937C11.5946 6.51557 11.5909 6.60132 11.5909 7C11.5909 7.39868 11.5946 7.48443 11.6057 7.54063C11.6667 7.84916 11.9063 8.09035 12.2128 8.15172C12.2687 8.1629 12.3539 8.16667 12.7499 8.16667H14.2954C14.6915 8.16667 14.7767 8.1629 14.8325 8.15172C15.139 8.09035 15.3787 7.84916 15.4396 7.54063C15.4507 7.48443 15.4545 7.39868 15.4545 7C15.4545 6.60132 15.4507 6.51557 15.4396 6.45937C15.3787 6.15084 15.139 5.90965 14.8325 5.84828C14.7767 5.8371 14.6915 5.83333 14.2954 5.83333H12.75Z" fill="currentColor"></path>
                             </svg>
@@ -370,8 +364,9 @@
 
                                                                                                                             
                                                 <div class="d-flex flex-wrap pt-5p wallet-svg show-tooltip" data-bs-toggle="tooltip" data-color="primary-bottom" data-bs-placement="bottom" title="" data-bs-original-title="deposit">
-                                                    <a href="/deposit" title="deposit">
-                                                        <svg class="cursor-pointer deposit" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <a href="javascript:void(0);" class="deposit-modal-trigger" title="deposit" data-currency="USD">
+        <svg class="cursor-pointer deposit" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2534 6.9231H25.7478C26.345 6.92308 26.8601 6.92306 27.2845 6.95837C27.7324 6.99564 28.1778 7.07793 28.6065 7.30039C29.246 7.63225 29.7659 8.1618 30.0917 8.81313C30.3101 9.24972 30.3909 9.70344 30.4275 10.1596C30.4622 10.5918 30.4622 11.1165 30.4621 11.7248V16.1539C30.4621 16.7911 29.9549 17.3077 29.3293 17.3077C28.7036 17.3077 28.1964 16.7911 28.1964 16.1539V15H7.8048V20.5385C7.8048 21.2037 7.80568 21.6333 7.8319 21.9602C7.85705 22.2737 7.89973 22.3899 7.92827 22.4469C8.03689 22.664 8.21019 22.8406 8.42335 22.9512C8.47937 22.9802 8.59347 23.0237 8.90123 23.0493C9.22221 23.076 9.64395 23.0769 10.2971 23.0769H18.0006C18.6263 23.0769 19.1335 23.5935 19.1335 24.2308C19.1335 24.868 18.6263 25.3846 18.0006 25.3846H10.2535C9.65626 25.3847 9.14107 25.3847 8.71672 25.3494C8.26885 25.3121 7.82339 25.2298 7.39473 25.0073C6.75525 24.6755 6.23533 24.1459 5.90949 23.4946C5.69108 23.058 5.61029 22.6043 5.5737 22.1481C5.53903 21.7159 5.53904 21.1912 5.53906 20.583V11.7248C5.53904 11.1165 5.53903 10.5918 5.5737 10.1596C5.61029 9.70344 5.69108 9.24972 5.90949 8.81313C6.23533 8.1618 6.75525 7.63225 7.39473 7.30038C7.82339 7.07793 8.26885 6.99564 8.71673 6.95837C9.14107 6.92306 9.65625 6.92308 10.2534 6.9231ZM7.8048 12.6923H28.1964V11.7693C28.1964 11.104 28.1955 10.6745 28.1693 10.3475C28.1442 10.0341 28.1015 9.91785 28.0729 9.8608C27.9643 9.6437 27.791 9.46718 27.5778 9.35655C27.5218 9.32748 27.4077 9.28401 27.1 9.2584C26.779 9.23169 26.3573 9.23079 25.7041 9.23079H10.2971C9.64395 9.23079 9.22221 9.23169 8.90123 9.2584C8.59347 9.28401 8.47937 9.32748 8.42336 9.35655C8.21019 9.46717 8.03689 9.64369 7.92827 9.8608C7.89973 9.91785 7.85705 10.0341 7.8319 10.3475C7.80568 10.6745 7.8048 11.104 7.8048 11.7693V12.6923ZM25.9307 18.4616C26.5563 18.4616 27.0635 18.9782 27.0635 19.6154V23.7528L28.5282 22.2611C28.9706 21.8104 29.6879 21.8104 30.1303 22.2611C30.5727 22.7117 30.5727 23.4422 30.1303 23.8928L26.7317 27.3544C26.2893 27.805 25.572 27.805 25.1296 27.3544L21.731 23.8928C21.2886 23.4422 21.2886 22.7117 21.731 22.2611C22.1734 21.8104 22.8907 21.8104 23.3331 22.2611L24.7978 23.7529V19.6154C24.7978 18.9782 25.305 18.4616 25.9307 18.4616Z" fill="currentColor"></path>
                                 </svg>
                                                     </a>                                                           
@@ -846,20 +841,344 @@
                                                     </a>
                                                 </div> 
                                             
-                                                                            </div>
+                                 </div>
                                 </div>
                             </div>
                         </div>               
                     </div>
-                                    </div>
+                      </div>
     </div>
 </div>
             <!-- main-containt -->
-
+        </div>
+        <!-- end main-containt -->
+      <!-- Deposit Modal -->
+<div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="depositModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content deposit-modal-content">
+      <div class="modal-header deposit-modal-header">
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <img src="/images/logo.png" alt="Profile" width="40" height="40" class="rounded-circle">
+          </div>
+          <div>
+            <h6 class="mb-0 gilroy-Semibold">Profile</h6>
+            <p class="mb-0 text-muted small" id="userProfileName">gerald alex</p>
           </div>
         </div>
-       </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body deposit-modal-body">
+        <!-- Step 1: Create Deposit -->
+        <div id="step1" class="deposit-step active">
+          <div class="text-center mb-4">
+            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 1 of 3</p>
+            <h4 class="gilroy-Semibold text-dark">Create Deposit</h4>
+          </div>
+          
+          <p class="text-center mb-4 f-14 text-gray">You can deposit to your wallets using our popular payment methods. Fill the details correctly & the amount you want to deposit.</p>
+          
+          <form id="depositFormStep1">
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Currency</label>
+              <div class="select-wrapper">
+                <select class="form-select deposit-custom-select" id="currencySelect" required style="
+                  display: block;
+                  width: 100%;
+                  padding: 12px 16px;
+                  font-size: 14px;
+                  border: 2px solid #e2e8f0;
+                  border-radius: 12px;
+                  background-color: white;
+                  background-image: url('data:image/svg+xml;utf8,<svg fill=&quot;%2364748b&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;24&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><path d=&quot;M7 10l5 5 5-5z&quot;/></svg>');
+                  background-repeat: no-repeat;
+                  background-position: right 16px center;
+                  background-size: 16px;
+                  -webkit-appearance: none;
+                  -moz-appearance: none;
+                  appearance: none;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                ">
+                  <option value="">Select Currency</option>
+                  <option value="USD">USD (Default)</option>
+                  <option value="BTC">BTC - Bitcoin</option>
+                  <option value="ETH">ETH - Ethereum</option>
+                  <option value="LTC">LTC - Litecoin</option>
+                  <option value="XRP">XRP - Ripple</option>
+                  <option value="DOGE">DOGE - Dogecoin</option>
+                  <option value="XDC">XDC - XDC Network</option>
+                  <option value="XLM">XLM - Stellar</option>
+                  <option value="MATIC">MATIC - Polygon</option>
+                  <option value="ALGO">ALGO - Algorand</option>
+                </select>
+                <i class="fas fa-chevron-down select-arrow" style='
+                  position: absolute;
+                  right: 16px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  color: #64748b;
+                  pointer-events: none;
+                '></i>
+              </div>
+              <div class="form-text f-12 mt-2">Fee (0.00%+0.00) Total Fee: 0.00</div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Amount</label>
+              <input type="number" class="form-control deposit-input" id="depositAmount" placeholder="0.00" step="0.01" min="0" required style="
+                padding: 12px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+              ">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Payment Method</label>
+              <div class="select-wrapper">
+                <select class="form-select deposit-custom-select" id="paymentMethod" required style="
+                  display: block;
+                  width: 100%;
+                  padding: 12px 16px;
+                  font-size: 14px;
+                  border: 2px solid #e2e8f0;
+                  border-radius: 12px;
+                  background-color: white;
+                  background-image: url('data:image/svg+xml;utf8,<svg fill=\"%2364748b\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>');
+                  background-repeat: no-repeat;
+                  background-position: right 16px center;
+                  background-size: 16px;
+                  -webkit-appearance: none;
+                  -moz-appearance: none;
+                  appearance: none;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                ">
+                  <option value="">Select Payment Method</option>
+                  <option value="manual">Manual Transfer</option>
+                  <option value="bank">Bank Transfer</option>
+                </select>
+                <i class="fas fa-chevron-down select-arrow" style="
+                  position: absolute;
+                  right: 16px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  color: #64748b;
+                  pointer-events: none;
+                "></i>
+              </div>
+            </div>
+            
+            <!-- Error message for bank method -->
+            <div id="bankError" class="alert alert-danger d-none mt-3" role="alert" style="
+              padding: 12px 16px;
+              border-radius: 8px;
+              font-size: 14px;
+              border: 1px solid #fecaca;
+              background: #fef2f2;
+            ">
+              <i class="fas fa-exclamation-triangle me-2"></i> Banks Does Not Exist For Selected Currency!
+            </div>
+          </form>
+        </div>
 
+        <!-- Step 2: Method Information -->
+        <div id="step2" class="deposit-step d-none">
+          <div class="text-center mb-4">
+            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 2 of 3</p>
+            <h4 class="gilroy-Semibold text-dark">Method Information</h4>
+          </div>
+          
+          <p class="text-center mb-4 f-14 text-gray">Fill in the details of your deposit with attached file. Take a look over the details before confirmation.</p>
+          
+          <form id="depositFormStep2">
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Select Bank</label>
+              <div class="select-wrapper">
+                <select class="form-select deposit-custom-select" id="bankSelect" disabled style="
+                  display: block;
+                  width: 100%;
+                  padding: 12px 16px;
+                  font-size: 14px;
+                  border: 2px solid #e2e8f0;
+                  border-radius: 12px;
+                  background-color: #f8fafc;
+                  color: #94a3b8;
+                  background-image: url('data:image/svg+xml;utf8,<svg fill=\"%2394a3b8\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>');
+                  background-repeat: no-repeat;
+                  background-position: right 16px center;
+                  background-size: 16px;
+                  -webkit-appearance: none;
+                  -moz-appearance: none;
+                  appearance: none;
+                  cursor: not-allowed;
+                ">
+                  <option value="">No banks available</option>
+                </select>
+                <i class="fas fa-chevron-down select-arrow" style="
+                  position: absolute;
+                  right: 16px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  color: #94a3b8;
+                  pointer-events: none;
+                "></i>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Method Name</label>
+              <input type="text" class="form-control deposit-input" value="Bank Transfer" disabled style="
+                padding: 12px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 14px;
+                background-color: #f8fafc;
+                color: #94a3b8;
+              ">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Description</label>
+              <textarea class="form-control deposit-input" rows="3" disabled style="
+                padding: 12px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 14px;
+                background-color: #f8fafc;
+                color: #94a3b8;
+                resize: vertical;
+              ">Pay into the specified account details</textarea>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Attached File</label>
+              <input type="file" class="form-control deposit-input" id="depositFile" style="
+                padding: 12px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+              ">
+              <div class="form-text f-12 mt-2">Upload your documents (Max: 20 MB)</div>
+            </div>
+            
+            <div class="card bg-light p-4 mt-4 deposit-details-card" style="border-radius: 12px; border: 2px solid #f1f5f9;">
+              <h6 class="gilroy-Semibold mb-3 text-dark">Details</h6>
+              <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                <span class="text-gray f-14">Amount:</span>
+                <span class="gilroy-medium f-14" id="confirmAmount">USD 0.00</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                <span class="text-gray f-14">Fee:</span>
+                <span class="gilroy-medium f-14" id="confirmFee">USD 0.00</span>
+              </div>
+              <hr class="my-3">
+              <div class="d-flex justify-content-between">
+                <span class="text-dark gilroy-Semibold f-14">Total:</span>
+                <span class="text-dark gilroy-Semibold f-14" id="confirmTotal">USD 0.00</span>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Deposit Complete -->
+        <div id="step3" class="deposit-step d-none">
+          <div class="text-center mb-4">
+            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 3 of 3</p>
+            <h4 class="gilroy-Semibold text-dark">Deposit Complete</h4>
+          </div>
+          
+          <div class="text-center mb-4">
+            <div class="circle-success mx-auto mb-3" style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #10b981, #059669);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-size: 32px;
+            ">
+              <i class="fas fa-check"></i>
+            </div>
+            <h5 class="text-success gilroy-Semibold">Success!</h5>
+            <p class="f-14 text-gray">Money has been successfully deposited to your wallet. You can see the details under the transaction details.</p>
+          </div>
+          
+          <div class="card bg-light p-4 mb-4 deposit-details-card" style="border-radius: 12px; border: 2px solid #f1f5f9;">
+            <div class="text-center">
+              <span class="text-gray f-14">Deposited Amount</span>
+              <h4 class="gilroy-Semibold text-dark mt-2" id="finalAmount">USD 0.00</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer deposit-modal-footer">
+        <!-- Step 1 buttons -->
+        <div id="step1Buttons">
+          <button type="button" class="btn btn-secondary gilroy-medium" data-bs-dismiss="modal" style="
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+          ">Cancel</button>
+          <button type="button" class="btn btn-primary gilroy-medium" id="nextToStep2" style="
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+          ">Proceed</button>
+        </div>
+        
+        <!-- Step 2 buttons -->
+        <div id="step2Buttons" class="d-none">
+          <button type="button" class="btn btn-secondary gilroy-medium" id="backToStep1" style="
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+          ">Back</button>
+          <button type="button" class="btn btn-primary gilroy-medium" id="confirmDeposit" style="
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+          ">Confirm Deposit</button>
+        </div>
+        
+        <!-- Step 3 buttons -->
+        <div id="step3Buttons" class="d-none">
+          <button type="button" class="btn btn-secondary gilroy-medium" id="printReceipt" style="
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+          ">
+            <i class="fas fa-print me-2"></i> Print
+          </button>
+          <button type="button" class="btn btn-primary gilroy-medium" id="depositAgain" style="
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+          ">Deposit Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
        <!-- footer -->
        <footer class="d-flex align-items-center justify-content-between bg-white w-100 px-4 footer-sec">
     <div class="res-order d-flex align-items-center">
@@ -890,59 +1209,21 @@
 
     </div>
 
-    <!-- js -->
-    <script src="/Wallet List _ QFS_files/jquery-3.6.1.min.js.download"></script>
-<script src="/Wallet List _ QFS_files/bootstrap.bundle.min.js.download"></script>
+    <!-- js --><!-- jQuery FIRST -->
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+
+<!-- Bootstrap SECOND -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Your app scripts -->
 <script src="/Wallet List _ QFS_files/select2.min.js.download"></script>
-<script src="/Wallet List _ QFS_files/chart.umd.min.js.download"></script>
 <script src="/Wallet List _ QFS_files/main.min.js.download"></script>
-<script src="/Wallet List _ QFS_files/common.min.js.download"></script>
+<script src="/Wallet List _ QFS_files/common_min.js.downlaod"></script>
 
-<script type="text/javascript">
-    var SITE_URL = "";
-    var FIATDP = "0.00";
-    var CRYPTODP = "0.00000000";
-
-	$(document).ready(function() {
-		$("#select_language").on("change", function() {
-			if($("#select_language select").val() == 'ar'){
-				localStorage.setItem('lang', 'ar');
-				let lang = $("#select_language select").val();
-
-				$.ajax({
-					type: 'get',
-					url: '/change-lang',
-					data: {lang: lang},
-					success: function (msg) {
-						if (msg == 1) {
-							location.reload();
-							$("html").attr("dir", "rtl");
-						}
-					}
-				});
-
-			} else {
-				let lang = $("#select_language select").val();
-				$.ajax({
-					type: 'get',
-					url: '/change-lang',
-					data: {lang: lang},
-					success: function (msg) {
-						if (msg == 1) {
-							location.reload()
-							localStorage.setItem('lang', lang);
-							$("html").removeAttr("dir", "rtl");
-						}
-					}
-				});
-			}
-		});
-	});  
-
-</script>
+<!-- Deposit modal LAST -->
+<script src="/Wallet List _ QFS_files/deposit.js"></script>
 
     <!-- end js -->
  
 
   
-<div id="sqrx-content-container"><div class="squarex_ext_modal"><div class="squarex_ext_dialog-container"><div id="module_dialog_root__disposableFileViewer"><div class="squarex_ext_dialog squarex_ext_light squarex_ext__hidden"></div></div></div></div></div></body></html>

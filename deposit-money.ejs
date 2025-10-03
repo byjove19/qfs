@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://quantumfinancial-system.com/makedepo.php -->
+<html lang="en" class="dark-theme hydrated"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Page</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://hostedpage.coin2pay.io/assets/img/logo/logo-coin2pay_icon-light.png">
+    <link rel="stylesheet" href="./Deposit Page_files/app.css" type="text/css">
+    <link href="./Deposit Page_files/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9ecef;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .forml {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #fff; /* Ensure address text is visible */
+        }
+
+        .control-label { /* Style for the address labels */
+            color: #fff; /* Make the labels dark */
+            font-weight: bold; /* Optional: Make them bold for better emphasis */
+        }
+
+        .copy-btn, .submit-btn, .qr-link button {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #007bff; /* Bootstrap primary color */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .copy-btn:hover, .submit-btn:hover, .qr-link button:hover {
+            background-color: #0056b3;
+        }
+
+        .wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .info-card {
+            margin-bottom: 20px;
+            background-color: #1c1e5f;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+
+        .remarks {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+    </style>
+<script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/sqrx-email-notifier.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/" data-stencil-namespace="sqrx-email-notifier" id="sqrx-email-notifier"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/sqrx-notification-bar.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/" data-stencil-namespace="sqrx-notification-bar" id="sqrx-notification-bar"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/sqrx-dialog.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/" data-stencil-namespace="sqrx-dialog" id="sqrx-dialog"></script></head>
+
+<body>
+    <div class="splash-container card card-border-color card-border-color-primary" style="margin-top: 20px !important; max-width: 860px !important; margin-left: auto; margin-right: auto;">
+        <div class="card-header" style="background-color: transparent;">
+            <center>
+                <img src="./Deposit Page_files/logo-coin2pay_icon-light.png" width="100" alt="QFS Logo">
+                <h3>Quantum Financial System Direct Deposit</h3>
+            </center>
+            <label></label>
+        </div>
+        <div class="alert alert-danger">
+         After successfully completing a deposit,kindly contact the QFS online assistance service to help verify your deposit, this will enable an instant reflection of your coin on your QFS dashboard.
+        </div>
+        <form action="https://quantumfinancial-system.com/dashboard" method="post">
+            <div class="form-group card-body">
+                <label class="control-label font-weight-bold"><b>QFS Direct Deposit Details:</b></label><br>
+                <div class="form-group remarks">
+                    <label class="control-label font-weight-bold"><b>Direct Deposit Steps:</b></label>
+                    <span id="Label3"><br>
+                        1. Choose QFS Asset Backed coin you want to deposit and Enter the amount<br>
+                        2. Copy the wallet address provided or generate QRScan the QR code to make the deposit. <br>
+                        3. Send the exact amount to the Crypto address provided. <br>
+                        4. After completing the deposit, click on "Submit Payment" to finalize the process. <br>
+                        5. Contact Live Support for Fast Deposit Confirmation<br>
+                    </span>
+                </div>
+                <label class="control-label"> <b>Enter Amount</b> </label>
+                <input name="TextBox2" type="text" autocomplete="off" placeholder="Minimum amount $100" id="TextBox2" required="" class="form-control">
+                <label for="network"><br>Select COIN:</label>
+                <select id="network" class="form-control" required="">
+                    <option value="" selected="">--Select your COIN--</option>
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="XRP">XRP</option>
+                    <option value="XLM">XLM</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Tetherer">USDT (ERC20)</option>
+                    <option value="Tetherer20">USDT (TRC20)</option>
+                    <option value="Algo">Algo</option>
+                    <option value="Polygon">Polygon</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Doge">Doge</option>
+                    <option value="Solana">Solana</option>
+                    <option value="USDC">USDC (ERC20)</option>
+                </select>
+            </div>
+        </form>
+
+        <div class="info-card" id="content">
+            <div class="info-card" style="display: block;">
+                <br>
+                <div class="form-group card-body">
+                    <label class="control-label">Bitcoin Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp" autocomplete="off" readonly="" id="btcaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;btcaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">XRP Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3" autocomplete="off" readonly="" id="xrpaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;xrpaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">XLM Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2" autocomplete="off" readonly="" id="xlmaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;xlmaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">Ethereum Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" autocomplete="off" readonly="" id="ethaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;ethaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">USDT-ERC20 Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" autocomplete="off" readonly="" id="ercaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;ercaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">USDT-TRC20 Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN" autocomplete="off" readonly="" id="trcaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;trcaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">Algo Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA" autocomplete="off" readonly="" id="algoaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;algoaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">Polgygon Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" autocomplete="off" readonly="" id="polyaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;polyaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">LiteCoin Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm" autocomplete="off" readonly="" id="ltcaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;ltcaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">DogeCoin Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx" autocomplete="off" readonly="" id="dogeaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;dogeaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">Solana Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="HhV3ydYWteQGxPPc3Atuj6qL1q4WWL7Ds4ogGxZZZP6n" autocomplete="off" readonly="" id="soladdr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;soladdr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=HhV3ydYWteQGxPPc3Atuj6qL1q4WWL7Ds4ogGxZZZP6n" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">USDC-ERC20 Address:<br></label>
+                    <div class="wrapper">
+                        <input type="text" value="0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" autocomplete="off" readonly="" id="usdcaddr" class="form-control forml">
+                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(&#39;usdcaddr&#39;)">Copy</button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?data=0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae" target="_blank" class="qr-link"><button class="btn btn-primary">QR Code</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form action="https://quantumfinancial-system.com/dashboard" method="post">
+            <div class="form-group card-body">
+                <center><button type="button" onclick="confirmTransfer()" class="submit-btn">Submit Payment</button></center>
+                <br><br>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        async function copyToClipboard(elementId) {
+            try {
+                const cryptoAddressElement = document.getElementById(elementId);
+                if (!cryptoAddressElement) {
+                    console.error(`Element with ID "${elementId}" not found.`);
+                    return;
+                }
+
+                const textToCopy = cryptoAddressElement.value;
+                await navigator.clipboard.writeText(textToCopy);
+                alert(`Address copied to clipboard: ${textToCopy}`);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy address to clipboard. Please try again.');
+            }
+        }
+
+        function confirmTransfer() {
+    alert("Deposit submitted. Waiting for Support confirmation.");
+    window.location.href = "/dashboard";
+}
+    </script>
+
+<div id="sqrx-content-container"><div class="squarex_ext_modal"><div class="squarex_ext_dialog-container"><div id="module_dialog_root__disposableFileViewer"><div class="squarex_ext_dialog squarex_ext_light squarex_ext__hidden"></div></div></div></div></div></body></html>

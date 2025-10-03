@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="/virtual/bootstrap.min.css">
 <link rel="stylesheet" href="/virtual/select2.min.css">
 <link rel="stylesheet" href="/virtual/style.min.css">
+<link rel="stylesheet" href="/virtual/styles.css">
+
     <!-- end css -->
        <!-- favicon -->
     <link rel="icon" type="image/png" href="/images/logo.png">
@@ -347,8 +349,7 @@
                     <a href="/virtualcard/"><img class="card-img-top w-100 blog-img" src="/virtual/vcardimage.jpeg" alt=""></a>
                     <div class="card-body text-center">
                                                  
-                                                <button class="btn btn-info ml-3 addBtn" id="">Request New Card</button>
-
+                    <button class="btn btn-info ml-3 addBtn" id="requestCardBtn">Request New Card</button>
                     </div>
                     
                 </div>
@@ -369,114 +370,209 @@
             </div>
         </div>
         
-    <div id="addModal" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">QFS CARDS</h5>
-
-                </div>
-                
-
-                    <div class="modal-body">
-
-                        <form method="post" action="/virtualcard/index" id="sendMoneyCreateForm">
-                            <input type="hidden" name="_token" value="25BYbh04ywsyJEKOSgmEqK03W1akIOOHgJUtAkRg">                            <input type="hidden" name="percentage_fee" id="feesPercentage" value="">
-                            <input type="hidden" name="fixed_fee" id="feesFixed" value="">
-                            <input type="hidden" name="total_fee" id="totalFees" value="0.00">
-                            <input type="hidden" name="sendMoneyProcessedBy" id="sendMoneyProcessedBy">
-                
-                            <div class="row">
-                
-                                <!-- Plan -->
-                
-                                <div class="col-md-12">
-                                    <div class="param-ref mt-20">
-                                        <label class="gilroy-medium text-gray-100 mb-2 f-15">Card Type</label>
-                                        <select class="select2 select2-hidden-accessible" data-minimum-results-for-search="Infinity" name="type" id="type" data-select2-id="select2-data-type" tabindex="-1" aria-hidden="true">
-                                            <option selected="" disabled="" data-select2-id="select2-data-2-y5lh">Select Card Type</option>
-                                            <option>QFS American Express</option>
-                                            <option>QFS Mastercard</option>
-                                            <option>QFS Verve Card</option>
-                                            <option>QFS Visa Card</option> 
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-k15p" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-type-container" aria-controls="select2-type-container"><span class="select2-selection__rendered" id="select2-type-container" role="textbox" aria-readonly="true" title="Select Card Type">Select Card Type</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                                                                <span class="receiverError custom-error"></span>
-                                    </div>
-                                </div>
-                
-                                <!-- Currency -->
-                
-                                <div class="col-md-6">
-                                    <div class="param-ref mt-20">
-                                        <label class="gilroy-medium text-gray-100 mb-2 f-15">Select Card Currency</label>
-                                        <select class="select2 select2-hidden-accessible" data-minimum-results-for-search="Infinity" name="wallet" id="wallet" data-old="fiat" data-select2-id="select2-data-wallet" tabindex="-1" aria-hidden="true">
-                                                                                            <option data-type="fiat" value="112725" selected="&quot;selected&quot;" data-select2-id="select2-data-4-bbqi">
-                                                    USD</option>
-                                                                                            <option data-type="fiat" value="112726">
-                                                    BTC</option>
-                                                                                            <option data-type="fiat" value="112727">
-                                                    LTC</option>
-                                                                                            <option data-type="fiat" value="112728">
-                                                    ETH</option>
-                                                                                            <option data-type="fiat" value="112729">
-                                                    XRP</option>
-                                                                                            <option data-type="fiat" value="112730">
-                                                    Matic</option>
-                                                                                            <option data-type="fiat" value="112731">
-                                                    XLM</option>
-                                                                                            <option data-type="fiat" value="112732">
-                                                    XDC</option>
-                                                                                            <option data-type="fiat" value="112733">
-                                                    Doge</option>
-                                                                                            <option data-type="fiat" value="112734">
-                                                    ALGO</option>
-                                                                                    </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-3-0tw5" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-wallet-container" aria-controls="select2-wallet-container"><span class="select2-selection__rendered" id="select2-wallet-container" role="textbox" aria-readonly="true" title="
-                                                    USD">
-                                                    USD</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                        <span id="walletlHelp" class="mb-0 text-gray-100 dark-B87 gilroy-regular f-12 mt-2">
-                                            Fee (<span id="formattedFeesPercentage">0.00</span>%+<span id="formattedFeesFixed">0.00</span>)&nbsp;Total Fee:&nbsp;<span id="formattedTotalFees">0.00</span>
-                                        </span>
-                                    </div>
-                                </div>
-                
-                                <!-- Amount -->
-                                <div class="col-md-6">
-                                    <div class="label-top mt-20">
-                                        <label class="gilroy-medium text-gray-100 mb-2 f-15">Prefund Amount</label>
-                                        <input type="text" class="form-control input-form-control apply-bg l-s2" name="amount" id="amount" placeholder="0.00" onkeypress="return isNumberOrDecimalPointKey(this, event);" oninput="restrictNumberToPrefdecimalOnInput(this)" required="" data-value-missing="This field is required." value="">
-                
-                                                                                <label class="custom-error amount-limit-error" style="display: none;">
-                                    </label></div>
-                                </div>
-                
-                                <div id="planDetails"></div>
-                
-                                <input type="hidden" id="receiver" name="receiver">
-                
-                                <!-- Note -->
-                
-                
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-lg btn-primary mt-4" id="sendMoneyCreateSubmitBtn">
-                                        <div class="spinner spinner-border text-white spinner-border-sm mx-2 d-none" role="status">
-                                            <span class="visually-hidden"></span>
-                                        </div>
-                                        <span class="px-1" id="sendMoneyCreateSubmitBtnText">Proceed</span>
-                                        <span id="sendMoneySvgIcon"><svg class="position-relative ms-1 rtl-wrap-one nscaleX-1" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.11648 12.216C3.81274 11.9123 3.81274 11.4198 4.11648 11.1161L8.23317 6.99937L4.11648 2.88268C3.81274 2.57894 3.81274 2.08647 4.11648 1.78273C4.42022 1.47899 4.91268 1.47899 5.21642 1.78273L9.88309 6.4494C10.1868 6.75314 10.1868 7.2456 9.88309 7.54934L5.21642 12.216C4.91268 12.5198 4.42022 12.5198 4.11648 12.216Z" fill="currentColor"></path>
-                            </svg></span>
-                                    </button>
-                                    <br>
-                                    <button type="button" class="btn btn-lg btn-warning" data-bs-dismiss="modal">Close</button>
-
-                                </div>
-                        
-
-                    </div></form> 
+    <!-- Request New Card Modal -->
+<div class="modal fade" id="requestCardModal" tabindex="-1" aria-labelledby="requestCardModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title gilroy-Semibold" id="requestCardModalLabel">Request New Card</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Step 1: Card Selection -->
+        <div id="cardStep1" class="card-step">
+          <div class="text-center mb-4">
+            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 1 of 3</p>
+            <h4 class="gilroy-Semibold text-dark">Select Card Type</h4>
+          </div>
+          
+          <p class="text-center mb-4 f-14 text-gray">Please select a card type below, then select the currency and enter an amount to pre-fund your credit card with.</p>
+          
+          <form id="cardFormStep1">
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Card Type</label>
+              <select class="form-select custom-select-card" id="cardType" required>
+                <option value="">Select Card Type</option>
+                <option value="amex">QFS American Express</option>
+                <option value="mastercard">QFS Mastercard</option>
+                <option value="verve">QFS Verve Card</option>
+                <option value="visa">QFS Visa Card</option>
+              </select>
             </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Card Currency</label>
+              <select class="form-select custom-select-card" id="cardCurrency" required>
+                <option value="">Select Currency</option>
+                <option value="USD">USD (Default)</option>
+                <option value="BTC">BTC - Bitcoin</option>
+                <option value="ETH">ETH - Ethereum</option>
+                <option value="LTC">LTC - Litecoin</option>
+                <option value="XRP">XRP - Ripple</option>
+                <option value="DOGE">DOGE - Dogecoin</option>
+                <option value="XDC">XDC - XDC Network</option>
+                <option value="XLM">XLM - Stellar</option>
+                <option value="MATIC">MATIC - Polygon</option>
+                <option value="ALGO">ALGO - Algorand</option>
+              </select>
+              <div class="form-text f-12 mt-1">Fee (0.00%+0.00) Total Fee: 0.00</div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label f-14 gilroy-medium text-dark mb-2">Pre-fund Amount</label>
+              <input type="number" class="form-control card-input" id="cardAmount" placeholder="0.00" step="0.01" min="0" required>
+              <div class="form-text f-12 mt-1">Minimum amount: $10.00</div>
+            </div>
+            
+            <!-- Balance Check -->
+            <div class="card bg-light p-3 mt-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="f-14 text-gray">Available Balance:</span>
+                <span class="f-14 gilroy-medium text-dark" id="availableBalance">USD 0.00</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="f-14 text-gray">Total Cost:</span>
+                <span class="f-14 gilroy-medium text-dark" id="totalCost">USD 0.00</span>
+              </div>
+            </div>
+            
+            <!-- Insufficient Balance Error -->
+            <div id="balanceError" class="alert alert-danger d-none mt-3" role="alert">
+              <i class="fa fa-exclamation-triangle me-2"></i> Insufficient balance! Please add funds to your wallet.
+            </div>
+          </form>
         </div>
+
+        <!-- Step 2: Confirmation -->
+        <div id="cardStep2" class="card-step d-none">
+          <div class="text-center mb-4">
+            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 2 of 3</p>
+            <h4 class="gilroy-Semibold text-dark">Confirm Card Request</h4>
+          </div>
+          
+          <p class="text-center mb-4 f-14 text-gray">Please review your card request details before confirmation.</p>
+          
+          <div class="card-details-card bg-light p-4">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Card Type:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmCardType">-</p>
+                </div>
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Currency:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmCurrency">-</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Pre-fund Amount:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmAmount">-</p>
+                </div>
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Issuance Fee:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmFee">USD 0.00</p>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <span class="f-14 gilroy-medium text-dark">Total Amount:</span>
+              <span class="f-16 gilroy-Semibold text-dark" id="confirmTotal">USD 0.00</span>
+            </div>
+          </div>
+          
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" id="termsAgreement">
+            <label class="form-check-label f-14 text-gray" for="termsAgreement">
+              I agree to the <a href="/terms" class="text-primary">Terms and Conditions</a> and <a href="/privacy" class="text-primary">Privacy Policy</a>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="cardStep3" class="card-step d-none">
+          <div class="text-center mb-4">
+            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 3 of 3</p>
+            <h4 class="gilroy-Semibold text-dark">Card Request Complete</h4>
+          </div>
+          
+          <div class="text-center mb-4">
+            <div class="circle-success mx-auto mb-3">
+              <i class="fa fa-check"></i>
+            </div>
+            <h5 class="text-success gilroy-Semibold">Success!</h5>
+            <p class="f-14 text-gray">Your virtual card request has been processed successfully.</p>
+          </div>
+          
+          <div class="card-details-card bg-light p-4 mb-4">
+            <div class="text-center">
+              <span class="text-gray f-14">Transaction ID</span>
+              <h5 class="gilroy-Semibold text-dark mt-2" id="transactionId">TXN-123456789</h5>
+            </div>
+            
+            <div class="row mt-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Card Type:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark" id="successCardType">-</p>
+                </div>
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Amount Loaded:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark" id="successAmount">-</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Status:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-success">Processing</p>
+                </div>
+                <div class="mb-3">
+                  <span class="f-14 text-gray">Estimated Delivery:</span>
+                  <p class="mb-0 f-14 gilroy-medium text-dark">24-48 hours</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="alert alert-info" role="alert">
+            <div class="d-flex">
+              <i class="fa fa-info-circle me-3 mt-1"></i>
+              <div>
+                <h6 class="alert-heading gilroy-Semibold mb-2">What's Next?</h6>
+                <p class="mb-2 f-14">Your virtual card is being processed and will be available in your account within 24-48 hours.</p>
+                <p class="mb-0 f-14">You'll receive an email notification once your card is ready for use.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <!-- Step 1 buttons -->
+        <div id="cardStep1Buttons">
+          <button type="button" class="btn btn-secondary gilroy-medium" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary gilroy-medium" id="nextToCardStep2">Proceed</button>
+        </div>
+        
+        <!-- Step 2 buttons -->
+        <div id="cardStep2Buttons" class="d-none">
+          <button type="button" class="btn btn-secondary gilroy-medium" id="backToCardStep1">Back</button>
+          <button type="button" class="btn btn-primary gilroy-medium" id="confirmCardRequest">Confirm Request</button>
+        </div>
+        
+        <!-- Step 3 buttons -->
+        <div id="cardStep3Buttons" class="d-none">
+          <button type="button" class="btn btn-secondary gilroy-medium" id="printCardReceipt">
+            <i class="fa fa-print me-2"></i> Print Receipt
+          </button>
+          <button type="button" class="btn btn-primary gilroy-medium" id="requestAnotherCard">Request Another Card</button>
+        </div>
+      </div>
     </div>
-            <!-- main-containt -->
+  </div>
+</div>
 
           </div>
         </div>
@@ -519,102 +615,8 @@
 <script src="/virtual/chart.umd.min.js.download"></script>
 <script src="/virtual/main.min.js.download"></script>
 <script src="/virtual/common.min.js.download"></script>
+<script src="/virtual/card-request.js"></script>
 
-<script type="text/javascript">
-    var SITE_URL = "";
-    var FIATDP = "0.00";
-    var CRYPTODP = "0.00000000";
-
-	$(document).ready(function() {
-		$("#select_language").on("change", function() {
-			if($("#select_language select").val() == 'ar'){
-				localStorage.setItem('lang', 'ar');
-				let lang = $("#select_language select").val();
-
-				$.ajax({
-					type: 'get',
-					url: '/change-lang',
-					data: {lang: lang},
-					success: function (msg) {
-						if (msg == 1) {
-							location.reload();
-							$("html").attr("dir", "rtl");
-						}
-					}
-				});
-
-			} else {
-				let lang = $("#select_language select").val();
-				$.ajax({
-					type: 'get',
-					url: '/change-lang',
-					data: {lang: lang},
-					success: function (msg) {
-						if (msg == 1) {
-							location.reload()
-							localStorage.setItem('lang', lang);
-							$("html").removeAttr("dir", "rtl");
-						}
-					}
-				});
-			}
-		});
-	});  
-
-</script>
-
-<script> 
-
-    (function ($) {
-
-    "use strict";
-    $('.addBtn').on('click', (e)=> {
-        var modal = $('#addModal');
-        modal.modal('show');
-    });
-    })(jQuery);
-</script>
-    
-    <script type="text/javascript">
-    function restrictNumberToPrefdecimal(e, type) {
-        let decimalFormat =
-            type === "fiat" ?
-            "2" :
-            "8";
-
-        let num = $.trim(e.value);
-        if (num.length > 0 && !isNaN(num)) {
-            e.value = digitCheck(num, 8, decimalFormat);
-            return e.value;
-        }
-    }
-
-    function digitCheck(num, beforeDecimal, afterDecimal) {
-        return num
-            .replace(/[^\d.]/g, "")
-            .replace(new RegExp("(^[\\d]{" + beforeDecimal + "})[\\d]", "g"), "$1")
-            .replace(/(\..*)\./g, "$1")
-            .replace(new RegExp("(\\.[\\d]{" + afterDecimal + "}).", "g"), "$1");
-    }
-
-</script>    <script>
-    var isNumberOrDecimalPointKey = function(value, e) {
-
-        var charCode = (e.which) ? e.which : e.keyCode;
-
-        if (charCode == 46) {
-            if (value.value.indexOf('.') === -1) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (charCode > 31 && (charCode < 48 || charCode > 57))
-                return false;
-        }
-        return true;
-    }
-</script>
 
     <script src="/virtual/validation.min.js.download"></script>
     <script src="/virtual/jquery.ba-throttle-debounce.min.js.download"></script>

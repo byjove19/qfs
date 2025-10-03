@@ -57,6 +57,14 @@ export const getWalletPage = async (req: AuthRequest, res: Response) => {
 async function renderWalletPage(res: Response, user: any, wallets: any[]) {
   try {
     console.log('Rendering wallet page with', wallets.length, 'wallets');
+    console.log('User data structure:', {
+      id: user._id,
+      hasFirstName: !!user.firstName,
+      hasLastName: !!user.lastName,
+      hasEmail: !!user.email,
+      hasProfilePicture: !!user.profilePicture,
+      fullUserObject: user
+    });
     
     // Get last transactions for each wallet
     const walletData = await Promise.all(
@@ -89,10 +97,21 @@ async function renderWalletPage(res: Response, user: any, wallets: any[]) {
 
     console.log('Processed wallet data:', walletData);
 
+    // Create a safe user object with fallbacks
+    const safeUser = {
+      _id: user._id,
+      firstName: user.firstName || 'User',
+      lastName: user.lastName || '',
+      email: user.email || 'user@example.com',
+      profilePicture: user.profilePicture || '/default-profile.png',
+      // Include any other properties that might be needed
+      ...user
+    };
+
     // Render the wallet list page with the data
     res.render('wallet', {
-      user: user,
-      wallets: walletData, // This is the key - make sure it's passed as 'wallets'
+      user: safeUser,
+      wallets: walletData,
       title: 'Wallet List'
     });
   } catch (error) {
