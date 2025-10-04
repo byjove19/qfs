@@ -192,11 +192,16 @@ app.get('/money-transfer', isAuthenticated, (req, res) => {
 app.get('/disputes', (req, res) => {
   res.render('disputes', { title: 'Disputes - QFS' });
 });
-// ========== ADMIN ROUTES (Admin authentication required) ==========
 
-app.get('/admin', isAdmin, (req, res) => {
-  res.render('admin', { title: 'Admin Dashboard - QFS' });
-});
+
+
+// Import routes
+app.use('/auth', require('./routes/auth'));
+app.use('/', require('./routes/dashboard'));
+app.use('/admin', require('./routes/admin'));
+
+// Import middleware for protected routes
+const { isAuthenticated, isAdmin } = require('./middleware/auth');
 
 // ========== ERROR HANDLERS ==========
 
