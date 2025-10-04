@@ -135,10 +135,6 @@ app.get('/wallet', isAuthenticated, (req, res) => {
   res.render('wallet', { title: 'My Wallet - QFS' });
 });
 
-// Transaction routes
-app.get('/transactions', isAuthenticated, (req, res) => {
-  res.render('transactions', { title: 'Transactions - QFS' });
-});
 
 app.get('/deposit', isAuthenticated, (req, res) => {
   res.render('deposit', { title: 'Deposit Funds - QFS' });
@@ -199,7 +195,7 @@ app.get('/disputes', (req, res) => {
 app.use('/auth', require('./routes/auth'));
 app.use('/', require('./routes/dashboard'));
 app.use('/admin', require('./routes/admin'));
-
+app.use('/transactions', require('./routes/transactions'));
 
 // ========== ERROR HANDLERS ==========
 
