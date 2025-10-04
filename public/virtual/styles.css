@@ -1,0 +1,188 @@
+/* Card Request Modal Styles */
+.card-step {
+  transition: all 0.3s ease;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.custom-select-card {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px 12px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.custom-select-card:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.card-input {
+  padding: 10px 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.card-details-card {
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.btn-card-primary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #000000, #333333);
+  border: none;
+}
+
+.btn-card-secondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.circle-success {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+}
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 0 0 15px 15px;
+}
+/* Card Request Modal Styles */
+.card-step {
+  transition: all 0.3s ease;
+}
+
+.d-none {
+  display: none !important;
+}
+
+/* Force dropdown styling */
+.card-custom-select {
+  cursor: pointer !important;
+  padding-right: 40px !important;
+}
+
+.card-custom-select:focus {
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1) !important;
+  outline: none !important;
+}
+
+.card-input {
+  padding: 10px 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.card-details-card {
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.btn-card-primary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #000000, #333333);
+  border: none;
+}
+
+.btn-card-secondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.circle-success {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+}
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 0 0 15px 15px;
+}
+
+/* Ensure dropdowns work in modal */
+.modal {
+  z-index: 1060 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+/* Override any conflicting styles */
+select.form-select {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+}
+
+/* Fix for Bootstrap select2 conflicts */
+.select2-container {
+  z-index: 1061 !important;
+}
+
+.modal .select2-container {
+  z-index: 1061 !important;
+}

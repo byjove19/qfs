@@ -1,0 +1,325 @@
+/* Deposit Modal Styles */
+.deposit-step {
+    transition: all 0.3s ease;
+}
+
+.circle-success {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+}
+
+/* Custom select styling - WORKING VERSION */
+.custom-select-deposit,
+.form-select.custom-select-deposit {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-select-deposit:focus,
+.form-select.custom-select-deposit:focus {
+    border-color: #000000;
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    outline: 0;
+}
+
+.custom-select-deposit.disabled,
+.form-select.custom-select-deposit:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+.deposit-input {
+    padding: 10px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.deposit-input.disabled,
+.deposit-input:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    opacity: 1;
+}
+
+.deposit-details-card {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.btn-deposit-primary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: linear-gradient(to right, #000000, #333333);
+    border: none;
+    color: white;
+}
+
+.btn-deposit-primary:hover {
+    background: linear-gradient(to right, #333333, #000000);
+}
+
+.btn-deposit-secondary,
+.btn-deposit-cancel {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #212529;
+}
+
+.btn-deposit-secondary:hover,
+.btn-deposit-cancel:hover {
+    background: #f8f9fa;
+}
+
+/* Modal z-index */
+.modal {
+    z-index: 1060;
+}
+
+.modal-backdrop {
+    z-index: 1050;
+}
+/* Additional fixes for dropdown interaction in modal */
+
+/* Ensure modal content is clickable */
+#depositModal .modal-body {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure select elements are fully interactive */
+#depositModal select.form-select,
+#depositModal select.custom-select-deposit {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Ensure the modal itself doesn't block interaction */
+#depositModal.modal.show {
+    pointer-events: auto;
+}
+
+/* Ensure backdrop doesn't interfere */
+.modal-backdrop {
+    pointer-events: none;
+}
+
+.modal-backdrop.show {
+    pointer-events: auto;
+}
+
+/* Make sure form controls are clickable */
+#depositModal .form-control,
+#depositModal .form-select,
+#depositModal button {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+/* Style select options for better visibility */
+#depositModal select option {
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #212529;
+}
+
+#depositModal select option:hover {
+    background-color: #f8f9fa;
+}
+
+/* Ensure Bootstrap select styling is preserved */
+#depositModal .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
+
+/* Remove any conflicting transforms or transitions on modal show */
+#depositModal.modal.show .modal-dialog {
+    pointer-events: auto;
+}
+
+/* Fix for any overlay issues */
+#depositModal * {
+    pointer-events: auto;
+}
+/* Deposit Modal Specific Styles */
+.deposit-modal-content {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.deposit-modal-header {
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 20px 20px 0 0;
+  padding: 1.5rem 2rem;
+}
+
+.deposit-modal-body {
+  padding: 2rem;
+  background: white;
+}
+
+.deposit-modal-footer {
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 0 0 20px 20px;
+  padding: 1.5rem 2rem;
+}
+
+/* Deposit Step Management */
+.deposit-step {
+  display: none;
+}
+
+.deposit-step.active {
+  display: block;
+}
+
+/* Select Wrapper for Better Dropdown Styling */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.deposit-custom-select {
+  width: 100% !important;
+  padding: 12px 16px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  background-color: white !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.deposit-custom-select:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  outline: none !important;
+}
+
+.deposit-custom-select:hover {
+  border-color: #cbd5e1 !important;
+}
+
+/* Input Styling */
+.deposit-input {
+  padding: 12px 16px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+  width: 100% !important;
+}
+
+.deposit-input:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  outline: none !important;
+}
+
+.deposit-input:hover {
+  border-color: #cbd5e1 !important;
+}
+
+/* Button Hover Effects */
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Details Card */
+.deposit-details-card {
+  background: white !important;
+  border: 2px solid #f1f5f9 !important;
+  border-radius: 12px !important;
+}
+
+/* Ensure Modal Z-Index */
+.modal {
+  z-index: 1060 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+/* Fix for any conflicting Bootstrap styles */
+select.form-select {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+}
+
+/* Remove any background images that might be conflicting */
+select {
+  background-image: none !important;
+}
+
+/* Ensure dropdown works in all browsers */
+select::-ms-expand {
+  display: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .deposit-modal-body {
+    padding: 1.5rem;
+  }
+  
+  .deposit-modal-header,
+  .deposit-modal-footer {
+    padding: 1.25rem 1.5rem;
+  }
+}

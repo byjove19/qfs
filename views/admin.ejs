@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - QFS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 48px 0 0; }
+        .sidebar-sticky { position: relative; top: 0; height: calc(100vh - 48px); padding-top: .5rem; overflow-x: hidden; overflow-y: auto; }
+        .nav-link { color: rgba(255,255,255,.8); }
+        .nav-link:hover { color: #fff; }
+        .nav-link.active { color: #fff; background: rgba(255,255,255,.1); }
+        main { margin-left: 16.66667%; }
+        .stat-card { border-left: 4px solid; }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <span class="navbar-brand">QFS Admin Panel</span>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3"><%= user.firstName %> <%= user.lastName %></span>
+                <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid" style="margin-top: 56px;">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-md-block bg-dark sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/dashboard">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/users">
+                                <i class="bi bi-people"></i> Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/transactions">
+                                <i class="bi bi-credit-card"></i> Transactions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/investments">
+                                <i class="bi bi-graph-up"></i> Investments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/tickets">
+                                <i class="bi bi-ticket"></i> Support Tickets
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/disputes">
+                                <i class="bi bi-exclamation-triangle"></i> Disputes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/logs">
+                                <i class="bi bi-file-text"></i> Activity Logs
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card border-primary">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Total Users</h6>
+                                <h2 class="card-title" id="totalUsers">-</h2>
+                                <small class="text-success" id="activeUsers">- active</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card border-success">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Total Volume</h6>
+                                <h2 class="card-title" id="totalVolume">-</h2>
+                                <small class="text-muted" id="totalTransactions">- transactions</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card border-warning">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Pending Actions</h6>
+                                <h2 class="card-title" id="pendingTransactions">-</h2>
+                                <small class="text-warning" id="openTickets">- tickets</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card border-info">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Investments</h6>
+                                <h2 class="card-title" id="totalInvestments">-</h2>
+                                <small class="text-info" id="activeInvestments">- active</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent Transactions</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Type</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentTransactions">
+                                            <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent Users</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush" id="recentUsers">
+                                    <div class="list-group-item">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/admin/dashboard');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const { stats, recentTransactions, recentUsers } = result.data;
+                    
+                    // Update stats
+                    document.getElementById('totalUsers').textContent = stats.totalUsers;
+                    document.getElementById('activeUsers').textContent = `${stats.activeUsers} active`;
+                    document.getElementById('totalVolume').textContent = `$${stats.totalVolume.toFixed(2)}`;
+                    document.getElementById('totalTransactions').textContent = `${stats.totalTransactions} transactions`;
+                    document.getElementById('pendingTransactions').textContent = stats.pendingTransactions;
+                    document.getElementById('openTickets').textContent = `${stats.openTickets} tickets`;
+                    document.getElementById('totalInvestments').textContent = `$${stats.totalInvestments.toFixed(2)}`;
+                    document.getElementById('activeInvestments').textContent = `${stats.activeInvestments} active`;
+                    
+                    // Update recent transactions
+                    const txnsHtml = recentTransactions.map(txn => `
+                        <tr>
+                            <td>${txn.user?.firstName || 'N/A'} ${txn.user?.lastName || ''}</td>
+                            <td><span class="badge bg-${txn.type === 'deposit' ? 'success' : 'danger'}">${txn.type}</span></td>
+                            <td>$${Math.abs(txn.amount).toFixed(2)}</td>
+                            <td><span class="badge bg-${txn.status === 'completed' ? 'success' : txn.status === 'pending' ? 'warning' : 'danger'}">${txn.status}</span></td>
+                            <td>${new Date(txn.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('recentTransactions').innerHTML = txnsHtml || '<tr><td colspan="5" class="text-center">No transactions</td></tr>';
+                    
+                    // Update recent users
+                    const usersHtml = recentUsers.map(user => `
+                        <a href="/admin/users/${user._id}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${user.firstName} ${user.lastName}</h6>
+                                <small>${new Date(user.createdAt).toLocaleDateString()}</small>
+                            </div>
+                            <small class="text-muted">${user.email}</small>
+                        </a>
+                    `).join('');
+                    document.getElementById('recentUsers').innerHTML = usersHtml || '<div class="list-group-item">No users</div>';
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        loadDashboard();
+    </script>
+</body>
+</html>
