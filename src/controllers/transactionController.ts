@@ -8,7 +8,117 @@ import User from '../models/User';
 import currencyConverter from '../utils/currencyCoverter';
 import feeCalculator from '../utils/feeCalculator';
 import mailer from '../utils/mailer';
+import transactionService from '../services/transactionService';
+import { TransactionFilters } from '../types/transaction';
 
+export const getTransactions = async (req: AuthRequest, res: Response) => {
+  try {
+    // Validate request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const {
+      page = 1,
+      limit = 20,
+      type,
+      status,
+      wallet,
+      from,
+      to
+    } = req.query;
+
+    // Parse date filters
+    let fromDate: Date | undefined;
+    let toDate: Date | undefined;
+    
+    if (from) fromDate = new Date(from as string);
+    if (to) toDate = new Date(to as string);
+
+    const filters: TransactionFilters = {
+      type: type as TransactionFilters['type'],
+      status: status as TransactionFilters['status'],
+      wallet: wallet as string,
+      fromDate,
+      toDate,
+      page: Number(page),
+      limit: Number(limit)
+    };
+
+    const result = await transactionService.getUserTransactions(
+      req.user!._id,
+      filters
+    );
+
+    // Format transactions for frontend
+    const formattedTransactions = result.transactions.map((transaction: ITransaction) =>
+      transactionService.formatTransactionForDisplay(transaction)
+    );
+
+    res.json({
+      success: true,
+      data: {
+        transactions: formattedTransactions,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total: result.total,
+          pages: Math.ceil(result.total / Number(limit))
+        }
+      }
+    });
+
+  } catch (error: any) {
+    console.error('Get transactions error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Internal server error'
+    });
+  }
+};
+
+export const getTransaction = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Transaction ID is required'
+      });
+    }
+
+    const transaction = await transactionService.getTransactionById(id, req.user!._id);
+
+    if (!transaction) {
+      return res.status(404).json({
+        success: false,
+        message: 'Transaction not found'
+      });
+    }
+
+    const formattedTransaction = transactionService.formatTransactionForDisplay(transaction);
+
+    res.json({
+      success: true,
+      data: { transaction: formattedTransaction }
+    });
+
+  } catch (error: any) {
+    console.error('Get transaction error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Internal server error'
+    });
+  }
+};
+
+// Keep your existing sendMoney function here (only one version)
 export const sendMoney = async (req: AuthRequest, res: Response) => {
   try {
     const errors = validationResult(req);
@@ -106,7 +216,7 @@ export const sendMoney = async (req: AuthRequest, res: Response) => {
         referenceId: `TXN${Date.now()}${Math.random().toString(36).substr(2, 9)}`,
         user: recipient._id,
         wallet: recipientWallet._id,
-        type: 'send',
+        type: 'received',
         amount,
         currency: recipientWallet.currency,
         fee: 0,
@@ -151,75 +261,6 @@ export const sendMoney = async (req: AuthRequest, res: Response) => {
     }
   } catch (error) {
     console.error('Send money error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-};
-
-export const getTransactions = async (req: AuthRequest, res: Response) => {
-  try {
-    const { page = 1, limit = 20, type, status } = req.query;
-    
-    const filter: any = { user: req.user!._id };
-    if (type) filter.type = type;
-    if (status) filter.status = status;
-
-    const transactions = await Transaction.find(filter)
-      .sort({ createdAt: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit))
-      .populate('metadata.recipient', 'firstName lastName email')
-      .populate('metadata.sender', 'firstName lastName email');
-
-    const total = await Transaction.countDocuments(filter);
-
-    res.json({
-      success: true,
-      data: {
-        transactions,
-        pagination: {
-          page: Number(page),
-          limit: Number(limit),
-          total,
-          pages: Math.ceil(total / Number(limit))
-        }
-      }
-    });
-  } catch (error) {
-    console.error('Get transactions error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-};
-
-export const getTransaction = async (req: AuthRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const transaction = await Transaction.findOne({
-      _id: id,
-      user: req.user!._id
-    })
-    .populate('metadata.recipient', 'firstName lastName email')
-    .populate('metadata.sender', 'firstName lastName email');
-
-    if (!transaction) {
-      return res.status(404).json({
-        success: false,
-        message: 'Transaction not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: { transaction }
-    });
-  } catch (error) {
-    console.error('Get transaction error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
