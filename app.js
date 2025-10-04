@@ -104,7 +104,7 @@ app.use((req, res, next) => {
 app.use('/auth', require('./routes/auth'));
 app.use('/', require('./routes/dashboard'));
 app.use('/admin', require('./routes/admin'));
-
+app.use('/transactions', require('./routes/transactions'));
 // Import middleware for protected routes
 const { isAuthenticated, isAdmin } = require('./middleware/auth');
 

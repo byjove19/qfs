@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
-const { isAuthenticated } = require('../middleware/auth'); // CHANGED FROM ensureAuthenticated
+const { isAuthenticated } = require('../middleware/auth'); 
 const { body } = require('express-validator');
 
 // Apply authentication middleware to all routes
