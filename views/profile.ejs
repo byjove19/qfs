@@ -345,7 +345,7 @@
         <div class="avatar-left-div bg-white mt-32">
             <div class="d-flex justify-content-between">
                 <div class="left-avatar-desc">
-                    <p class="mb-0 f-20 leading-25 gilroy-Semibold text-dark">gerald alex</p>
+                    <p class="mb-0 f-20 leading-25 gilroy-Semibold text-dark"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
                     <p class="mb-0 f-14 leading-22 gilroy-medium text-gray-100 mt-8">Please set your profile image.</p>
                     <p class="mb-0 f-12 leading-18 gilroy-medium fst-italic text-gray mt-3p">Supported format: jpeg, png, bmp, gif, or svg</p>
                     <div class="d-flex mt-26 align-items-center justify-content-between">
@@ -506,7 +506,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body modal-body-pxy">
-                                    <form method="post" action="//prifile/update_password" id="profileResetPasswordForm">
+                                    <form method="post" action="/profile/update_password" id="profileResetPasswordForm">
                                         <input type="hidden" name="_token" value="tiLfEIdLpapV8KvHXwRBGHJgLZFODUJqcXaCWPKM">                                        <div>
                                             <div class="row">
                                                 <div class="col-md-12">

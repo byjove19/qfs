@@ -21,7 +21,7 @@
 
     <script>
       'use strict';
-      var SITE_URL = "https://quantumfinancial-system.com";
+      var SITE_URL = "";
       var FIATDP = "0.00";
       var CRYPTODP = "0.00000000";
 
@@ -353,7 +353,7 @@
         <p class="mb-0 text-center f-14 gilroy-medium text-gray dark-p mt-20">
             PLEASE SELECT A PLAN BELOW AND ENTER AN AMOUNT TO INVEST WHERE APPLICABLE TO BEGIN INVESTMENT</p>
 
-        <form method="post" action="https://quantumfinancial-system.com/investment" id="sendMoneyCreateForm" data-select2-id="select2-data-sendMoneyCreateForm">
+        <form method="post" action="/investment" id="sendMoneyCreateForm" data-select2-id="select2-data-sendMoneyCreateForm">
             <input type="hidden" name="_token" value="9MOkldmaiwKPSwaJvquMJHt5P6T7SvFA5QVPfnEM">            <input type="hidden" name="percentage_fee" id="feesPercentage" value="">
             <input type="hidden" name="fixed_fee" id="feesFixed" value="">
             <input type="hidden" name="total_fee" id="totalFees" value="0.00">
@@ -455,7 +455,7 @@
        <!-- footer -->
        <footer class="d-flex align-items-center justify-content-between bg-white w-100 px-4 footer-sec">
     <div class="res-order d-flex align-items-center">
-        <p class="mb-0 gilroy-medium">Copyright © 2025&nbsp;<a href="https://quantumfinancial-system.com/" class="link-text">QFS</a>&nbsp;|&nbsp;All Rights Reserved.</p>
+        <p class="mb-0 gilroy-medium">Copyright © 2025&nbsp;<a href="/" class="link-text">QFS</a>&nbsp;|&nbsp;All Rights Reserved.</p>
         <span class="d-none">4.0.1</span>
     </div>
     <div class="d-flex f-link align-items-center">
@@ -483,15 +483,15 @@
     </div>
 
     <!-- js -->
-    <script src="/investment/jquery-3.6.1.min.js.download"></script>
-<script src="/investment/bootstrap.bundle.min.js.download"></script>
-<script src="/investment/select2.min.js.download"></script>
-<script src="/investment/chart.umd.min.js.download"></script>
-<script src="/investment/main.min.js.download"></script>
-<script src="/investment/common.min.js.download"></script>
+    <script src="/investment/jquery-3.6.1.min.js"></script>
+<script src="/investment/bootstrap.bundle.min.js"></script>
+<script src="/investment/select2.min.js"></script>
+<script src="/investment/chart.umd.min.js"></script>
+<script src="/investment/main.min.js"></script>
+<script src="/investment/common.min.js"></script>
 
 <script type="text/javascript">
-    var SITE_URL = "https://quantumfinancial-system.com";
+    var SITE_URL = "";
     var FIATDP = "0.00";
     var CRYPTODP = "0.00000000";
 
@@ -503,7 +503,7 @@
 
 				$.ajax({
 					type: 'get',
-					url: 'https://quantumfinancial-system.com/change-lang',
+					url: '/change-lang',
 					data: {lang: lang},
 					success: function (msg) {
 						if (msg == 1) {
@@ -517,7 +517,7 @@
 				let lang = $("#select_language select").val();
 				$.ajax({
 					type: 'get',
-					url: 'https://quantumfinancial-system.com/change-lang',
+					url: '/change-lang',
 					data: {lang: lang},
 					success: function (msg) {
 						if (msg == 1) {
@@ -641,8 +641,8 @@
     }
 </script>
 
-    <script src="/investment/validation.min.js.download"></script>
-    <script src="/investment/jquery.ba-throttle-debounce.min.js.download"></script>
+    <script src="/investment/validation.min.js"></script>
+    <script src="/investment/jquery.ba-throttle-debounce.min.js"></script>
 
 
     <script type="text/javascript">
@@ -655,11 +655,11 @@
         let validPhoneMessage = placeHolder.replace(':x', 'phone (ex: +12015550123)');
         let validEmailOrPhoneMessage = placeHolder.replace(':x', 'email (ex: user@gmail.com) or phone (ex: +12015550123)');
         let lowBalanceText = "Not have enough balance !";
-        let receiverStatusUrl = "https://quantumfinancial-system.com/transfer-user-email-phone-receiver-status-validate";
-        let checkAmountLimitUrl = "https://quantumfinancial-system.com/amount-limit";
+        let receiverStatusUrl = "/transfer-user-email-phone-receiver-status-validate";
+        let checkAmountLimitUrl = "/amount-limit";
         let submitBtnText = 'Processing...';
     </script>
-    <script src="/investment/send-money.min.js.download"></script>
+    <script src="/investment/send-money.min.js"></script>
     <!-- end js -->
  
 
