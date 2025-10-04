@@ -200,8 +200,6 @@ app.use('/auth', require('./routes/auth'));
 app.use('/', require('./routes/dashboard'));
 app.use('/admin', require('./routes/admin'));
 
-// Import middleware for protected routes
-const { isAuthenticated, isAdmin } = require('./middleware/auth');
 
 // ========== ERROR HANDLERS ==========
 
