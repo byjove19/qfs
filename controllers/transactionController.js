@@ -29,7 +29,7 @@ const transactionController = {
         Transaction.countDocuments({ $or: [{ userId }, { recipientId: userId }] })
       ]);
 
-      res.render('transactions/index', {
+      res.render('transactions', {
         title: 'Transactions - QFS',
         transactions,
         currentPage: page,

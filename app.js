@@ -29,7 +29,6 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      // ✅ Allow styles from Bootstrap, Google Fonts, and CDNs
       styleSrc: [
         "'self'", 
         "'unsafe-inline'", 
@@ -37,7 +36,6 @@ app.use(helmet({
         "https://cdn.jsdelivr.net", 
         "https://fonts.googleapis.com"
       ],
-      // ✅ Allow scripts from jQuery, Bootstrap, and CDNs
       scriptSrc: [
         "'self'", 
         "'unsafe-inline'", 
@@ -45,25 +43,20 @@ app.use(helmet({
         "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com"
       ],
-      // ✅ Allow fonts from Google Fonts and CDNs
       fontSrc: [
         "'self'", 
         "https://fonts.gstatic.com",
         "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com"
       ],
-      // ✅ Allow images from various sources
       imgSrc: [
         "'self'", 
         "data:", 
         "https:",
         "https://cdnjs.cloudflare.com"
       ],
-      // ✅ Allow connect sources (AJAX, APIs)
       connectSrc: ["'self'"],
-      // ✅ Block Flash/objects
       objectSrc: ["'none'"],
-      // ✅ Auto upgrade http → https
       upgradeInsecureRequests: []
     }
   }
@@ -100,12 +93,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Import routes
-app.use('/auth', require('./routes/auth'));
-app.use('/', require('./routes/dashboard'));
-app.use('/admin', require('./routes/admin'));
-app.use('/transactions', require('./routes/transactions'));
-// Import middleware for protected routes
+// Import middleware for protected routes - MUST BE BEFORE ROUTE IMPORTS
 const { isAuthenticated, isAdmin } = require('./middleware/auth');
 
 // ========== PUBLIC ROUTES (No authentication required) ==========
@@ -128,13 +116,19 @@ app.get('/signup', (req, res) => {
   res.render('signup', { title: 'Sign Up - QFS' });
 });
 
+// ========== ROUTE IMPORTS (SINGLE SET - NO DUPLICATES) ==========
+
+app.use('/auth', require('./routes/auth'));
+app.use('/', require('./routes/dashboard'));
+app.use('/admin', require('./routes/admin'));
+app.use('/transactions', require('./routes/transactions'));
+
 // ========== PROTECTED ROUTES (Authentication required) ==========
 
 // Wallet routes
 app.get('/wallet', isAuthenticated, (req, res) => {
   res.render('wallet', { title: 'My Wallet - QFS' });
 });
-
 
 app.get('/deposit', isAuthenticated, (req, res) => {
   res.render('deposit', { title: 'Deposit Funds - QFS' });
@@ -154,7 +148,7 @@ app.get('/support', isAuthenticated, (req, res) => {
   res.render('support', { title: 'Support - QFS' });
 });
 
-app.get('/tickets', (req, res) => {
+app.get('/tickets', isAuthenticated, (req, res) => {
   res.render('tickets', { title: 'My Tickets - QFS' });
 });
 
@@ -181,32 +175,24 @@ app.get('/virtual', isAuthenticated, (req, res) => {
 app.get('/virtualcard', isAuthenticated, (req, res) => {
   res.render('virtualcard', { title: 'Virtual Card - QFS' });
 });
+
 app.get('/money-transfer', isAuthenticated, (req, res) => {
   res.render('money-transfer', { title: 'Money Transfer - QFS' });
 });
 
-app.get('/disputes', (req, res) => {
-  res.render('disputes', { title: 'Disputes - QFS' });
-});
-
-
-
-// Import routes
-app.use('/auth', require('./routes/auth'));
-app.use('/', require('./routes/dashboard'));
-app.use('/admin', require('./routes/admin'));
-app.use('/transactions', require('./routes/transactions'));
-
 // ========== ERROR HANDLERS ==========
 
-// 404 handler
+// 404 handler - FIXED PATH (remove extra slash)
 app.use((req, res) => {
-  res.status(404).render('/error/404', { title: 'Page Not Found - QFS' });
+  res.status(404).render('error/404', { title: 'Page Not Found - QFS' });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
+  console.error('=== SERVER ERROR ===');
+  console.error(err.message);
   console.error(err.stack);
+  console.error('=== END ERROR ===');
   res.status(500).render('error/500', { title: 'Server Error - QFS' });
 });
 
@@ -216,4 +202,5 @@ app.listen(PORT, () => {
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Home page: http://localhost:${PORT}`);
   console.log(`Login page: http://localhost:${PORT}/login`);
+  console.log(`Transactions: http://localhost:${PORT}/transactions`);
 });
