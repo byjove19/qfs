@@ -4,6 +4,9 @@ const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const Investment = require('../models/Investment');
 const Ticket = require('../models/Ticket');
+const Wallet = require('../models/Wallet');
+const CardRequest = require('../models/CardRequest');
+
 
 /**
  * Admin Controller
@@ -96,14 +99,24 @@ const adminController = {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      const [users, totalUsers] = await Promise.all([
-        User.find()
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit)
-          .select('firstName lastName email createdAt isActive balance currency'),
-        User.countDocuments()
-      ]);
+      const users = await User.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select('firstName lastName email createdAt isActive currency');
+
+      // Get wallet balances for each user
+      const usersWithBalances = await Promise.all(
+        users.map(async (user) => {
+          const wallet = await Wallet.findOne({ userId: user._id, currency: 'USD' });
+          return {
+            ...user.toObject(),
+            balance: wallet ? wallet.balance : 0
+          };
+        })
+      );
+
+      const totalUsers = await User.countDocuments();
 
       // Ensure user data is properly passed
       const currentUser = req.user || {
@@ -114,7 +127,7 @@ const adminController = {
 
       res.render('admin/users', {
         title: 'Manage Users',
-        users: users || [],
+        users: usersWithBalances || [],
         currentPage: page,
         totalPages: Math.ceil(totalUsers / limit),
         totalUsers: totalUsers || 0,
@@ -151,19 +164,29 @@ const adminController = {
   async getUserDetail(req, res) {
     try {
       const user = await User.findById(req.params.id)
-        .select('firstName lastName email createdAt isActive balance currency loginHistory');
+        .select('firstName lastName email createdAt isActive currency loginHistory');
 
       if (!user) {
         req.flash('error', 'User not found');
         return res.redirect('/admin/users');
       }
 
+      // Get user's wallet balance
+      const wallet = await Wallet.findOne({ userId: req.params.id, currency: 'USD' });
+      const userBalance = wallet ? wallet.balance : 0;
+
       const recentTransactions = await Transaction.find({ userId: req.params.id })
         .sort({ createdAt: -1 }).limit(10);
 
+      // Add balance to user object for the template
+      const userWithBalance = {
+        ...user.toObject(),
+        balance: userBalance
+      };
+
       res.render('admin/user-detail', {
         title: `User Details - ${user.firstName} ${user.lastName}`,
-        user,
+        user: userWithBalance,
         recentTransactions,
         currentUser: req.user,
         messages: {
@@ -202,137 +225,184 @@ const adminController = {
     }
   },
 
-  /** =======================
-   *  USER BALANCE MANAGEMENT
-   *  =======================
-   */
-  async getAllUserBalances(req, res) {
-    try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 15;
-      const skip = (page - 1) * limit;
+/** =======================
+ *  USER BALANCE MANAGEMENT (Multi-currency)
+ *  =======================
+ */
+async getAllUserBalances(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
 
-      const [users, totalUsers] = await Promise.all([
-        User.find().sort({ balance: -1 }).skip(skip).limit(limit)
-          .select('firstName lastName email balance currency createdAt isActive'),
-        User.countDocuments()
-      ]);
+    const users = await User.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select('firstName lastName email currency createdAt isActive');
 
-      const totalBalance = users.reduce((sum, u) => sum + (u.balance || 0), 0);
+    // Get ALL wallet balances for each user
+    const usersWithBalances = await Promise.all(
+      users.map(async (user) => {
+        const wallets = await Wallet.find({ userId: user._id });
+        const balances = {};
+        let totalBalanceUSD = 0;
 
-      res.render('admin/user-balances', {
-        title: 'User Balances',
-        users,
-        totalBalance,
-        currentPage: page,
-        totalPages: Math.ceil(totalUsers / limit),
-        totalUsers,
-        user: req.user,
-        messages: {
-          success: req.flash('success'),
-          error: req.flash('error')
-        }
-      });
-    } catch (error) {
-      console.error('Get Balances Error:', error);
-      req.flash('error', 'Failed to load user balances');
-      res.redirect('/admin/dashboard');
+        // Calculate balances for each currency
+        wallets.forEach(wallet => {
+          balances[wallet.currency] = wallet.balance;
+          // Here you would convert to USD using exchange rates
+          // For now, we'll just sum USD and ignore crypto values
+          if (wallet.currency === 'USD') {
+            totalBalanceUSD += wallet.balance;
+          }
+        });
+
+        return {
+          ...user.toObject(),
+          balances,
+          totalBalance: totalBalanceUSD
+        };
+      })
+    );
+
+    const totalUsers = await User.countDocuments();
+    const totalBalance = usersWithBalances.reduce((sum, u) => sum + (u.totalBalance || 0), 0);
+
+    res.render('admin/user-balances', {
+      title: 'User Balances',
+      users: usersWithBalances,
+      totalBalance,
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers,
+      user: req.user,
+      messages: {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    });
+  } catch (error) {
+    console.error('Get Balances Error:', error);
+    req.flash('error', 'Failed to load user balances');
+    res.redirect('/admin/dashboard');
+  }
+},
+
+async updateUserBalance(req, res) {
+  try {
+    const { userId, amount, type, reason, currency } = req.body;
+    
+    // Validate required fields
+    if (!userId || !amount || !type || !currency) {
+      req.flash('error', 'Missing required fields');
+      return res.redirect(`/admin/users/${userId}`);
     }
-  },
 
-  /** =======================
-   *  UPDATED BALANCE MANAGEMENT (FOR USER DETAIL PAGE)
-   *  =======================
-   */
-  async updateUserBalance(req, res) {
-    try {
-      const { userId, amount, type, reason } = req.body;
-      
-      // Validate required fields
-      if (!userId || !amount || !type) {
-        req.flash('error', 'Missing required fields');
-        return res.redirect(`/admin/users/${userId}`);
-      }
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
 
-      // Find user
-      const user = await User.findById(userId);
-      if (!user) {
-        req.flash('error', 'User not found');
-        return res.redirect('/admin/users');
-      }
-
-      // Validate amount
-      const numericAmount = parseFloat(amount);
-      if (isNaN(numericAmount) || numericAmount <= 0) {
-        req.flash('error', 'Invalid amount');
-        return res.redirect(`/admin/users/${userId}`);
-      }
-
-      const oldBalance = user.balance || 0;
-      let newBalance = oldBalance;
-      let transactionType = '';
-      let transactionDescription = '';
-
-      // Process balance update based on type
-      if (type === 'add') {
-        newBalance = oldBalance + numericAmount;
-        transactionType = 'admin_credit';
-        transactionDescription = `Admin credit: ${reason || 'Funds added by administrator'}`;
-      } else if (type === 'subtract') {
-        if (oldBalance < numericAmount) {
-          req.flash('error', 'Insufficient balance to deduct');
-          return res.redirect(`/admin/users/${userId}`);
+    // Find or create the user's wallet for the specified currency
+    let wallet = await Wallet.findOne({ userId: userId, currency: currency });
+    if (!wallet) {
+      try {
+        wallet = new Wallet({
+          userId: userId,
+          currency: currency,
+          balance: 0
+        });
+        await wallet.save();
+      } catch (createError) {
+        if (createError.code === 11000) {
+          wallet = await Wallet.findOne({ userId: userId, currency: currency });
+          if (!wallet) {
+            req.flash('error', 'Failed to create wallet. Please try again.');
+            return res.redirect(`/admin/users/${userId}`);
+          }
+        } else {
+          throw createError;
         }
-        newBalance = oldBalance - numericAmount;
-        transactionType = 'admin_debit';
-        transactionDescription = `Admin debit: ${reason || 'Funds deducted by administrator'}`;
-      } else {
-        req.flash('error', 'Invalid operation type');
+      }
+    }
+
+    // Validate amount
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      req.flash('error', 'Invalid amount');
+      return res.redirect(`/admin/users/${userId}`);
+    }
+
+    const oldBalance = wallet.balance || 0;
+    let newBalance = oldBalance;
+    let transactionType = '';
+    let transactionDescription = '';
+
+    // Process balance update based on type
+    if (type === 'add') {
+      newBalance = oldBalance + numericAmount;
+      transactionType = 'deposit';
+      transactionDescription = `Admin credit: ${reason || 'Funds added by administrator'}`;
+    } else if (type === 'subtract') {
+      if (oldBalance < numericAmount) {
+        req.flash('error', 'Insufficient balance to deduct');
         return res.redirect(`/admin/users/${userId}`);
       }
+      newBalance = oldBalance - numericAmount;
+      transactionType = 'withdrawal';
+      transactionDescription = `Admin debit: ${reason || 'Funds deducted by administrator'}`;
+    } else {
+      req.flash('error', 'Invalid operation type');
+      return res.redirect(`/admin/users/${userId}`);
+    }
 
-      // Update user balance
-      user.balance = newBalance;
-      await user.save();
+    // Update wallet balance
+    wallet.balance = newBalance;
+    wallet.lastAction = new Date();
+    await wallet.save();
 
-      // Create transaction record
-      await Transaction.create({
-        userId: user._id,
-        type: transactionType,
-        amount: numericAmount,
-        currency: user.currency || 'USD',
-        status: 'completed',
-        description: transactionDescription,
-        adminNote: `Processed by ${req.user.firstName} ${req.user.lastName}`,
+    // Create transaction record
+    await Transaction.create({
+      userId: user._id,
+      walletId: wallet._id,
+      type: transactionType,
+      method: 'manual',
+      amount: numericAmount,
+      currency: currency,
+      status: 'completed',
+      description: transactionDescription,
+      metadata: {
+        adminId: req.user._id,
+        operation: type,
+        reason: reason || 'No reason provided',
+        adminProcessed: true,
         previousBalance: oldBalance,
-        newBalance: newBalance,
-        metadata: {
-          adminId: req.user._id,
-          operation: type,
-          reason: reason || 'No reason provided'
-        }
-      });
-
-      req.flash('success', 
-        `Balance ${type === 'add' ? 'added to' : 'deducted from'} user account successfully. ` +
-        `New balance: $${newBalance.toFixed(2)}`
-      );
-      
-      // Redirect back to user detail page where the updated balance will show
-      res.redirect(`/admin/users/${userId}`);
-      
-    } catch (error) {
-      console.error('Update User Balance Error:', error);
-      req.flash('error', 'Failed to update user balance');
-      
-      // Redirect back to user detail page or users list if userId is not available
-      if (req.body.userId) {
-        res.redirect(`/admin/users/${req.body.userId}`);
-      } else {
-        res.redirect('/admin/users');
+        newBalance: newBalance
       }
+    });
+
+    req.flash('success', 
+      `Balance ${type === 'add' ? 'added to' : 'deducted from'} user account successfully. ` +
+      `New ${currency} balance: ${newBalance.toFixed(2)}`
+    );
+    
+    res.redirect(`/admin/users/${userId}`);
+    
+  } catch (error) {
+    console.error('Update User Balance Error:', error);
+    req.flash('error', 'Failed to update user balance: ' + error.message);
+    
+    if (req.body.userId) {
+      res.redirect(`/admin/users/${req.body.userId}`);
+    } else {
+      res.redirect('/admin/users');
     }
-  },
+  }
+},
+
 
   async updateUserCurrency(req, res) {
     try {
@@ -510,15 +580,37 @@ const adminController = {
       // Deposit Approval
       if (status === 'completed' && transaction.type === 'deposit') {
         const user = await User.findById(transaction.userId);
-        user.balance += transaction.amount;
-        await user.save();
+        if (user) {
+          let wallet = await Wallet.findOne({ userId: user._id, currency: 'USD' });
+          if (!wallet) {
+            wallet = new Wallet({
+              userId: user._id,
+              currency: 'USD',
+              balance: 0
+            });
+          }
+          wallet.balance += transaction.amount;
+          wallet.lastAction = new Date();
+          await wallet.save();
+        }
       }
 
       // Withdrawal Rejection Refund
       if (status === 'rejected' && transaction.type === 'withdrawal') {
         const user = await User.findById(transaction.userId);
-        user.balance += transaction.amount;
-        await user.save();
+        if (user) {
+          let wallet = await Wallet.findOne({ userId: user._id, currency: 'USD' });
+          if (!wallet) {
+            wallet = new Wallet({
+              userId: user._id,
+              currency: 'USD',
+              balance: 0
+            });
+          }
+          wallet.balance += transaction.amount;
+          wallet.lastAction = new Date();
+          await wallet.save();
+        }
       }
 
       await transaction.save();
@@ -712,40 +804,7 @@ const adminController = {
       req.flash('error', 'Failed to update investment');
       res.redirect('/admin/investments');
     }
-  },
-
-  async updateUserCurrency(req, res) {
-  try {
-    const { userId, currency } = req.body;
-    
-    if (!userId || !currency) {
-      req.flash('error', 'Missing required fields');
-      return res.redirect('back');
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      req.flash('error', 'User not found');
-      return res.redirect('/admin/users');
-    }
-
-    const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'];
-    if (!validCurrencies.includes(currency)) {
-      req.flash('error', 'Invalid currency');
-      return res.redirect('back');
-    }
-
-    user.currency = currency;
-    await user.save();
-
-    req.flash('success', `Currency updated to ${currency} successfully`);
-    res.redirect(`/admin/users/${userId}`);
-  } catch (error) {
-    console.error('Update Currency Error:', error);
-    req.flash('error', 'Failed to update currency');
-    res.redirect('back');
   }
-},
 
 };
 

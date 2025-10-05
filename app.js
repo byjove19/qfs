@@ -7,10 +7,11 @@ const helmet = require('helmet');
 const path = require('path');
 const flash = require('connect-flash');
 
+
 const app = express();
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qfs', {
+mongoose.connect(process.env.MONGODB_URI ||  {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -74,7 +75,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/qfs',
+    mongoUrl: process.env.MONGODB_URI,
     collectionName: 'sessions'
   }),
   cookie: {
@@ -88,15 +89,16 @@ app.use(flash());
 // Import middleware for protected routes
 const { isAuthenticated, isGuest, isAdmin, attachUser, allowAdminLogin } = require('./middleware/auth');
 
-// Global flash + user middleware
+// Global middleware - flash, CSRF token, user
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.info = req.flash('info');
+
   next();
 });
 
-// Attach user globally (after flash)
+// Attach user globally (after flash and CSRF)
 app.use(attachUser);
 
 // ========== ROUTE IMPORTS ==========
@@ -108,6 +110,10 @@ const adminRoutes = require('./routes/admin');
 const transactionRoutes = require('./routes/transactions');
 const recipientRoutes = require('./routes/recipients');
 const investmentRoutes = require('./routes/investment');
+const walletController = require('./controllers/walletController'); 
+
+// FIXED: Correct path for userRoutes
+const userRoutes = require('./routes/userRoutes'); // Make sure this file exists
 
 // ========== PUBLIC ROUTES (No authentication required) ==========
 
@@ -210,6 +216,9 @@ app.use('/auth', authRoutes);
 // Admin routes (protected by isAdmin middleware INSIDE the adminRoutes file)
 app.use('/admin', adminRoutes);
 
+// FIXED: Mount user routes at /profile base path
+app.use('/profile', userRoutes);  // This mounts all userRoutes at /profile
+
 // Other protected routes
 app.use('/', dashboardRoutes);
 app.use('/transactions', transactionRoutes);
@@ -219,9 +228,7 @@ app.use('/', investmentRoutes);
 // ========== INDIVIDUAL PROTECTED ROUTES ==========
 
 // Wallet routes
-app.get('/wallet', isAuthenticated, (req, res) => {
-  res.render('wallet', { title: 'My Wallet - QFS' });
-});
+app.get('/wallet', isAuthenticated, walletController.getWalletPage);
 
 app.get('/deposit', isAuthenticated, (req, res) => {
   res.render('deposit', { title: 'Deposit Funds - QFS' });
@@ -255,11 +262,6 @@ app.get('/identity-verification', isAuthenticated, (req, res) => {
   res.render('identity-verification', { title: 'Identity Verification - QFS' });
 });
 
-// User profile routes
-app.get('/profile', isAuthenticated, (req, res) => {
-  res.render('profile', { title: 'My Profile - QFS' });
-});
-
 // Virtual card routes
 app.get('/virtual', isAuthenticated, (req, res) => {
   res.render('virtual', { title: 'Virtual Accounts - QFS' });
@@ -286,6 +288,13 @@ app.use((err, req, res, next) => {
   console.error(err.message);
   console.error(err.stack);
   console.error('=== END ERROR ===');
+  
+  // CSRF token errors
+  if (err.code === 'EBADCSRFTOKEN') {
+    req.flash('error', 'Invalid CSRF token');
+    return res.redirect('back');
+  }
+  
   res.status(500).render('error/500', { title: 'Server Error - QFS' });
 });
 
@@ -296,4 +305,5 @@ app.listen(PORT, () => {
   console.log(`Home page: http://localhost:${PORT}`);
   console.log(`Admin login: http://localhost:${PORT}/admin-login`);
   console.log(`Admin panel: http://localhost:${PORT}/admin`);
+  console.log(`User profile: http://localhost:${PORT}/profile`);
 });

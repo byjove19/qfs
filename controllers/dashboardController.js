@@ -12,19 +12,56 @@ const dashboardController = {
       // Get user data
       const user = await User.findById(userId);
       
-      // Get basic data without complex queries for now
-      const wallets = await Wallet.find({ userId });
+      // Get user's existing wallets from database
+      const userWallets = await Wallet.find({ userId });
+      
+      // Define ALL available currencies (same as wallet page)
+      const allCurrencies = [
+        { currency: 'USD', type: 'Fiat', isDefault: true },
+        { currency: 'BTC', type: 'Crypto', isDefault: false },
+        { currency: 'ETH', type: 'Crypto', isDefault: false },
+        { currency: 'LTC', type: 'Crypto', isDefault: false },
+        { currency: 'XRP', type: 'Crypto', isDefault: false },
+        { currency: 'Doge', type: 'Crypto', isDefault: false },
+        { currency: 'XDC', type: 'Crypto', isDefault: false },
+        { currency: 'XLM', type: 'Crypto', isDefault: false },
+        { currency: 'Matic', type: 'Crypto', isDefault: false },
+        { currency: 'ALGO', type: 'Crypto', isDefault: false }
+      ];
+
+      // Create formatted wallets array with ALL currencies (including zero balances)
+      const wallets = allCurrencies.map(currency => {
+        // Find if user has an existing wallet for this currency
+        const existingWallet = userWallets.find(wallet => wallet.currency === currency.currency);
+        
+        if (existingWallet) {
+          // Use existing wallet data
+          return {
+            currency: existingWallet.currency,
+            balance: existingWallet.balance || 0,
+            isDefault: existingWallet.isDefault || currency.isDefault
+          };
+        } else {
+          // Create wallet data for currencies that don't exist yet
+          return {
+            currency: currency.currency,
+            balance: 0, // Zero balance for non-existent wallets
+            isDefault: currency.isDefault
+          };
+        }
+      });
+
       const recentTransactions = await Transaction.find({ userId })
         .sort({ createdAt: -1 })
         .limit(5);
 
       const totalBalance = wallets.reduce((sum, wallet) => sum + wallet.balance, 0);
 
-      // Render dashboard.ejs (not dashboard/index.ejs)
+      // Render dashboard.ejs
       res.render('dashboard', {
         title: 'Dashboard - QFS',
         user: user,
-        wallets: wallets,
+        wallets: wallets, // This now includes ALL currencies
         totalBalance: totalBalance,
         recentTransactions: recentTransactions
       });
@@ -37,7 +74,7 @@ const dashboardController = {
   getProfile: async (req, res) => {
     try {
       const user = await User.findById(req.session.user.id);
-      res.render('profile', { // Changed from dashboard/profile to profile
+      res.render('profile', {
         title: 'Profile - QFS',
         user
       });

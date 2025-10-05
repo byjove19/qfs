@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="tiLfEIdLpapV8KvHXwRBGHJgLZFODUJqcXaCWPKM">
 
     <title>User Profile |  QFS</title>
-
+  <link rel="icon" type="image/png" href="/images/logo.png">
     <!-- css -->
     <link rel="stylesheet" href="/User Profile _ QFS_files/bootstrap.min.css">
 <link rel="stylesheet" href="/User Profile _ QFS_files/select2.min.css">
@@ -272,7 +272,7 @@
     <div class="item">
         <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center user-list">
-                <img src="/Dashboard _ QFS_files/1759158223.png" alt="Profile" class="img-fluid">
+                <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
             </div>
             <div class="ml-12 d-flex align-items-center h-78 w-134">
                 <p class="mb-0 f-14 text-dark gilroy-Semibold"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
@@ -286,7 +286,7 @@
         <ul class="open-notify open-drop bg-white" style="display: none;">
             <li class="d-flex align-items-center bg-secondary h-78 px-3">
                 <div class="d-flex align-items-center justify-content-center user-dp">
-                    <img src="/Dashboard _ QFS_files/1759158223.png" alt="Profile" class="img-fluid">
+                    <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
                 </div>
                 <div class="ms-3 text-white">
                     <p class="mb-0 f-15 gilroy-medium text-white"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
@@ -364,7 +364,7 @@
                     </div>
                 </div>
                 <div class="right-avatar-img">
-                    <img src="/User Profile _ QFS_files/1759158223.png" alt="Profile" id="profileImage">
+                    <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" id="profileImage">
                 </div>
             </div>
         </div>
@@ -1455,8 +1455,116 @@
 
 <script src="/User Profile _ QFS_files/phone.min.js" type="text/javascript"></script>
 <script src="/User Profile _ QFS_files/profile.min.js" type="text/javascript"></script>
-<script src="/js/profile.js" type="text/javascript"></script>
+<script  src ="/js/card-request.js"></script>
     <!-- end js -->
  
+<script>
+// Profile Picture Upload Functionality
+function changeProfile() {
+    document.getElementById('upload').click();
+}
 
+document.getElementById('upload').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const fileError = document.getElementById('file-error');
+        
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/svg+xml'];
+        if (!validTypes.includes(file.type)) {
+            fileError.textContent = 'Please select a valid image file (JPEG, PNG, GIF, BMP, SVG)';
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            fileError.textContent = 'File size must be less than 5MB';
+            return;
+        }
+
+        fileError.textContent = '';
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profileImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Upload the file
+        uploadProfilePicture(file);
+    }
+});
+
+function uploadProfilePicture(file) {
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    
+    // Get CSRF token
+    const csrfToken = document.getElementById('csrfToken').value;
+    
+    fetch('/profile/picture', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-Token': csrfToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const fileError = document.getElementById('file-error');
+        if (data.success) {
+            fileError.textContent = '';
+            // Update profile image with new URL from server
+            if (data.data && data.data.profile_image_url) {
+                document.getElementById('profileImage').src = data.data.profile_image_url;
+            }
+            // Show success message (you can use toast or alert)
+            console.log('Profile picture updated successfully!');
+        } else {
+            fileError.textContent = data.message || 'Upload failed';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('file-error').textContent = 'Upload failed. Please try again.';
+    });
+}
+
+// QR Code functionality (if needed)
+document.getElementById('updateQrCodeBtn').addEventListener('click', function() {
+    updateQRCode();
+});
+
+function updateQRCode() {
+    const csrfToken = document.getElementById('csrfToken').value;
+    
+    fetch('/profile/update-qr-code', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('QR Code updated successfully');
+            // You can update the QR code image here if needed
+            if (data.qr_code_url) {
+                document.querySelector('.qrCodeImage').src = data.qr_code_url;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating QR code:', error);
+    });
+}
+
+// Print QR Code functionality
+document.getElementById('printQrCodeBtn').addEventListener('click', function() {
+    window.print();
+});
+</script>
   
+</body></html>

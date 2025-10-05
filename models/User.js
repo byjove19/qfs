@@ -45,11 +45,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'UTC'
   },
-  currency: {
+ 
+
+currency: {
   type: String,
-  enum: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'],
+  enum: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'],
   default: 'USD'
 },
+
   isVerified: {
     type: Boolean,
     default: false

@@ -43,7 +43,7 @@ class TransactionManager {
                 limit: '10'
             });
 
-            const apiUrl = `/api/transactions?${queryParams}`;
+            const apiUrl = `/transactions/api/transactions?${queryParams}`;
             console.log('Fetching from:', apiUrl);
 
             const response = await fetch(apiUrl, {

@@ -26,11 +26,18 @@ const transactionSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  currency: {
-    type: String,
-    enum: ['USD', 'BTC', 'ETH', 'XRP', 'DOGE'],
-    required: true
-  },
+
+currency: {
+  type: String,
+  enum: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'],
+  default: 'USD'
+},
+
+  type: {
+  type: String,
+  enum: ['deposit', 'withdrawal', 'send', 'request', 'exchange', 'admin_credit', 'admin_debit', 'system'],
+  required: true
+},
   status: {
     type: String,
     enum: ['pending', 'completed', 'failed', 'cancelled'],

@@ -1,10 +1,12 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 
 const createAdminUser = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qfs');
+    await mongoose.connect(process.env.MONGODB_URI);
     
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: 'admin@qfs.com' });
