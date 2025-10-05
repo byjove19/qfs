@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --tg-body-font-family: 'Inter', sans-serif;
+            --tg-heading-font-family: 'Inter', sans-serif;
+            --tg-body-font-size: 16px;
+            --tg-body-color: #9E9E9E;
+            --tg-heading-color: #ffffff;
+            --tg-theme-primary: #4b59f5;
+            --tg-theme-primary-hover: #3a49e5;
+            --tg-color-dark: #0C0C0C;
+            --tg-color-dark-2: #000000;
+            --tg-color-dark-3: #262626;
+            --tg-border-1: #363636;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --tg-transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] {
+            --tg-body-color: #5a5a5a;
+            --tg-heading-color: #1a1a1a;
+            --tg-color-dark: #f8f9fa;
+            --tg-color-dark-2: #ffffff;
+            --tg-color-dark-3: #e9ecef;
+            --tg-border-1: #dee2e6;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--tg-body-font-family);
+            font-size: var(--tg-body-font-size);
+            color: var(--tg-body-color);
+            background: var(--tg-color-dark);
+            transition: var(--tg-transition);
+            line-height: 1.6;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--tg-color-dark-2);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: var(--tg-transition);
+            box-shadow: var(--tg-shadow);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--tg-color-dark-3);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--tg-heading-color);
+            transition: var(--tg-transition);
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: 280px;
+            background: var(--tg-color-dark-2);
+            border-right: 1px solid var(--tg-border-1);
+            display: flex;
+            flex-direction: column;
+            transition: var(--tg-transition);
+            position: relative;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--tg-heading-color);
+            text-decoration: none;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--tg-heading-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .sidebar-close:hover {
+            background: var(--tg-color-dark-3);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-theme-primary);
+            border-left-color: var(--tg-theme-primary);
+        }
+
+        .nav-link i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+            transition: var(--tg-transition);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--tg-border-1);
+        }
+
+        .sidebar-footer .nav-link {
+            padding: 10px 0;
+            border-left: none;
+        }
+
+        /* Main Content Styles */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--tg-transition);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: var(--tg-color-dark-2);
+            border-bottom: 1px solid var(--tg-border-1);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--tg-heading-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: var(--tg-transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--tg-color-dark-3);
+            transform: rotate(90deg);
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-name {
+            color: var(--tg-heading-color);
+            font-weight: 500;
+        }
+
+        .badge {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--tg-shadow);
+            transition: var(--tg-transition);
+            border: 1px solid var(--tg-border-1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--tg-theme-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        }
+
+        .stat-icon i {
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .stat-info p {
+            font-size: 14px;
+            color: var(--tg-body-color);
+            font-weight: 500;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            box-shadow: var(--tg-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: var(--tg-transition);
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .tg-btn {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--tg-transition);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tg-btn:hover {
+            background: var(--tg-theme-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        }
+
+        .tg-btn-secondary {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-body-color);
+        }
+
+        .tg-btn-secondary:hover {
+            background: var(--tg-border-1);
+            color: var(--tg-heading-color);
+            transform: translateY(-2px);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+            border-bottom: 1px solid var(--tg-border-1);
+            background: var(--tg-color-dark-3);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--tg-border-1);
+            transition: var(--tg-transition);
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-table tr:hover {
+            background: var(--tg-color-dark-3);
+            transform: scale(1.01);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-details strong {
+            color: var(--tg-heading-color);
+            display: block;
+            font-size: 15px;
+        }
+
+        .user-details span {
+            font-size: 13px;
+            color: var(--tg-body-color);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-badge.completed {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+            border: 1px solid rgba(13, 110, 253, 0.3);
+        }
+
+        .status-badge.cancelled {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--tg-color-dark-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: var(--tg-theme-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Table Controls */
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            background: var(--tg-color-dark-3);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            color: var(--tg-heading-color);
+            transition: var(--tg-transition);
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-primary);
+            box-shadow: 0 0 0 3px rgba(75, 89, 245, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--tg-body-color);
+        }
+
+        .filter-select {
+            padding: 12px 15px;
+            background: var(--tg-color-dark-3);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            color: var(--tg-heading-color);
+            min-width: 160px;
+            cursor: pointer;
+            transition: var(--tg-transition);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--tg-theme-primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--tg-body-color);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 10px 18px;
+            background: var(--tg-color-dark-3);
+            color: var(--tg-body-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--tg-transition);
+            border: 1px solid var(--tg-border-1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .pagination-btn:hover {
+            background: var(--tg-theme-primary);
+            color: white;
+            border-color: var(--tg-theme-primary);
+        }
+
+        .pagination-info {
+            color: var(--tg-body-color);
+            font-size: 14px;
+            padding: 0 15px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .admin-sidebar {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                width: 220px;
+            }
+            
+            .admin-header {
+                padding: 15px 20px;
+            }
+            
+            .admin-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-wrapper {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            
+            .admin-sidebar.sidebar-open {
+                left: 0;
+            }
+            
+            .sidebar-close {
+                display: block;
+            }
+            
+            .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .admin-header h1 {
+                font-size: 20px;
+            }
+            
+            .header-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 8px;
+            }
+            
+            .admin-name {
+                font-size: 14px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-content {
+                padding: 15px;
+            }
+            
+            .card-body {
+                padding: 20px 15px;
+            }
+            
+            .admin-table {
+                font-size: 14px;
+            }
+            
+            .admin-table th,
+            .admin-table td {
+                padding: 10px 8px;
+            }
+            
+            .user-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            
+            .pagination {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .pagination-info {
+                order: -1;
+            }
+        }
+
+        /* Sidebar Collapsed State */
+        .admin-wrapper.sidebar-collapsed .admin-sidebar {
+            width: 70px;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .logo-text,
+        .admin-wrapper.sidebar-collapsed .nav-link span,
+        .admin-wrapper.sidebar-collapsed .sidebar-footer .nav-link span {
+            display: none;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .nav-link {
+            justify-content: center;
+            padding: 12px;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .nav-link i {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS ADMIN</a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="/admin/users" class="nav-link">
+                        <i class="fas fa-users"></i> <span>Users</span>
+                    </a></li>
+                    <li><a href="/admin/transactions" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                    </a></li>
+                    <li><a href="/admin/investments" class="nav-link active">
+                        <i class="fas fa-chart-line"></i> <span>Investments</span>
+                    </a></li>
+                    <li><a href="/admin/tickets" class="nav-link">
+                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
+                    </a></li>
+                    <li><a href="/admin/users/balances" class="nav-link">
+                        <i class="fas fa-wallet"></i> <span>User Balances</span>
+                    </a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
+                    </a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link">
+                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                    <li><a href="/admin/disputes" class="nav-link">
+                        <i class="fas fa-gavel"></i> <span>Disputes</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><%= title %></h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
+                    <span class="admin-role badge"><%= user.role %></span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= totalInvestments %></h3>
+                            <p>Total Investments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= totalActiveInvestments %></h3>
+                            <p>Active Investments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= totalCompletedInvestments %></h3>
+                            <p>Completed Investments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>$<%= totalAmount.toFixed(2) %></h3>
+                            <p>Total Active Amount</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Controls -->
+                <div class="table-controls">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Search investments..." id="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <!-- Investments Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>All Investments (<span id="investmentsCount"><%= totalInvestments %></span>)</h2>
+                        <div class="action-buttons">
+                            <button class="tg-btn tg-btn-secondary" onclick="exportInvestments()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="admin-table" id="investmentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Plan</th>
+                                        <th>Amount</th>
+                                        <th>Duration</th>
+                                        <th>Returns</th>
+                                        <th>Status</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="investmentsTableBody">
+                                    <% if (investments && investments.length > 0) { %>
+                                        <% investments.forEach(investment => { %>
+                                            <tr>
+                                                <td>
+                                                    <div class="user-info">
+                                                        <div class="user-avatar">
+                                                            <%= investment.userId.firstName.charAt(0) %><%= investment.userId.lastName.charAt(0) %>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <strong><%= investment.userId.firstName %> <%= investment.userId.lastName %></strong>
+                                                            <span><%= investment.userId.email %></span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <strong><%= investment.planId ? investment.planId.name : 'N/A' %></strong>
+                                                    <br>
+                                                    <small><%= investment.planId ? investment.planId.interest + '%' : 'N/A' %></small>
+                                                </td>
+                                                <td>$<%= investment.amount.toFixed(2) %></td>
+                                                <td><%= investment.duration || 'N/A' %> days</td>
+                                                <td>
+                                                    $<%= (investment.expectedReturns || 0).toFixed(2) %>
+                                                    <br>
+                                                    <small><%= investment.returnsPaid || 0 %> paid</small>
+                                                </td>
+                                                <td>
+                                                    <span class="status-badge <%= investment.status %>">
+                                                        <%= investment.status %>
+                                                    </span>
+                                                </td>
+                                                <td><%= investment.startDate ? new Date(investment.startDate).toLocaleDateString() : 'N/A' %></td>
+                                                <td><%= investment.endDate ? new Date(investment.endDate).toLocaleDateString() : 'N/A' %></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <a href="/admin/investments/<%= investment._id %>" class="btn-icon" title="View Details">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <button class="btn-icon" title="Edit Status" onclick="editInvestmentStatus('<%= investment._id %>', '<%= investment.status %>')">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="9">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-chart-line"></i>
+                                                    <p>No

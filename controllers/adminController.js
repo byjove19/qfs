@@ -469,6 +469,144 @@ getTransactions: async (req, res) => {  // ✅ correct inside object
     });
   }
 },
+
+/** =======================
+ *  INVESTMENTS MANAGEMENT
+ *  =======================
+ */
+async getInvestments(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const { status } = req.query;
+
+    const filter = {};
+    if (status && status !== 'all') filter.status = status;
+
+    const [investments, totalInvestments] = await Promise.all([
+      Investment.find(filter)
+        .populate('userId', 'firstName lastName email')
+        .populate('planId')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Investment.countDocuments(filter)
+    ]);
+
+    // Calculate stats
+    const totalActiveInvestments = await Investment.countDocuments({ status: 'active' });
+    const totalCompletedInvestments = await Investment.countDocuments({ status: 'completed' });
+    const totalInvestmentAmount = await Investment.aggregate([
+      { $match: { status: 'active' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]);
+
+    const totalAmount = totalInvestmentAmount.length > 0 ? totalInvestmentAmount[0].total : 0;
+
+    res.render('admin/investments', {
+      title: 'Investment Management',
+      investments,
+      totalInvestments,
+      totalActiveInvestments,
+      totalCompletedInvestments,
+      totalAmount,
+      currentPage: page,
+      totalPages: Math.ceil(totalInvestments / limit),
+      filter: { status },
+      user: req.user,
+      messages: {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    });
+  } catch (error) {
+    console.error('Get Investments Error:', error);
+    req.flash('error', 'Failed to load investments');
+    res.redirect('/admin/dashboard');
+  }
+},
+
+async getInvestmentDetail(req, res) {
+  try {
+    const investment = await Investment.findById(req.params.id)
+      .populate('userId', 'firstName lastName email')
+      .populate('planId');
+
+    if (!investment) {
+      req.flash('error', 'Investment not found');
+      return res.redirect('/admin/investments');
+    }
+
+    // Get investment returns/history
+    const investmentReturns = await Transaction.find({
+      investmentId: investment._id,
+      type: 'investment_return'
+    }).sort({ createdAt: -1 });
+
+    res.render('admin/investment-detail', {
+      title: `Investment Details - ${investment.userId.firstName}`,
+      investment,
+      investmentReturns,
+      currentUser: req.user,
+      messages: {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    });
+  } catch (error) {
+    console.error('Get Investment Detail Error:', error);
+    req.flash('error', 'Failed to load investment details');
+    res.redirect('/admin/investments');
+  }
+},
+
+async updateInvestmentStatus(req, res) {
+  try {
+    const { investmentId, status, adminNote } = req.body;
+
+    if (!investmentId || !status) {
+      req.flash('error', 'Missing required fields');
+      return res.redirect('/admin/investments');
+    }
+
+    const investment = await Investment.findById(investmentId).populate('userId');
+    if (!investment) {
+      req.flash('error', 'Investment not found');
+      return res.redirect('/admin/investments');
+    }
+
+    const oldStatus = investment.status;
+    investment.status = status;
+    investment.adminNote = adminNote || `Updated by ${req.user.firstName}`;
+
+    // If activating investment, ensure it's properly set up
+    if (status === 'active' && oldStatus !== 'active') {
+      investment.startDate = new Date();
+      // Calculate end date based on plan duration
+      if (investment.planId && investment.planId.duration) {
+        investment.endDate = new Date(Date.now() + investment.planId.duration * 24 * 60 * 60 * 1000);
+      }
+    }
+
+    // If completing investment, process returns
+    if (status === 'completed' && oldStatus !== 'completed') {
+      investment.endDate = new Date();
+      // Here you would typically process final returns
+    }
+
+    await investment.save();
+
+    req.flash('success', `Investment ${status} successfully.`);
+    res.redirect('/admin/investments');
+  } catch (error) {
+    console.error('Update Investment Error:', error);
+    req.flash('error', 'Failed to update investment');
+    res.redirect('/admin/investments');
+  }
+}
+
 };
 
 
