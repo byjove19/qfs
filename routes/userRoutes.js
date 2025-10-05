@@ -1,4 +1,3 @@
-
 // routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
@@ -11,7 +10,10 @@ const {
   updateProfile,
   changePassword,
   uploadProfilePicture,
-  updateQRCode
+  updateQRCode,
+  verifyAccount,
+  resendVerification,
+  getVerificationStatus
 } = require('../controllers/userController');
 
 // Apply isAuthenticated middleware to all routes
@@ -23,6 +25,11 @@ router.post('/update', updateProfile);
 router.post('/update_password', changePassword);
 router.post('/picture', uploadProfile, uploadProfilePicture);
 router.post('/update-qr-code', updateQRCode);
+
+// Verification routes
+router.post('/verify', verifyAccount);
+router.post('/resend-verification', resendVerification);
+router.get('/verification-status', getVerificationStatus);
 
 // Remove these duplicate API routes to avoid conflicts
 // router.get('/api', getUserProfile);

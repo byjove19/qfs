@@ -645,6 +645,112 @@ const transactionController = {
     }
   },
 
+  // NEW WITHDRAWAL PAGE CONTROLLERS
+  getWithdrawalList: async (req, res) => {
+    try {
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+      const userRole = req.session.user?.role;
+      
+      if (!userId) {
+        req.flash('error', 'Please login to view withdrawals');
+        return res.redirect('/auth/login');
+      }
+
+      let query = { type: 'withdrawal' };
+      
+      // Regular users only see their own withdrawals
+      if (!['admin', 'superadmin'].includes(userRole)) {
+        query.userId = userId;
+      }
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = 10;
+      const skip = (page - 1) * limit;
+
+      const [withdrawals, total] = await Promise.all([
+        Transaction.find(query)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .populate('userId', 'firstName lastName email')
+          .lean(),
+        Transaction.countDocuments(query)
+      ]);
+
+      res.render('transactions/withdrawal-list', {
+        title: 'Withdrawal History - QFS',
+        withdrawals,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        isAdmin: ['admin', 'superadmin'].includes(userRole),
+        user: req.session.user,
+        error: req.flash('error'),
+        success: req.flash('success')
+      });
+    } catch (error) {
+      console.error('Withdrawal list error:', error);
+      res.status(500).render('error/500', { 
+        title: 'Server Error',
+        error: req.app.get('env') === 'development' ? error : {},
+        user: req.session.user
+      });
+    }
+  },
+
+  getWithdrawalSettings: async (req, res) => {
+    try {
+      // This is admin-only (protected by isAdmin middleware)
+      res.render('transactions/withdrawal-settings', {
+        title: 'Withdrawal Settings - QFS',
+        user: req.session.user,
+        error: req.flash('error'),
+        success: req.flash('success')
+      });
+    } catch (error) {
+      console.error('Withdrawal settings error:', error);
+      res.status(500).render('error/500', { 
+        title: 'Server Error',
+        error: req.app.get('env') === 'development' ? error : {},
+        user: req.session.user
+      });
+    }
+  },
+
+  getWithdrawalDetails: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.session.user?._id;
+      const userRole = req.session.user?.role;
+
+      const withdrawal = await Transaction.findById(id)
+        .populate('userId', 'firstName lastName email phone')
+        .populate('recipientId', 'firstName lastName email');
+
+      if (!withdrawal) {
+        req.flash('error', 'Withdrawal not found');
+        return res.redirect('/transactions/withdrawal-list');
+      }
+
+      // Check permissions
+      if (!['admin', 'superadmin'].includes(userRole) && 
+          withdrawal.userId._id.toString() !== userId.toString()) {
+        req.flash('error', 'Access denied');
+        return res.redirect('/transactions/withdrawal-list');
+      }
+
+      res.render('transactions/withdrawal-details', {
+        title: 'Withdrawal Details - QFS',
+        withdrawal,
+        isAdmin: ['admin', 'superadmin'].includes(userRole),
+        user: req.session.user
+      });
+    } catch (error) {
+      console.error('Withdrawal details error:', error);
+      req.flash('error', 'Failed to load withdrawal details');
+      res.redirect('/transactions/withdrawal-list');
+    }
+  },
+
   // HELPER FUNCTIONS
   getExchangeRate: async (fromCurrency, toCurrency) => {
     // Simplified exchange rates - in real app, use an external API

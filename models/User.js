@@ -65,6 +65,9 @@ currency: {
       type: Date,
       default: Date.now
     },
+  verificationToken: String,
+  verificationExpires: Date,
+  verifiedAt: Date,
     ip: String
   }]
 }, {
