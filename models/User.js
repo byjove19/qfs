@@ -45,6 +45,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'UTC'
   },
+  currency: {
+  type: String,
+  enum: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'],
+  default: 'USD'
+},
   isVerified: {
     type: Boolean,
     default: false

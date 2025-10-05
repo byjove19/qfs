@@ -17,6 +17,8 @@ router.get('/users/balances', adminController.getAllUserBalances);
 router.get('/users/:id', adminController.getUserDetail);
 router.get('/users/:id/login-history', adminController.getUserLoginHistory);
 router.post('/users/update-balance', adminController.updateUserBalance);
+// Add this route with your other user management routes
+router.put('/users/:userId/status', adminController.toggleUserStatus);
 
 // Transaction management routes
 router.get('/transactions', adminController.getTransactions);
