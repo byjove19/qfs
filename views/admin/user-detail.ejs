@@ -6,6 +6,7 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Your existing CSS styles remain the same */
         :root {
             --tg-body-font-family: 'Inter', sans-serif;
             --tg-heading-font-family: 'Inter', sans-serif;
@@ -566,6 +567,257 @@
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--tg-border-1);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--tg-body-color);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .close-modal:hover {
+            color: var(--tg-heading-color);
+            background: var(--tg-color-dark-3);
+        }
+
+        .balance-card {
+            background: var(--tg-color-dark-3);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin: 20px;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .balance-card h3 {
+            font-size: 16px;
+            color: var(--tg-body-color);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .balance-card .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+        }
+
+        .transaction-type {
+            display: flex;
+            gap: 10px;
+            margin: 20px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--tg-border-1);
+            background: var(--tg-color-dark-3);
+            color: var(--tg-body-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .type-btn.active {
+            background: var(--tg-theme-primary);
+            color: white;
+            border-color: var(--tg-theme-primary);
+        }
+
+        .type-btn:hover:not(.active) {
+            background: var(--tg-border-1);
+            color: var(--tg-heading-color);
+        }
+
+        .form-group {
+            margin: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--tg-heading-color);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+            font-size: 14px;
+            transition: var(--tg-transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--tg-theme-primary);
+            box-shadow: 0 0 0 2px rgba(75, 89, 245, 0.2);
+        }
+
+        .btn-submit {
+            width: calc(100% - 40px);
+            margin: 20px;
+            padding: 15px;
+            background: var(--tg-theme-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--tg-theme-primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .currency-option {
+            padding: 20px 10px;
+            border: 2px solid var(--tg-border-1);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            background: var(--tg-color-dark-3);
+        }
+
+        .currency-option.selected {
+            border-color: var(--tg-theme-primary);
+            background: rgba(75, 89, 245, 0.1);
+        }
+
+        .currency-option:hover {
+            border-color: var(--tg-theme-primary);
+        }
+
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px;
+        }
+
+        .wallet-item {
+            background: var(--tg-color-dark-3);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .wallet-item h4 {
+            font-size: 14px;
+            color: var(--tg-body-color);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .wallet-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+        }
+
+        .btn-manage {
+            width: 100%;
+            padding: 12px;
+            background: var(--tg-theme-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .btn-manage:hover {
+            background: var(--tg-theme-primary-hover);
+            transform: translateY(-2px);
+        }
+
         /* Action Buttons */
         .action-buttons {
             display: flex;
@@ -703,6 +955,14 @@
                 width: 45px;
                 height: 45px;
             }
+
+            .currency-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .wallet-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 576px) {
@@ -734,6 +994,10 @@
             
             .user-profile-info h2 {
                 font-size: 24px;
+            }
+
+            .currency-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -999,16 +1263,22 @@
 
                             <!-- Action Buttons -->
                             <div class="action-buttons">
-                                <a href="/admin/users/<%= user._id %>/login-history" class="tg-btn">
-                                    <i class="fas fa-history"></i> View Login History
-                                </a>
-                                <a href="/admin/users/balances?user=<%= user._id %>" class="tg-btn tg-btn-secondary">
+                                <button class="tg-btn" id="manageBalanceBtn" data-user-id="<%= user._id %>" data-balance="<%= user.balance %>" data-user-name="<%= user.firstName %> <%= user.lastName %>">
                                     <i class="fas fa-wallet"></i> Manage Balance
+                                </button>
+                                <button class="tg-btn tg-btn-secondary" id="manageCurrencyBtn" data-user-id="<%= user._id %>" data-currency="<%= user.currency || 'USD' %>">
+                                    <i class="fas fa-money-bill-wave"></i> Manage Currency
+                                </button>
+                                <button class="tg-btn tg-btn-secondary" id="walletDetailsBtn" data-user-id="<%= user._id %>" data-balance="<%= user.balance %>">
+                                    <i class="fas fa-chart-line"></i> Wallet Details
+                                </button>
+                                <a href="/admin/users/<%= user._id %>/login-history" class="tg-btn tg-btn-secondary">
+                                    <i class="fas fa-history"></i> View Login History
                                 </a>
                                 <a href="/admin/tickets?user=<%= user._id %>" class="tg-btn tg-btn-secondary">
                                     <i class="fas fa-ticket-alt"></i> View Support Tickets
                                 </a>
-                                <button class="tg-btn <%= user.isActive ? 'tg-btn-secondary' : '' %>" onclick="toggleUserStatus('<%= user._id %>', <%= user.isActive %>)">
+                                <button class="tg-btn <%= user.isActive ? 'tg-btn-secondary' : '' %>" id="toggleUserStatusBtn" data-user-id="<%= user._id %>" data-is-active="<%= user.isActive %>">
                                     <i class="fas fa-user-<%= user.isActive ? 'slash' : 'check' %>"></i>
                                     <%= user.isActive ? 'Deactivate' : 'Activate' %> User
                                 </button>
@@ -1030,10 +1300,275 @@
                     </div>
                 <% } %>
             </div>
+
+            <!-- Balance Management Modal -->
+            <div id="balanceModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-wallet"></i> Manage Balance</h2>
+                        <button class="close-modal" id="closeBalanceModal">&times;</button>
+                    </div>
+                    
+                    <div class="balance-card">
+                        <h3>Current Balance</h3>
+                        <div class="amount" id="currentBalance">$0.00</div>
+                    </div>
+
+                    <form id="balanceForm" action="/admin/users/update-balance" method="POST">
+                        <input type="hidden" name="userId" id="balanceUserId">
+                        <input type="hidden" name="type" id="balanceType" value="add">
+
+                        <div class="transaction-type">
+                            <button type="button" class="type-btn active" id="addFundsBtn">
+                                <i class="fas fa-plus-circle"></i> Add Funds
+                            </button>
+                            <button type="button" class="type-btn" id="deductFundsBtn">
+                                <i class="fas fa-minus-circle"></i> Deduct Funds
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   placeholder="Enter amount" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reason">Reason/Description</label>
+                            <textarea class="form-control" id="reason" name="reason" 
+                                      rows="3" placeholder="Enter reason for this transaction"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check-circle"></i> Update Balance
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Currency Management Modal -->
+            <div id="currencyModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-money-bill-wave"></i> Manage Currency</h2>
+                        <button class="close-modal" id="closeCurrencyModal">&times;</button>
+                    </div>
+
+                    <form id="currencyForm" action="/admin/users/update-currency" method="POST">
+                        <input type="hidden" name="userId" id="currencyUserId">
+
+                        <div class="form-group">
+                            <label>Select Primary Currency</label>
+                            <div class="currency-grid">
+                                <div class="currency-option selected" data-currency="USD">
+                                    <div style="font-size: 24px;">$</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">USD</div>
+                                </div>
+                                <div class="currency-option" data-currency="EUR">
+                                    <div style="font-size: 24px;">€</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">EUR</div>
+                                </div>
+                                <div class="currency-option" data-currency="GBP">
+                                    <div style="font-size: 24px;">£</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">GBP</div>
+                                </div>
+                                <div class="currency-option" data-currency="CAD">
+                                    <div style="font-size: 24px;">C$</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">CAD</div>
+                                </div>
+                                <div class="currency-option" data-currency="AUD">
+                                    <div style="font-size: 24px;">A$</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">AUD</div>
+                                </div>
+                                <div class="currency-option" data-currency="JPY">
+                                    <div style="font-size: 24px;">¥</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">JPY</div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="currency" id="selectedCurrency" value="USD">
+                        </div>
+
+                        <div class="wallet-grid">
+                            <div class="wallet-item">
+                                <h4>Current Currency</h4>
+                                <div class="value" id="userCurrency">USD</div>
+                            </div>
+                            <div class="wallet-item">
+                                <h4>Exchange Rate</h4>
+                                <div class="value" id="exchangeRate">1.00</div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-sync-alt"></i> Update Currency
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Wallet Details Modal -->
+            <div id="walletModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-wallet"></i> Wallet Details</h2>
+                        <button class="close-modal" id="closeWalletModal">&times;</button>
+                    </div>
+
+                    <div class="wallet-grid">
+                        <div class="wallet-item">
+                            <h4>Available Balance</h4>
+                            <div class="value" id="walletBalance">$0.00</div>
+                        </div>
+                        <div class="wallet-item">
+                            <h4>Total Deposits</h4>
+                            <div class="value" id="totalDeposits">$0.00</div>
+                        </div>
+                        <div class="wallet-item">
+                            <h4>Total Withdrawals</h4>
+                            <div class="value" id="totalWithdrawals">$0.00</div>
+                        </div>
+                        <div class="wallet-item">
+                            <h4>Pending Transactions</h4>
+                            <div class="value" id="pendingTxns">0</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="btn-manage" id="adjustBalanceBtn">
+                            <i class="fas fa-edit"></i> Adjust Balance
+                        </button>
+                        <button class="btn-manage" style="background: #28a745;">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
     <script>
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Event Listeners for Modal Controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal close buttons
+            document.getElementById('closeBalanceModal').addEventListener('click', function() {
+                closeModal('balanceModal');
+            });
+            
+            document.getElementById('closeCurrencyModal').addEventListener('click', function() {
+                closeModal('currencyModal');
+            });
+            
+            document.getElementById('closeWalletModal').addEventListener('click', function() {
+                closeModal('walletModal');
+            });
+
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+
+            // Action buttons
+            document.getElementById('manageBalanceBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const balance = this.getAttribute('data-balance');
+                const userName = this.getAttribute('data-user-name');
+                openBalanceModal(userId, balance, userName);
+            });
+
+            document.getElementById('manageCurrencyBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const currency = this.getAttribute('data-currency');
+                openCurrencyModal(userId, currency);
+            });
+
+            document.getElementById('walletDetailsBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const balance = this.getAttribute('data-balance');
+                openWalletModal(userId, balance);
+            });
+
+            document.getElementById('toggleUserStatusBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const isActive = this.getAttribute('data-is-active') === 'true';
+                toggleUserStatus(userId, isActive);
+            });
+
+            // Balance modal transaction type buttons
+            document.getElementById('addFundsBtn').addEventListener('click', function() {
+                setTransactionType('add');
+            });
+
+            document.getElementById('deductFundsBtn').addEventListener('click', function() {
+                setTransactionType('subtract');
+            });
+
+            // Adjust balance button in wallet modal
+            document.getElementById('adjustBalanceBtn').addEventListener('click', function() {
+                closeModal('walletModal');
+                const manageBalanceBtn = document.getElementById('manageBalanceBtn');
+                const userId = manageBalanceBtn.getAttribute('data-user-id');
+                const balance = manageBalanceBtn.getAttribute('data-balance');
+                const userName = manageBalanceBtn.getAttribute('data-user-name');
+                openBalanceModal(userId, balance, userName);
+            });
+
+            // Currency options
+            document.querySelectorAll('.currency-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.currency-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('selectedCurrency').value = this.dataset.currency;
+                    const rates = { USD: 1.00, EUR: 0.92, GBP: 0.79, CAD: 1.36, AUD: 1.52, JPY: 149.50 };
+                    document.getElementById('exchangeRate').textContent = rates[this.dataset.currency].toFixed(2);
+                });
+            });
+        });
+
+        function openBalanceModal(userId, balance, name) {
+            document.getElementById('balanceUserId').value = userId;
+            document.getElementById('currentBalance').textContent = '$' + parseFloat(balance || 0).toFixed(2);
+            openModal('balanceModal');
+        }
+
+        function setTransactionType(type) {
+            document.getElementById('balanceType').value = type;
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (type === 'add') {
+                document.getElementById('addFundsBtn').classList.add('active');
+            } else {
+                document.getElementById('deductFundsBtn').classList.add('active');
+            }
+        }
+
+        function openCurrencyModal(userId, currency) {
+            document.getElementById('currencyUserId').value = userId;
+            document.getElementById('userCurrency').textContent = currency || 'USD';
+            document.querySelectorAll('.currency-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.dataset.currency === currency) opt.classList.add('selected');
+            });
+            openModal('currencyModal');
+        }
+
+        function openWalletModal(userId, balance) {
+            document.getElementById('walletBalance').textContent = '$' + parseFloat(balance || 0).toFixed(2);
+            openModal('walletModal');
+        }
+
         // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');

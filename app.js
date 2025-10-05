@@ -84,21 +84,22 @@ app.use(session({
 }));
 
 app.use(flash());
+
 // Import middleware for protected routes
-const { isAuthenticated, isAdmin, attachUser } = require('./middleware/auth');
+const { isAuthenticated, isGuest, isAdmin, attachUser, allowAdminLogin } = require('./middleware/auth');
 
 // Global flash + user middleware
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
+  res.locals.info = req.flash('info');
   next();
 });
 
 // Attach user globally (after flash)
 app.use(attachUser);
 
-
-// ========== FIXED ROUTE IMPORTS (NO DUPLICATES) ==========
+// ========== ROUTE IMPORTS ==========
 
 // Import all route files
 const authRoutes = require('./routes/auth');
@@ -119,21 +120,94 @@ app.get('/index', (req, res) => {
   res.redirect('/');
 });
 
-// Auth pages
-app.get('/login', (req, res) => {
+// Regular auth pages (guests only - redirect logged in users)
+app.get('/login', isGuest, (req, res) => {
   res.render('login', { title: 'Login - QFS' });
 });
 
-app.get('/signup', (req, res) => {
+app.get('/signup', isGuest, (req, res) => {
   res.render('signup', { title: 'Sign Up - QFS' });
+});
+
+// Admin login page - ONLY defined here, NOT in auth routes
+app.get('/admin-login', allowAdminLogin, (req, res) => {
+  res.render('admin-login', { 
+    title: 'Admin Login - QFS',
+    error: req.flash('error'),
+    success: req.flash('success'),
+    info: req.flash('info')
+  });
+});
+
+// Admin login POST - handle the form submission
+app.post('/admin-login', async (req, res) => {
+  const { validationResult } = require('express-validator');
+  const User = require('./models/User');
+  
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    
+    // Check credentials first
+    if (!user || !(await user.comparePassword(password))) {
+      req.flash('error', 'Invalid email or password');
+      return res.redirect('/admin-login');
+    }
+
+    // CRITICAL: Check if user has admin privileges
+    if (!['admin', 'superadmin'].includes(user.role)) {
+      req.flash('error', 'Access denied. Admin privileges required.');
+      return res.redirect('/admin-login');
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Create session
+    req.session.user = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      profilePicture: user.profilePicture
+    };
+
+    req.flash('success', 'Admin login successful!');
+    res.redirect('/admin/dashboard');
+
+  } catch (error) {
+    console.error('Admin login error:', error);
+    req.flash('error', 'Login failed. Please try again.');
+    res.redirect('/admin-login');
+  }
+});
+
+// Logout route - accessible at /logout
+app.get('/logout', (req, res) => {
+  const wasAdmin = req.session.user && ['admin', 'superadmin'].includes(req.session.user.role);
+  
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Logout error:', err);
+    }
+    res.clearCookie('connect.sid');
+    
+    if (wasAdmin) {
+      res.redirect('/admin-login');
+    } else {
+      res.redirect('/login');
+    }
+  });
 });
 
 // ========== USE ROUTES IN CORRECT ORDER ==========
 
-// Public routes first
+// Auth routes (handles /auth/login, /auth/register, etc. - NO admin-login here)
 app.use('/auth', authRoutes);
 
-
+// Admin routes (protected by isAdmin middleware INSIDE the adminRoutes file)
 app.use('/admin', adminRoutes);
 
 // Other protected routes
@@ -170,14 +244,7 @@ app.get('/support', isAuthenticated, (req, res) => {
 app.get('/tickets', isAuthenticated, (req, res) => {
   res.render('tickets', { title: 'My Tickets - QFS' });
 });
-// Add this to your PUBLIC ROUTES section
-app.get('/admin-login', (req, res) => {
-  res.render('admin-login', { 
-    title: 'Admin Login - QFS',
-    error: req.flash('error'),
-    success: req.flash('success')
-  });
-});
+
 // Dispute routes
 app.get('/disputes', isAuthenticated, (req, res) => {
   res.render('disputes', { title: 'Disputes - QFS' });
@@ -227,5 +294,6 @@ app.listen(PORT, () => {
   console.log(`QFS Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Home page: http://localhost:${PORT}`);
+  console.log(`Admin login: http://localhost:${PORT}/admin-login`);
   console.log(`Admin panel: http://localhost:${PORT}/admin`);
 });

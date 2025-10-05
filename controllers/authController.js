@@ -18,6 +18,16 @@ const authController = {
     });
   },
 
+  // Admin Login Page - Separate from regular login
+  getAdminLogin: (req, res) => {
+    res.render('admin-login', { 
+      title: 'Admin Login - QFS',
+      error: req.flash('error'),
+      success: req.flash('success'),
+      info: req.flash('info')
+    });
+  },
+
   register: async (req, res) => {
     try {
       console.log('Registration request body:', req.body);
@@ -74,66 +84,142 @@ const authController = {
     }
   },
 
-login: async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
+  // Regular user login
+  login: async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+      }
+
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      
+      if (!user || !(await user.comparePassword(password))) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password'
+        });
+      }
+
+      user.lastLogin = new Date();
+      await user.save();
+
+      req.session.user = {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        profilePicture: user.profilePicture
+      };
+
+      // Regular users go to dashboard, admins redirected to admin panel
+      let redirectUrl = '/dashboard';
+      if (user.role === 'admin' || user.role === 'superadmin') {
+        redirectUrl = '/admin/dashboard';
+      }
+
+      res.json({
+        success: true,
+        message: 'Login successful!',
+        redirect: redirectUrl
+      });
+
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(500).json({
         success: false,
-        message: 'Validation failed',
-        errors: errors.array()
+        message: 'Login failed. Please try again.'
       });
     }
+  },
 
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({
+  // Admin-only login (validates admin role before allowing access)
+  adminLogin: async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+      }
+
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      
+      // Check credentials first
+      if (!user || !(await user.comparePassword(password))) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password'
+        });
+      }
+
+      // CRITICAL: Check if user has admin privileges
+      if (!['admin', 'superadmin'].includes(user.role)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied. Admin privileges required.'
+        });
+      }
+
+      // Update last login
+      user.lastLogin = new Date();
+      await user.save();
+
+      // Create session
+      req.session.user = {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        profilePicture: user.profilePicture
+      };
+
+      res.json({
+        success: true,
+        message: 'Admin login successful!',
+        redirect: '/admin/dashboard'
+      });
+
+    } catch (error) {
+      console.error('Admin login error:', error);
+      res.status(500).json({
         success: false,
-        message: 'Invalid email or password'
+        message: 'Login failed. Please try again.'
       });
     }
+  },
 
-    user.lastLogin = new Date();
-    await user.save();
-
-    req.session.user = {
-      id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      profilePicture: user.profilePicture
-    };
-
-    // FIX: Redirect admins to admin panel
-    let redirectUrl = '/dashboard';
-    if (user.role === 'admin' || user.role === 'superadmin') {
-      redirectUrl = '/admin';
-    }
-
-    res.json({
-      success: true,
-      message: 'Login successful!',
-      redirect: redirectUrl
-    });
-
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Login failed. Please try again.'
-    });
-  }
-},
-
+  // Logout with proper cleanup and smart redirects
   logout: (req, res) => {
+    // Check if user was admin before destroying session
+    const wasAdmin = req.session.user && ['admin', 'superadmin'].includes(req.session.user.role);
+    
     req.session.destroy((err) => {
       if (err) {
         console.error('Logout error:', err);
+        req.flash('error', 'Error logging out');
+        return res.redirect('/dashboard');
       }
-      res.redirect('/auth/login');
+      
+      // Clear the session cookie
+      res.clearCookie('connect.sid');
+      
+      // Redirect based on user type
+      if (wasAdmin) {
+        res.redirect('/admin-login');
+      } else {
+        res.redirect('/auth/login');
+      }
     });
   }
 };

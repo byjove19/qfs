@@ -605,6 +605,240 @@ async updateInvestmentStatus(req, res) {
     req.flash('error', 'Failed to update investment');
     res.redirect('/admin/investments');
   }
+},
+
+async updateUserCurrency(req, res) {
+  try {
+    const { userId, currency } = req.body;
+    
+    if (!userId || !currency) {
+      req.flash('error', 'Missing required fields');
+      return res.redirect('/admin/users');
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
+
+    // Valid currencies
+    const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'];
+    if (!validCurrencies.includes(currency)) {
+      req.flash('error', 'Invalid currency');
+      return res.redirect('/admin/users');
+    }
+
+    user.currency = currency;
+    await user.save();
+
+    req.flash('success', `Currency updated to ${currency} successfully`);
+    res.redirect('/admin/users');
+  } catch (error) {
+    console.error('Update Currency Error:', error);
+    req.flash('error', 'Failed to update currency');
+    res.redirect('/admin/users');
+  }
+},
+
+/** =======================
+ *  USER BALANCE MANAGEMENT
+ *  =======================
+ */
+async updateUserBalance(req, res) {
+  try {
+    const { userId, amount, type, reason } = req.body;
+    
+    // Validate required fields
+    if (!userId || !amount || !type) {
+      req.flash('error', 'Missing required fields');
+      return res.redirect(`/admin/users/${userId}`);
+    }
+
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
+
+    // Validate amount
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      req.flash('error', 'Invalid amount');
+      return res.redirect(`/admin/users/${userId}`);
+    }
+
+    const oldBalance = user.balance || 0;
+    let newBalance = oldBalance;
+    let transactionType = '';
+    let transactionDescription = '';
+
+    // Process balance update based on type
+    if (type === 'add') {
+      newBalance = oldBalance + numericAmount;
+      transactionType = 'admin_credit';
+      transactionDescription = `Admin credit: ${reason || 'Funds added by administrator'}`;
+    } else if (type === 'subtract') {
+      if (oldBalance < numericAmount) {
+        req.flash('error', 'Insufficient balance to deduct');
+        return res.redirect(`/admin/users/${userId}`);
+      }
+      newBalance = oldBalance - numericAmount;
+      transactionType = 'admin_debit';
+      transactionDescription = `Admin debit: ${reason || 'Funds deducted by administrator'}`;
+    } else {
+      req.flash('error', 'Invalid operation type');
+      return res.redirect(`/admin/users/${userId}`);
+    }
+
+    // Update user balance
+    user.balance = newBalance;
+    await user.save();
+
+    // Create transaction record
+    await Transaction.create({
+      userId: user._id,
+      type: transactionType,
+      amount: numericAmount,
+      currency: user.currency || 'USD',
+      status: 'completed',
+      description: transactionDescription,
+      adminNote: `Processed by ${req.user.firstName} ${req.user.lastName}`,
+      previousBalance: oldBalance,
+      newBalance: newBalance,
+      metadata: {
+        adminId: req.user._id,
+        operation: type,
+        reason: reason || 'No reason provided'
+      }
+    });
+
+    req.flash('success', 
+      `Balance ${type === 'add' ? 'added to' : 'deducted from'} user account successfully. ` +
+      `New balance: $${newBalance.toFixed(2)}`
+    );
+    
+    // Redirect back to user detail page
+    res.redirect(`/admin/users/${userId}`);
+    
+  } catch (error) {
+    console.error('Update User Balance Error:', error);
+    req.flash('error', 'Failed to update user balance');
+    
+    // Redirect back to user detail page or users list if userId is not available
+    if (req.body.userId) {
+      res.redirect(`/admin/users/${req.body.userId}`);
+    } else {
+      res.redirect('/admin/users');
+    }
+  }
+},
+
+async updateUserCurrency(req, res) {
+  try {
+    const { userId, currency } = req.body;
+    
+    if (!userId || !currency) {
+      req.flash('error', 'Missing required fields');
+      return res.redirect('/admin/users');
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
+
+    // Valid currencies
+    const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'];
+    if (!validCurrencies.includes(currency)) {
+      req.flash('error', 'Invalid currency');
+      return res.redirect(`/admin/users/${userId}`);
+    }
+
+    const oldCurrency = user.currency || 'USD';
+    user.currency = currency;
+    await user.save();
+
+    // Create a system transaction for currency change
+    await Transaction.create({
+      userId: user._id,
+      type: 'system',
+      amount: 0,
+      currency: currency,
+      status: 'completed',
+      description: `Currency changed from ${oldCurrency} to ${currency}`,
+      adminNote: `Updated by ${req.user.firstName} ${req.user.lastName}`,
+      metadata: {
+        adminId: req.user._id,
+        oldCurrency: oldCurrency,
+        newCurrency: currency
+      }
+    });
+
+    req.flash('success', `User currency updated to ${currency} successfully`);
+    res.redirect(`/admin/users/${userId}`);
+    
+  } catch (error) {
+    console.error('Update Currency Error:', error);
+    req.flash('error', 'Failed to update currency');
+    
+    if (req.body.userId) {
+      res.redirect(`/admin/users/${req.body.userId}`);
+    } else {
+      res.redirect('/admin/users');
+    }
+  }
+},
+
+async toggleUserStatus(req, res) {
+  try {
+    const { userId } = req.params;
+    const { isActive } = req.body;
+
+    if (!userId) {
+      req.flash('error', 'User ID is required');
+      return res.redirect('/admin/users');
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
+
+    user.isActive = isActive === 'true';
+    await user.save();
+
+    // Create system transaction for status change
+    await Transaction.create({
+      userId: user._id,
+      type: 'system',
+      amount: 0,
+      status: 'completed',
+      description: `Account ${user.isActive ? 'activated' : 'deactivated'} by administrator`,
+      adminNote: `Processed by ${req.user.firstName} ${req.user.lastName}`,
+      metadata: {
+        adminId: req.user._id,
+        previousStatus: !user.isActive,
+        newStatus: user.isActive
+      }
+    });
+
+    req.flash('success', `User ${user.isActive ? 'activated' : 'deactivated'} successfully`);
+    res.redirect(`/admin/users/${userId}`);
+    
+  } catch (error) {
+    console.error('Toggle User Status Error:', error);
+    req.flash('error', 'Failed to update user status');
+    
+    if (req.params.userId) {
+      res.redirect(`/admin/users/${req.params.userId}`);
+    } else {
+      res.redirect('/admin/users');
+    }
+  }
 }
 
 };

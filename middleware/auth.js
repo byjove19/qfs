@@ -6,6 +6,16 @@ const isAuthenticated = (req, res, next) => {
   res.redirect('/auth/login');
 };
 
+const isGuest = (req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  
+  // Redirect ALL logged-in users away from regular login/signup
+  req.flash('info', 'You are already logged in');
+  return res.redirect('/dashboard');
+};
+
 const isAdmin = (req, res, next) => {
   if (req.session.user && ['admin', 'superadmin'].includes(req.session.user.role)) {
     return next();
@@ -22,6 +32,19 @@ const isSuperAdmin = (req, res, next) => {
   res.redirect('/dashboard');
 };
 
+// NEW: Allow admin login - redirect if already admin, otherwise show form
+const allowAdminLogin = (req, res, next) => {
+  // If user is already logged in as admin, redirect to dashboard
+  if (req.session.user && ['admin', 'superadmin'].includes(req.session.user.role)) {
+    req.flash('info', 'You are already logged in as admin');
+    return res.redirect('/admin/dashboard');
+  }
+  
+  // If regular user is logged in, they can still see the admin login form
+  // (they'll need to logout first or enter admin credentials)
+  next();
+};
+
 const attachUser = (req, res, next) => {
   if (req.session.user) {
     res.locals.user = req.session.user;
@@ -31,7 +54,9 @@ const attachUser = (req, res, next) => {
 
 module.exports = {
   isAuthenticated,
+  isGuest,
   isAdmin,
   isSuperAdmin,
-  attachUser
+  attachUser,
+  allowAdminLogin  // Export the new middleware
 };

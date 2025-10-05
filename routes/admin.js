@@ -63,4 +63,7 @@ router.post('/process-exchange', (req, res) => {
   res.redirect('/admin/transactions');
 });
 
+// Add this route with your other user management routes
+router.post('/users/update-currency', adminController.updateUserCurrency);
+
 module.exports = router;
