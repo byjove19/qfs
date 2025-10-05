@@ -74,76 +74,59 @@ const authController = {
     }
   },
 
-  // SINGLE CORRECTED LOGIN METHOD
-  login: async (req, res) => {
-    try {
-      console.log('Login request body:', req.body);
-
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Validation failed',
-          errors: errors.array().reduce((acc, error) => {
-            acc[error.path] = error.msg;
-            return acc;
-          }, {})
-        });
-      }
-
-      const { email, password } = req.body;
-
-      const user = await User.findOne({ email });
-      if (!user || !(await user.comparePassword(password))) {
-        return res.status(401).json({
-          success: false,
-          message: 'Invalid email or password',
-          errors: { general: 'Invalid credentials' }
-        });
-      }
-
-      // Update last login
-      user.lastLogin = new Date();
-      await user.save();
-
-      // Set session
-      req.session.user = {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
-        profilePicture: user.profilePicture
-      };
-
-      console.log('Session set:', req.session.user); // Debug log
-
-      // Send JSON response for frontend
-      res.json({
-        success: true,
-        message: 'Login successful!',
-        data: {
-          user: {
-            id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role
-          },
-          // Add redirect URL for frontend
-          redirect: '/dashboard'
-        }
-      });
-
-    } catch (error) {
-      console.error('Login error:', error);
-      res.status(500).json({
+login: async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
         success: false,
-        message: 'Login failed. Please try again.',
-        errors: { general: 'Server error' }
+        message: 'Validation failed',
+        errors: errors.array()
       });
     }
-  },
+
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    req.session.user = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      profilePicture: user.profilePicture
+    };
+
+    // FIX: Redirect admins to admin panel
+    let redirectUrl = '/dashboard';
+    if (user.role === 'admin' || user.role === 'superadmin') {
+      redirectUrl = '/admin';
+    }
+
+    res.json({
+      success: true,
+      message: 'Login successful!',
+      redirect: redirectUrl
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Login failed. Please try again.'
+    });
+  }
+},
 
   logout: (req, res) => {
     req.session.destroy((err) => {

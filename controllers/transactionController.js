@@ -6,13 +6,31 @@ const { validationResult } = require('express-validator');
 const transactionController = {
   getTransactions: async (req, res) => {
     try {
-      // Safely get user ID - check different possible locations
-      const userId = req.user?._id || req.user?.id || req.session?.user?.id;
+      console.log('=== TRANSACTIONS PAGE REQUEST ===');
+      console.log('Full session:', JSON.stringify(req.session, null, 2));
+      console.log('Session user:', req.session.user);
+      console.log('Session ID:', req.sessionID);
+      
+      // FIX: Get userId with multiple fallbacks
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+      
+      console.log('Extracted userId:', userId);
       
       if (!userId) {
-        req.flash('error', 'Please login to view transactions');
-        return res.redirect('/auth/login');
+        console.log('❌ CRITICAL: No user ID found in session');
+        console.log('Session keys:', Object.keys(req.session));
+        console.log('User object:', req.session.user);
+        
+        // This shouldn't happen if isAuthenticated passed, but handle it
+        req.session.destroy((err) => {
+          if (err) console.error('Session destroy error:', err);
+          req.flash('error', 'Session error. Please login again.');
+          return res.redirect('/auth/login');
+        });
+        return;
       }
+
+      console.log('✅ User authenticated, fetching transactions for:', userId);
 
       const page = parseInt(req.query.page) || 1;
       const limit = 10;
@@ -25,36 +43,41 @@ const transactionController = {
           .limit(limit)
           .populate('userId', 'firstName lastName email')
           .populate('recipientId', 'firstName lastName email')
-          .populate('senderId', 'firstName lastName email'),
+          .populate('senderId', 'firstName lastName email')
+          .lean(),
         Transaction.countDocuments({ $or: [{ userId }, { recipientId: userId }] })
       ]);
+
+      console.log(`✅ Found ${transactions.length} transactions out of ${total} total`);
 
       res.render('transactions', {
         title: 'Transactions - QFS',
         transactions,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
-        user: req.user
+        user: req.session.user // Use session user
       });
+
     } catch (error) {
-      console.error('Transactions error:', error);
+      console.error('❌ Transactions error:', error);
       res.status(500).render('error/500', { 
         title: 'Server Error',
-        error: req.app.get('env') === 'development' ? error : {}
+        error: req.app.get('env') === 'development' ? error : {},
+        user: req.session.user
       });
     }
   },
 
   getSendMoney: async (req, res) => {
     try {
-      const userId = req.user?._id || req.user?.id || req.session?.user?.id;
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
       
       if (!userId) {
         req.flash('error', 'Please login to send money');
         return res.redirect('/auth/login');
       }
 
-      const wallets = await Wallet.find({ userId });
+      const wallets = await Wallet.find({ userId }).lean();
       
       res.render('transactions/send', {
         title: 'Send Money - QFS',
@@ -62,13 +85,14 @@ const transactionController = {
         error: req.flash('error'),
         success: req.flash('success'),
         formData: req.flash('formData')[0] || {},
-        user: req.user
+        user: req.session.user
       });
     } catch (error) {
       console.error('Send money error:', error);
       res.status(500).render('error/500', { 
         title: 'Server Error',
-        error: req.app.get('env') === 'development' ? error : {}
+        error: req.app.get('env') === 'development' ? error : {},
+        user: req.session.user
       });
     }
   },
@@ -77,14 +101,13 @@ const transactionController = {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        // Save form data to repopulate form
         req.flash('formData', req.body);
         req.flash('error', errors.array()[0].msg);
         return res.redirect('/transactions/send');
       }
 
       const { recipientEmail, amount, currency, description } = req.body;
-      const senderId = req.user?._id || req.user?.id || req.session?.user?.id;
+      const senderId = req.session.user?._id || req.session.user?.id || req.session.userId;
 
       if (!senderId) {
         req.flash('error', 'Please login to send money');
@@ -187,14 +210,14 @@ const transactionController = {
 
   getWithdraw: async (req, res) => {
     try {
-      const userId = req.user?._id || req.user?.id || req.session?.user?.id;
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
       
       if (!userId) {
         req.flash('error', 'Please login to withdraw funds');
         return res.redirect('/auth/login');
       }
 
-      const wallets = await Wallet.find({ userId });
+      const wallets = await Wallet.find({ userId }).lean();
       
       res.render('transactions/withdraw', {
         title: 'Withdraw Funds - QFS',
@@ -202,13 +225,14 @@ const transactionController = {
         error: req.flash('error'),
         success: req.flash('success'),
         formData: req.flash('formData')[0] || {},
-        user: req.user
+        user: req.session.user
       });
     } catch (error) {
       console.error('Withdraw error:', error);
       res.status(500).render('error/500', { 
         title: 'Server Error',
-        error: req.app.get('env') === 'development' ? error : {}
+        error: req.app.get('env') === 'development' ? error : {},
+        user: req.session.user
       });
     }
   },
@@ -223,7 +247,7 @@ const transactionController = {
       }
 
       const { amount, currency, method } = req.body;
-      const userId = req.user?._id || req.user?.id || req.session?.user?.id;
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
 
       if (!userId) {
         req.flash('error', 'Please login to withdraw funds');
@@ -251,12 +275,9 @@ const transactionController = {
         method,
         amount: amountNum,
         currency,
-        status: 'pending', // Changed to pending for admin approval
+        status: 'pending',
         description: `Withdrawal request - ${method}`
       });
-
-      // Don't deduct balance immediately - wait for admin approval
-      // wallet.balance -= amountNum;
 
       await transaction.save();
 

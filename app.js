@@ -84,17 +84,29 @@ app.use(session({
 }));
 
 app.use(flash());
+// Import middleware for protected routes
+const { isAuthenticated, isAdmin, attachUser } = require('./middleware/auth');
 
-// Global variables middleware
+// Global flash + user middleware
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
-  res.locals.user = req.session.user || null;
   next();
 });
 
-// Import middleware for protected routes - MUST BE BEFORE ROUTE IMPORTS
-const { isAuthenticated, isAdmin } = require('./middleware/auth');
+// Attach user globally (after flash)
+app.use(attachUser);
+
+
+// ========== FIXED ROUTE IMPORTS (NO DUPLICATES) ==========
+
+// Import all route files
+const authRoutes = require('./routes/auth');
+const dashboardRoutes = require('./routes/dashboard');
+const adminRoutes = require('./routes/admin');
+const transactionRoutes = require('./routes/transactions');
+const recipientRoutes = require('./routes/recipients');
+const investmentRoutes = require('./routes/investment');
 
 // ========== PUBLIC ROUTES (No authentication required) ==========
 
@@ -116,14 +128,21 @@ app.get('/signup', (req, res) => {
   res.render('signup', { title: 'Sign Up - QFS' });
 });
 
-// ========== ROUTE IMPORTS (SINGLE SET - NO DUPLICATES) ==========
+// ========== USE ROUTES IN CORRECT ORDER ==========
 
-app.use('/auth', require('./routes/auth'));
-app.use('/', require('./routes/dashboard'));
-app.use('/admin', require('./routes/admin'));
-app.use('/transactions', require('./routes/transactions'));
+// Public routes first
+app.use('/auth', authRoutes);
 
-// ========== PROTECTED ROUTES (Authentication required) ==========
+
+app.use('/admin', adminRoutes);
+
+// Other protected routes
+app.use('/', dashboardRoutes);
+app.use('/transactions', transactionRoutes);
+app.use('/', recipientRoutes);
+app.use('/', investmentRoutes);
+
+// ========== INDIVIDUAL PROTECTED ROUTES ==========
 
 // Wallet routes
 app.get('/wallet', isAuthenticated, (req, res) => {
@@ -151,7 +170,14 @@ app.get('/support', isAuthenticated, (req, res) => {
 app.get('/tickets', isAuthenticated, (req, res) => {
   res.render('tickets', { title: 'My Tickets - QFS' });
 });
-
+// Add this to your PUBLIC ROUTES section
+app.get('/admin-login', (req, res) => {
+  res.render('admin-login', { 
+    title: 'Admin Login - QFS',
+    error: req.flash('error'),
+    success: req.flash('success')
+  });
+});
 // Dispute routes
 app.get('/disputes', isAuthenticated, (req, res) => {
   res.render('disputes', { title: 'Disputes - QFS' });
@@ -182,7 +208,7 @@ app.get('/money-transfer', isAuthenticated, (req, res) => {
 
 // ========== ERROR HANDLERS ==========
 
-// 404 handler - FIXED PATH (remove extra slash)
+// 404 handler
 app.use((req, res) => {
   res.status(404).render('error/404', { title: 'Page Not Found - QFS' });
 });
@@ -201,6 +227,5 @@ app.listen(PORT, () => {
   console.log(`QFS Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Home page: http://localhost:${PORT}`);
-  console.log(`Login page: http://localhost:${PORT}/login`);
-  console.log(`Transactions: http://localhost:${PORT}/transactions`);
+  console.log(`Admin panel: http://localhost:${PORT}/admin`);
 });

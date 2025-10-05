@@ -21,6 +21,6 @@ router.post('/login', [
   body('password').notEmpty().withMessage('Password is required')
 ], authController.login);
 
-router.post('/logout', authController.logout);
+router.get('/logout', authController.logout);
 
 module.exports = router;

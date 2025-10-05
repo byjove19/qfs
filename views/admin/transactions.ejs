@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Copy ALL the CSS from your dashboard.ejs file here */
+        :root {
+            --tg-body-font-family: 'Inter', serif;
+            --tg-heading-font-family: 'Inter', serif;
+            --tg-icon-font-family: "Font Awesome 5 Free";
+            --tg-body-font-size: 16px;
+            --tg-body-color: #9E9E9E;
+            --tg-heading-color: #ffffff;
+            --tg-theme-primary: #4b59f5;
+            --tg-color-dark: #0C0C0C;
+            --tg-color-dark-2: #000000;
+            --tg-color-dark-3: #262626;
+            --tg-border-1: #363636;
+        }
+        /* Include ALL the CSS styles from your dashboard.ejs */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--tg-body-font-family); font-size: var(--tg-body-font-size); color: var(--tg-body-color); background: var(--tg-color-dark); }
+        .admin-wrapper { display: flex; min-height: 100vh; }
+        .admin-sidebar { width: 280px; background: var(--tg-color-dark-2); border-right: 1px solid var(--tg-border-1); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--tg-border-1); }
+        .logo-text { font-size: 24px; font-weight: 800; color: white; text-decoration: none; letter-spacing: 2.5px; text-transform: uppercase; display: block; text-align: center; }
+        .sidebar-nav { flex: 1; padding: 20px 0; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 5px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 20px; color: var(--tg-body-color); text-decoration: none; transition: all 0.3s; border-left: 3px solid transparent; }
+        .nav-link:hover { background: var(--tg-color-dark-3); color: var(--tg-heading-color); }
+        .nav-link.active { background: var(--tg-color-dark-3); color: var(--tg-theme-primary); border-left-color: var(--tg-theme-primary); }
+        .nav-link i { width: 24px; margin-right: 12px; font-size: 16px; }
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--tg-border-1); }
+        .admin-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: var(--tg-color-dark-2); border-bottom: 1px solid var(--tg-border-1); }
+        .header-left { display: flex; align-items: center; }
+        .sidebar-toggle { background: none; border: none; color: var(--tg-heading-color); font-size: 18px; margin-right: 20px; cursor: pointer; padding: 5px; border-radius: 5px; }
+        .admin-header h1 { font-size: 24px; font-weight: 700; color: var(--tg-heading-color); }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .admin-name { color: var(--tg-heading-color); font-weight: 500; }
+        .badge { background: var(--tg-theme-primary); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .alert { padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; }
+        .alert-error { background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; }
+        .alert-success { background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); color: #28a745; }
+        .card { background: var(--tg-color-dark-2); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); margin-bottom: 30px; overflow: hidden; }
+        .card-header { padding: 20px 25px; border-bottom: 1px solid var(--tg-border-1); display: flex; justify-content: space-between; align-items: center; }
+        .card-header h2 { font-size: 20px; font-weight: 600; color: var(--tg-heading-color); }
+        .tg-btn { background: var(--tg-theme-primary); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .card-body { padding: 25px; }
+        .table-responsive { overflow-x: auto; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { text-align: left; padding: 12px 15px; font-weight: 600; color: var(--tg-heading-color); border-bottom: 1px solid var(--tg-border-1); }
+        .admin-table td { padding: 12px 15px; border-bottom: 1px solid var(--tg-border-1); }
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-badge.pending { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+        .status-badge.completed { background: rgba(40, 167, 69, 0.1); color: #28a745; }
+        .status-badge.rejected { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-icon { width: 32px; height: 32px; border-radius: 6px; background: var(--tg-color-dark-3); display: flex; align-items: center; justify-content: center; color: var(--tg-body-color); text-decoration: none; }
+       
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS ADMIN</a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="/admin/users" class="nav-link">
+                        <i class="fas fa-users"></i> <span>Users</span>
+                    </a></li>
+                    <li><a href="/admin/transactions" class="nav-link active">
+                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                    </a></li>
+                    <li><a href="/admin/investments" class="nav-link">
+                        <i class="fas fa-chart-line"></i> <span>Investments</span>
+                    </a></li>
+                    <li><a href="/admin/tickets" class="nav-link">
+                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
+                    </a></li>
+                    <li><a href="/admin/users/balances" class="nav-link">
+                        <i class="fas fa-wallet"></i> <span>User Balances</span>
+                    </a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
+                    </a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link">
+                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><%= title %></h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
+                    <span class="admin-role badge"><%= user.role %></span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>All Transactions (<%= totalTransactions %>)</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (transactions && transactions.length > 0) { %>
+                                        <% transactions.forEach(transaction => { %>
+                                            <tr>
+                                                <td>
+                                                    <% if (transaction.userId) { %>
+                                                        <%= transaction.userId.firstName %> <%= transaction.userId.lastName %>
+                                                    <% } else { %>
+                                                        User Not Found
+                                                    <% } %>
+                                                </td>
+                                                <td><%= transaction.type %></td>
+                                                <td>$<%= transaction.amount?.toFixed(2) || '0.00' %></td>
+                                                <td>
+                                                    <span class="status-badge <%= transaction.status %>">
+                                                        <%= transaction.status %>
+                                                    </span>
+                                                </td>
+                                                <td><%= new Date(transaction.createdAt).toLocaleDateString() %></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <% if (transaction.status === 'pending') { %>
+                                                            <form action="/admin/transactions/update-status" method="POST" style="display: inline;">
+                                                                <input type="hidden" name="transactionId" value="<%= transaction._id %>">
+                                                                <input type="hidden" name="status" value="completed">
+                                                                <button type="submit" class="btn-icon" title="Approve">
+                                                                    <i class="fas fa-check"></i>
+                                                                </button>
+                                                            </form>
+                                                            <form action="/admin/transactions/update-status" method="POST" style="display: inline;">
+                                                                <input type="hidden" name="transactionId" value="<%= transaction._id %>">
+                                                                <input type="hidden" name="status" value="rejected">
+                                                                <button type="submit" class="btn-icon" title="Reject">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </form>
+                                                        <% } %>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" style="text-align: center;">No transactions found</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Copy the same JavaScript from your dashboard.ejs
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.admin-wrapper').classList.toggle('sidebar-collapsed');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Copy ALL CSS from dashboard */
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Same sidebar -->
+        <aside class="admin-sidebar">
+            <!-- Sidebar content -->
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><%= title %></h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
+                    <span class="admin-role badge"><%= user.role %></span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Flash Messages -->
+                <% if (messages.error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> <%= messages.error %>
+                    </div>
+                <% } %>
+                <% if (messages.success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> <%= messages.success %>
+                    </div>
+                <% } %>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Support Tickets (<%= totalTickets %>)</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (tickets && tickets.length > 0) { %>
+                                        <% tickets.forEach(ticket => { %>
+                                            <tr>
+                                                <td>
+                                                    <% if (ticket.userId) { %>
+                                                        <%= ticket.userId.firstName %> <%= ticket.userId.lastName %>
+                                                    <% } else { %>
+                                                        User Not Found
+                                                    <% } %>
+                                                </td>
+                                                <td><%= ticket.subject %></td>
+                                                <td>
+                                                    <span class="status-badge <%= ticket.status %>">
+                                                        <%= ticket.status %>
+                                                    </span>
+                                                </td>
+                                                <td><%= new Date(ticket.createdAt).toLocaleDateString() %></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <a href="/admin/tickets/<%= ticket._id %>" class="btn-icon" title="View Ticket">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="5" style="text-align: center;">No tickets found</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.admin-wrapper').classList.toggle('sidebar-collapsed');
+        });
+    </script>
+</body>
+</html>
