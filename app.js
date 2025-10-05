@@ -258,8 +258,8 @@ app.get('/disputes', isAuthenticated, (req, res) => {
 });
 
 // Verification routes
-app.get('/identity-verification', isAuthenticated, (req, res) => {
-  res.render('identity-verification', { title: 'Identity Verification - QFS' });
+app.get('/verification', isAuthenticated, (req, res) => {
+  res.render('verification', { title: 'Identity Verification - QFS' });
 });
 
 // Virtual card routes

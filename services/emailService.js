@@ -29,6 +29,32 @@ class EmailService {
     }
   }
 
+  // Send verification resend email
+  async sendVerificationResendEmail(user, token) {
+    try {
+      const verificationUrl = `${process.env.APP_URL}/profile?verify=true&token=${token}`;
+      
+      const { data, error } = await resend.emails.send({
+        from: `${process.env.APP_NAME} <onboarding@resend.dev>`,
+        to: user.email,
+        subject: `New Verification Code - ${process.env.APP_NAME}`,
+        html: this.getVerificationResendTemplate(user, token, verificationUrl),
+        text: `Your new verification code for ${process.env.APP_NAME}: ${token} or click: ${verificationUrl}`
+      });
+
+      if (error) {
+        console.error('Resend verification resend error:', error);
+        return false;
+      }
+
+      console.log('✅ Verification resend email sent via Resend');
+      return true;
+    } catch (error) {
+      console.error('Verification resend email error:', error);
+      return false;
+    }
+  }
+
   // Send welcome email
   async sendWelcomeEmail(user) {
     try {
@@ -37,7 +63,7 @@ class EmailService {
         to: user.email,
         subject: `Welcome to ${process.env.APP_NAME}!`,
         html: this.getWelcomeTemplate(user),
-        text: `Welcome to ${process.env.APP_NAME}! We're excited to have you on board.`
+        text: `Welcome to ${process.env.APP_NAME}! We're excited to have you on board. Start exploring at: ${process.env.APP_URL}`
       });
 
       if (error) {
@@ -56,14 +82,25 @@ class EmailService {
   // Send password reset email
   async sendPasswordResetEmail(user, token) {
     try {
-      const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
+      let subject, html, text;
+      
+      if (token) {
+        const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
+        subject = `Reset Your ${process.env.APP_NAME} Password`;
+        html = this.getPasswordResetTemplate(user, token, resetUrl);
+        text = `Reset your ${process.env.APP_NAME} password. Code: ${token} or click: ${resetUrl}`;
+      } else {
+        subject = `Your ${process.env.APP_NAME} Password Has Been Reset`;
+        html = this.getPasswordResetConfirmationTemplate(user);
+        text = `Your ${process.env.APP_NAME} password has been successfully reset.`;
+      }
       
       const { data, error } = await resend.emails.send({
         from: `${process.env.APP_NAME} <security@resend.dev>`,
         to: user.email,
-        subject: `Reset Your ${process.env.APP_NAME} Password`,
-        html: this.getPasswordResetTemplate(user, token, resetUrl),
-        text: `Reset your password. Code: ${token} or click: ${resetUrl}`
+        subject: subject,
+        html: html,
+        text: text
       });
 
       if (error) {
@@ -148,7 +185,7 @@ class EmailService {
     `;
   }
 
-  getWelcomeTemplate(user) {
+  getVerificationResendTemplate(user, token, verificationUrl) {
     return `
       <!DOCTYPE html>
       <html>
@@ -158,6 +195,50 @@ class EmailService {
           .header { background: #28a745; color: white; padding: 20px; text-align: center; }
           .content { padding: 30px; background: #f8f9fa; }
           .button { background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }
+          .code { background: white; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 18px; text-align: center; margin: 20px 0; border: 2px dashed #28a745; }
+          .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>New Verification Code</h1>
+          </div>
+          <div class="content">
+            <h2>Hello ${user.firstName}!</h2>
+            <p>Here is your new verification code for ${process.env.APP_NAME}:</p>
+            
+            <div class="code">
+              <strong>New Verification Code:</strong><br>
+              ${token}
+            </div>
+            
+            <p style="text-align: center;">
+              <a href="${verificationUrl}" class="button">Verify My Account</a>
+            </p>
+            
+            <p><small>This new code will expire in 24 hours.</small></p>
+            <p>If you didn't request this code, please secure your account.</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} ${process.env.APP_NAME}. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  getWelcomeTemplate(user) {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; }
+          .header { background: #6f42c1; color: white; padding: 20px; text-align: center; }
+          .content { padding: 30px; background: #f8f9fa; }
+          .button { background: #6f42c1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }
           .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
         </style>
       </head>
@@ -236,6 +317,45 @@ class EmailService {
     `;
   }
 
+  getPasswordResetConfirmationTemplate(user) {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; }
+          .header { background: #28a745; color: white; padding: 20px; text-align: center; }
+          .content { padding: 30px; background: #f8f9fa; }
+          .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Password Reset Successful</h1>
+          </div>
+          <div class="content">
+            <h2>Hello ${user.firstName}!</h2>
+            <p>Your ${process.env.APP_NAME} password has been successfully reset.</p>
+            
+            <p>If you did not make this change, please contact our support team immediately.</p>
+            
+            <p>For security reasons, if you suspect any unauthorized activity on your account, please:</p>
+            <ul>
+              <li>Change your password immediately</li>
+              <li>Review your recent account activity</li>
+              <li>Contact our support team</li>
+            </ul>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} ${process.env.APP_NAME}. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
   getPromotionalTemplate(user, promotion) {
     return `
       <!DOCTYPE html>
@@ -243,16 +363,16 @@ class EmailService {
       <head>
         <style>
           .container { max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; }
-          .header { background: #6f42c1; color: white; padding: 20px; text-align: center; }
+          .header { background: #fd7e14; color: white; padding: 20px; text-align: center; }
           .content { padding: 30px; background: #f8f9fa; }
-          .button { background: #6f42c1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }
+          .button { background: #fd7e14; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }
           .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>${promotion.title || 'Special Offer!'}</h1>
+            <h1>${promotion.title || promotion.subject}</h1>
           </div>
           <div class="content">
             <h2>Hello ${user.firstName}!</h2>
