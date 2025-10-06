@@ -1,7 +1,7 @@
 // routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middleware/auth'); // Changed from 'protect'
+const { isAuthenticated } = require('../middleware/auth');
 const { 
   uploadProfile
 } = require('../config/multer');
@@ -13,29 +13,24 @@ const {
   updateQRCode,
   verifyAccount,
   resendVerification,
-  getVerificationStatus
+  getVerificationStatus,
+  changeDefaultCurrency
 } = require('../controllers/userController');
 
 // Apply isAuthenticated middleware to all routes
-router.use(isAuthenticated); // Changed from 'protect'
+router.use(isAuthenticated);
 
-// Profile routes
+// Profile routes - authentication runs first, then multer, then controller
 router.get('/', getUserProfile);
 router.post('/update', updateProfile);
 router.post('/update_password', changePassword);
-router.post('/picture', uploadProfile, uploadProfilePicture);
+router.post('/picture', uploadProfile, uploadProfilePicture); // isAuthenticated runs first
 router.post('/update-qr-code', updateQRCode);
+router.post('/change-default-currency', changeDefaultCurrency);
 
 // Verification routes
 router.post('/verify', verifyAccount);
 router.post('/resend-verification', resendVerification);
 router.get('/verification-status', getVerificationStatus);
-
-// Remove these duplicate API routes to avoid conflicts
-// router.get('/api', getUserProfile);
-// router.post('/api/update', updateProfile);
-// router.post('/api/password', changePassword);
-// router.post('/api/picture', uploadProfile, uploadProfilePicture);
-// router.post('/api/qr-code', updateQRCode);
 
 module.exports = router;

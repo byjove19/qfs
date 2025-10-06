@@ -979,6 +979,86 @@ const updateUserSettings = async (req, res) => {
     });
   }
 };
+// @desc    Change user default currency
+// @route   POST /profile/change-default-currency
+// @access  Private
+const changeDefaultCurrency = async (req, res) => {
+  try {
+    const { currency } = req.body;
+    
+    // Validation
+    if (!currency) {
+      if (req.xhr) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Currency is required' 
+        });
+      }
+      req.flash('error', 'Currency is required');
+      return res.redirect('/profile');
+    }
+
+    // Validate currency against enum values
+    const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'];
+    if (!validCurrencies.includes(currency)) {
+      if (req.xhr) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Invalid currency selected' 
+        });
+      }
+      req.flash('error', 'Invalid currency selected');
+      return res.redirect('/profile');
+    }
+
+    const user = await User.findById(req.session.user.id);
+    if (!user) {
+      if (req.xhr) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+      req.flash('error', 'User not found');
+      return res.redirect('/profile');
+    }
+
+    // Update currency
+    user.currency = currency;
+    user.updatedAt = new Date();
+    await user.save();
+
+    // Update session
+    req.session.user.currency = currency;
+
+    if (req.xhr) {
+      return res.json({ 
+        success: true, 
+        message: 'Default currency updated successfully',
+        data: {
+          currency: currency
+        }
+      });
+    }
+
+    req.flash('success', 'Default currency updated successfully');
+    res.redirect('/profile');
+    
+  } catch (error) {
+    console.error('Currency change error:', error);
+    
+    if (req.xhr) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Currency change failed',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+    
+    req.flash('error', 'Currency change failed');
+    res.redirect('/profile');
+  }
+};
 
 module.exports = {
   getUserProfile,
@@ -995,5 +1075,6 @@ module.exports = {
   sendPromotionalEmail,
   deleteAccount,
   getUserSettings,
-  updateUserSettings
+  updateUserSettings,
+   changeDefaultCurrency
 };

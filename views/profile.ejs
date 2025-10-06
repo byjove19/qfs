@@ -6,6 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="twoone.tech">
     <meta name="csrf-token" content="tiLfEIdLpapV8KvHXwRBGHJgLZFODUJqcXaCWPKM">
+    <meta name="csrf-token" content="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
 
     <title>User Profile |  QFS</title>
   <link rel="icon" type="image/png" href="/images/logo.png">
@@ -398,42 +399,47 @@
                                     </button>
                                 </div>
                                 <div class="modal-body modal-body-pxy">
-                                    <form method="post" action="/profile/change-default-currency" id="defaultCurrencyForm">
-                                        <input type="hidden" name="_token" value="tiLfEIdLpapV8KvHXwRBGHJgLZFODUJqcXaCWPKM">                                        <input type="hidden" name="user_id" id="user_id" value="11405">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="settingId"></div>
-                                                <div class="col-md-12">
-                                                    <div class="param-ref param-ref-withdraw  money-ref r-mt-11">
-                                                        <label class="gilroy-medium text-gray-100 mb-7 f-14 leading-17 r-mt-0">Select Wallet
-                                                        </label>
-                                                        <select class="select2 withdraw-type select2-hidden-accessible" data-minimum-results-for-search="Infinity" name="default_wallet" id="default_wallet" data-select2-id="select2-data-default_wallet" tabindex="-1" aria-hidden="true">
-                                                                                                                            <option value="112725" selected="" data-select2-id="select2-data-2-al4c">USD</option>
-                                                                                                                            <option value="112733">Doge</option>
-                                                                                                                            <option value="112732">XDC</option>
-                                                                                                                            <option value="112731">XLM</option>
-                                                                                                                            <option value="112730">Matic</option>
-                                                                                                                            <option value="112729">XRP</option>
-                                                                                                                            <option value="112728">ETH</option>
-                                                                                                                            <option value="112727">LTC</option>
-                                                                                                                            <option value="112726">BTC</option>
-                                                                                                                            <option value="112734">ALGO</option>
-                                                                                                                    </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-lp0f" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-default_wallet-container" aria-controls="select2-default_wallet-container"><span class="select2-selection__rendered" id="select2-default_wallet-container" role="textbox" aria-readonly="true" title="USD">USD</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-20">
-                                            <div class="col-md-12 pd-bottom pb-2">
-                                                <button type="submit" class="btn bg-primary add-option-btn w-100 setting-btn f-16 leading-20 gilroy-medium" id="defaultCurrencySubmitBtn">
-                                                    <div class="spinner spinner-border text-white spinner-border-sm mx-2 d-none" role="status">
-                                                        <span class="visually-hidden"></span>
-                                                    </div>
-                                                    <span id="defaultCurrencySubmitBtnText">Save Changes</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                   <form method="post" action="/profile/change-default-currency" id="defaultCurrencyForm">
+    <input type="hidden" name="_token" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="settingId"></div>
+            <div class="col-md-12">
+                <div class="param-ref param-ref-withdraw  money-ref r-mt-11">
+                    <label class="gilroy-medium text-gray-100 mb-7 f-14 leading-17 r-mt-0">Select Currency</label>
+                    <select class="select2 withdraw-type select2-hidden-accessible" name="currency" id="currency" data-select2-id="select2-data-default_wallet" tabindex="-1" aria-hidden="true">
+                        <option value="USD" <%= user.currency === 'USD' ? 'selected' : '' %>>USD</option>
+                        <option value="EUR" <%= user.currency === 'EUR' ? 'selected' : '' %>>EUR</option>
+                        <option value="GBP" <%= user.currency === 'GBP' ? 'selected' : '' %>>GBP</option>
+                        <option value="CAD" <%= user.currency === 'CAD' ? 'selected' : '' %>>CAD</option>
+                        <option value="AUD" <%= user.currency === 'AUD' ? 'selected' : '' %>>AUD</option>
+                        <option value="JPY" <%= user.currency === 'JPY' ? 'selected' : '' %>>JPY</option>
+                        <option value="BTC" <%= user.currency === 'BTC' ? 'selected' : '' %>>BTC</option>
+                        <option value="ETH" <%= user.currency === 'ETH' ? 'selected' : '' %>>ETH</option>
+                        <option value="XRP" <%= user.currency === 'XRP' ? 'selected' : '' %>>XRP</option>
+                        <option value="DOGE" <%= user.currency === 'DOGE' ? 'selected' : '' %>>DOGE</option>
+                        <option value="LTC" <%= user.currency === 'LTC' ? 'selected' : '' %>>LTC</option>
+                        <option value="ALGO" <%= user.currency === 'ALGO' ? 'selected' : '' %>>ALGO</option>
+                        <option value="XDC" <%= user.currency === 'XDC' ? 'selected' : '' %>>XDC</option>
+                        <option value="XLM" <%= user.currency === 'XLM' ? 'selected' : '' %>>XLM</option>
+                        <option value="MATIC" <%= user.currency === 'MATIC' ? 'selected' : '' %>>MATIC</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-20">
+        <div class="col-md-12 pd-bottom pb-2">
+            <button type="submit" class="btn bg-primary add-option-btn w-100 setting-btn f-16 leading-20 gilroy-medium" id="defaultCurrencySubmitBtn">
+                <div class="spinner spinner-border text-white spinner-border-sm mx-2 d-none" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+                <span id="defaultCurrencySubmitBtnText">Save Changes</span>
+            </button>
+        </div>
+    </div>
+</form>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -1455,11 +1461,17 @@
 <script src="/User Profile _ QFS_files/sweetalert-unpkg.min.js" type="text/javascript"></script>
 
 <script src="/User Profile _ QFS_files/phone.min.js" type="text/javascript"></script>
-<script src="/User Profile _ QFS_files/profile.min.js" type="text/javascript"></script>
 <script  src ="/js/card-request.js"></script>
     <!-- end js -->
  
 <script>
+// CSRF Token handling
+function getCSRFToken() {
+    return document.querySelector('input[name="_token"]')?.value || 
+           document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+           '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>';
+}
+
 // Profile Picture Upload Functionality
 function changeProfile() {
     document.getElementById('upload').click();
@@ -1471,7 +1483,7 @@ document.getElementById('upload').addEventListener('change', function(e) {
         const fileError = document.getElementById('file-error');
         
         // Validate file type
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/svg+xml'];
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/svg+xml'];
         if (!validTypes.includes(file.type)) {
             fileError.textContent = 'Please select a valid image file (JPEG, PNG, GIF, BMP, SVG)';
             return;
@@ -1501,14 +1513,17 @@ function uploadProfilePicture(file) {
     const formData = new FormData();
     formData.append('profile_picture', file);
     
-    // Get CSRF token
-    const csrfToken = document.getElementById('csrfToken').value;
+    // Show loading state
+    const changeProfileBtn = document.getElementById('changeProfile');
+    const originalText = changeProfileBtn.innerHTML;
+    changeProfileBtn.innerHTML = '<span>Uploading...</span>';
+    changeProfileBtn.disabled = true;
     
     fetch('/profile/picture', {
         method: 'POST',
         body: formData,
         headers: {
-            'X-CSRF-Token': csrfToken
+            'X-CSRF-Token': getCSRFToken()
         }
     })
     .then(response => response.json())
@@ -1519,52 +1534,309 @@ function uploadProfilePicture(file) {
             // Update profile image with new URL from server
             if (data.data && data.data.profile_image_url) {
                 document.getElementById('profileImage').src = data.data.profile_image_url;
+                // Update avatar everywhere on the page
+                document.querySelectorAll('.user-avatar, .profile-avatar').forEach(avatar => {
+                    avatar.src = data.data.profile_image_url;
+                });
             }
-            // Show success message (you can use toast or alert)
-            console.log('Profile picture updated successfully!');
+            showSuccessMessage('Profile picture updated successfully!');
         } else {
             fileError.textContent = data.message || 'Upload failed';
+            showErrorMessage(data.message || 'Upload failed');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         document.getElementById('file-error').textContent = 'Upload failed. Please try again.';
+        showErrorMessage('Upload failed. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        changeProfileBtn.innerHTML = originalText;
+        changeProfileBtn.disabled = false;
     });
 }
 
-// QR Code functionality (if needed)
-document.getElementById('updateQrCodeBtn').addEventListener('click', function() {
-    updateQRCode();
+// Password Change Form Handling
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordForm = document.getElementById('profileResetPasswordForm');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handlePasswordChange(this);
+        });
+    }
+
+    // Default Currency Form Handling
+    const currencyForm = document.getElementById('defaultCurrencyForm');
+    if (currencyForm) {
+        currencyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleCurrencyChange(this);
+        });
+    }
+
+    // Profile Update Form Handling
+    const profileForm = document.getElementById('profileUpdateForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleProfileUpdate(this);
+        });
+    }
+
+    // Password visibility toggle
+    const eyeIconHide = document.getElementById('eye-icon-hide');
+    const eyeIconShow = document.getElementById('eye-icon-show');
+    const passwordField = document.getElementById('password');
+
+    if (eyeIconHide && eyeIconShow && passwordField) {
+        eyeIconHide.addEventListener('click', function() {
+            passwordField.type = 'text';
+            eyeIconHide.classList.add('d-none');
+            eyeIconShow.classList.remove('d-none');
+        });
+
+        eyeIconShow.addEventListener('click', function() {
+            passwordField.type = 'password';
+            eyeIconShow.classList.add('d-none');
+            eyeIconHide.classList.remove('d-none');
+        });
+    }
 });
 
-function updateQRCode() {
-    const csrfToken = document.getElementById('csrfToken').value;
+function handlePasswordChange(form) {
+    const submitBtn = form.querySelector('#profileResetPasswordSubmitBtn');
+    const submitText = form.querySelector('#profileResetPasswordSubmitBtnText');
+    const spinner = form.querySelector('.spinner');
     
-    fetch('/profile/update-qr-code', {
+    // Show loading state
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    submitText.textContent = 'Updating...';
+
+    const formData = new FormData(form);
+    
+    fetch('/profile/update_password', {
         method: 'POST',
+        body: formData,
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': csrfToken
+            'X-CSRF-Token': getCSRFToken()
         }
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log('QR Code updated successfully');
-            // You can update the QR code image here if needed
-            if (data.qr_code_url) {
-                document.querySelector('.qrCodeImage').src = data.qr_code_url;
+            showSuccessMessage('Password changed successfully!');
+            form.reset();
+            // Close modal if exists
+            const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal-2'));
+            if (modal) modal.hide();
+        } else {
+            showErrorMessage(data.message || 'Password change failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorMessage('Password change failed. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        submitBtn.disabled = false;
+        spinner.classList.add('d-none');
+        submitText.textContent = 'Save Changes';
+    });
+}
+
+function handleCurrencyChange(form) {
+    const submitBtn = form.querySelector('#defaultCurrencySubmitBtn');
+    const submitText = form.querySelector('#defaultCurrencySubmitBtnText');
+    const spinner = form.querySelector('.spinner');
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    submitText.textContent = 'Saving...';
+
+    const formData = new FormData(form);
+    
+    fetch('/profile/change-default-currency', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-Token': getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('Default currency updated successfully!');
+            // Update the displayed currency
+            const currencyDisplay = document.querySelector('.default-wallet-div .text-primary');
+            if (currencyDisplay && data.data && data.data.currency) {
+                currencyDisplay.textContent = data.data.currency;
             }
+            // Close modal if exists
+            const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
+            if (modal) modal.hide();
+        } else {
+            showErrorMessage(data.message || 'Currency update failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorMessage('Currency update failed. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        submitBtn.disabled = false;
+        spinner.classList.add('d-none');
+        submitText.textContent = 'Save Changes';
+    });
+}
+
+function handleProfileUpdate(form) {
+    const submitBtn = form.querySelector('#profileUpdateSubmitBtn');
+    const submitText = form.querySelector('#profileUpdateSubmitBtnText');
+    const spinner = form.querySelector('.spinner');
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    submitText.textContent = 'Saving...';
+
+    const formData = new FormData(form);
+    
+    fetch('/profile/update', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-Token': getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('Profile updated successfully!');
+            // Close modal if exists
+            const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal-3'));
+            if (modal) modal.hide();
+            // Reload to show updated data
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showErrorMessage(data.message || 'Profile update failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorMessage('Profile update failed. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        submitBtn.disabled = false;
+        spinner.classList.add('d-none');
+        submitText.textContent = 'Save Changes';
+    });
+}
+
+// QR Code functionality
+document.getElementById('updateQrCodeBtn').addEventListener('click', function() {
+    updateQRCode();
+});
+
+function updateQRCode() {
+    const updateBtn = document.getElementById('updateQrCodeBtn');
+    const originalText = updateBtn.innerHTML;
+    updateBtn.innerHTML = '<span class="print-code-text f-13 leading-20">Updating...</span>';
+    updateBtn.disabled = true;
+    
+    fetch('/profile/update-qr-code', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('QR Code updated successfully!');
+            // Update the QR code image if needed
+            if (data.data && data.data.qr_code_url) {
+                document.querySelector('.qrCodeImage').src = data.data.qr_code_url;
+            }
+        } else {
+            showErrorMessage(data.message || 'QR Code update failed');
         }
     })
     .catch(error => {
         console.error('Error updating QR code:', error);
+        showErrorMessage('QR Code update failed. Please try again.');
+    })
+    .finally(() => {
+        updateBtn.innerHTML = originalText;
+        updateBtn.disabled = false;
     });
 }
 
 // Print QR Code functionality
 document.getElementById('printQrCodeBtn').addEventListener('click', function() {
     window.print();
+});
+
+// Utility functions for messages
+function showSuccessMessage(message) {
+    // You can use SweetAlert, toast, or custom notification
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: message,
+            timer: 3000,
+            showConfirmButton: false
+        });
+    } else {
+        alert('Success: ' + message);
+    }
+}
+
+function showErrorMessage(message) {
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message,
+            timer: 3000,
+            showConfirmButton: false
+        });
+    } else {
+        alert('Error: ' + message);
+    }
+}
+
+// Initialize phone input if needed
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize intlTelInput if exists
+    if (typeof intlTelInput !== 'undefined' && document.getElementById('phone')) {
+        const phoneInput = document.querySelector("#phone");
+        const iti = intlTelInput(phoneInput, {
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch("https://ipapi.co/json")
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) { callback(data.country_code); })
+                    .catch(function() { callback("us"); });
+            },
+            utilsScript: "/utils.js" // make sure you have utils.js from intl-tel-input
+        });
+
+        phoneInput.addEventListener('countrychange', function() {
+            document.getElementById('defaultCountry').value = iti.getSelectedCountryData().iso2;
+            document.getElementById('carrierCode').value = iti.getSelectedCountryData().dialCode;
+        });
+    }
 });
 </script>
   

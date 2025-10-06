@@ -36,13 +36,29 @@ const profileStorage = multer.diskStorage({
     cb(null, dir);
   },
   filename: function (req, file, cb) {
-    if (!req.user || !req.user.id) {
-      return cb(new Error('User not authenticated'), null);
+    // Try multiple ways to get user ID
+    let userId = null;
+    
+    if (req.session && req.session.user && req.session.user.id) {
+      userId = req.session.user.id;
+    } else if (req.user && req.user.id) {
+      userId = req.user.id;
+    } else if (req.body && req.body.user_id) {
+      userId = req.body.user_id;
+    }
+    
+    if (!userId) {
+      // Generate a temporary filename without user ID
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const fileExtension = path.extname(file.originalname).toLowerCase();
+      const filename = `temp-profile-${uniqueSuffix}${fileExtension}`;
+      console.warn('No user ID found, using temporary filename:', filename);
+      return cb(null, filename);
     }
     
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const fileExtension = path.extname(file.originalname).toLowerCase();
-    const filename = `profile-${req.user.id}-${uniqueSuffix}${fileExtension}`;
+    const filename = `profile-${userId}-${uniqueSuffix}${fileExtension}`;
     cb(null, filename);
   }
 });
@@ -65,16 +81,12 @@ const imageFileFilter = (req, file, cb) => {
   }
 };
 
-// Create multer instances with better error handling
+// Create multer instances
 const createMulterInstance = (storage, fileFilter, limits) => {
   return multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: limits,
-    onError: function(err, next) {
-      console.error('Multer error:', err);
-      next(err);
-    }
+    limits: limits
   });
 };
 
@@ -88,41 +100,21 @@ const uploadProfile = createMulterInstance(
   }
 ).single('profile_picture');
 
-// QR code upload (if needed)
-const qrStorage = multer.diskStorage({
-  destination: async function (req, file, cb) {
-    const dir = path.join(__dirname, '../public/uploads/qrcodes');
-    try {
-      await fs.access(dir);
-    } catch (error) {
-      await fs.mkdir(dir, { recursive: true });
-    }
-    cb(null, dir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const filename = `qrcode-${req.user.id}-${uniqueSuffix}.jpg`;
-    cb(null, filename);
-  }
-});
-
-const uploadQR = createMulterInstance(
-  qrStorage,
-  imageFileFilter,
-  {
-    fileSize: 2 * 1024 * 1024, // 2MB
-    files: 1
-  }
-).single('qr_code');
-
-// Middleware wrapper for better error handling
+// Middleware wrapper that handles authentication separately
 const handleUpload = (uploadFunction) => {
   return (req, res, next) => {
+    // First verify session authentication
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Please log in to upload files'
+      });
+    }
+
     uploadFunction(req, res, function(err) {
       if (err) {
         console.error('Upload error:', err);
         
-        // Handle different types of errors
         if (err instanceof multer.MulterError) {
           if (err.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
@@ -150,7 +142,5 @@ const handleUpload = (uploadFunction) => {
 
 module.exports = {
   uploadProfile: handleUpload(uploadProfile),
-  uploadQR: handleUpload(uploadQR),
-  uploadProfileMiddleware: uploadProfile,
-  uploadQRMiddleware: uploadQR
+  uploadProfileMiddleware: uploadProfile
 };

@@ -271,7 +271,7 @@
     <div class="item">
         <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center user-list">
-                <img src="/Dashboard/1759158223.png" alt="Profile" class="img-fluid">
+                <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
             </div>
             <div class="ml-12 d-flex align-items-center h-78 w-134">
                 <p class="mb-0 f-14 text-dark gilroy-Semibold"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
@@ -285,7 +285,7 @@
         <ul class="open-notify open-drop bg-white" style="display: none;">
             <li class="d-flex align-items-center bg-secondary h-78 px-3">
                 <div class="d-flex align-items-center justify-content-center user-dp">
-                    <img src="/Dashboard/1759158223.png" alt="Profile" class="img-fluid">
+                    <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
                 </div>
                 <div class="ms-3 text-white">
                     <p class="mb-0 f-15 gilroy-medium text-white"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
@@ -338,7 +338,7 @@
             <div class="d-flex justify-content-between dash-left-profile dash-profile-flex-wrap">
                 <div class="dash-left-profile d-flex gap-14">
                     <div class="dash-left-img">
-                        <img src="/Dashboard/1759158223.png" alt="Profile" class="img-fluid">
+                        <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
                     </div>
                     <div class="qr-icon">
                         <p class="mb-0 f-32 gilroy-Semibold text-dark"><span><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></span>
