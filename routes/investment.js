@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const investmentController = require('../controllers/investmentController');
-const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const { isAuthenticated, isAdmin, attachUser } = require('../middleware/auth');
 
 // USER ROUTES - All require authentication
 router.use(isAuthenticated);

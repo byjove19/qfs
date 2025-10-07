@@ -1276,40 +1276,35 @@ const adminController = {
     req.flash('info', 'Admin withdrawal feature coming soon');
     res.redirect('/admin/users');
   },
-/** =======================
- *  WALLET ADDRESS MANAGEMENT
- *  =======================
+
+  /**
+ * WALLET ADDRESS MANAGEMENT
+ * =======================
  */
 
 // Get all deposit wallet addresses for admin management
 async getDepositAddresses(req, res) {
   try {
-    // Default deposit wallet addresses (separate from user wallets)
-    const defaultWallets = {
-      BTC: process.env.BTC_WALLET || 'bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp',
-      ETH: process.env.ETH_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-      LTC: process.env.LTC_WALLET || 'ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm',
-      XRP: process.env.XRP_WALLET || 'rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3',
-      DOGE: process.env.DOGE_WALLET || 'DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx',
-      XLM: process.env.XLM_WALLET || 'GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2',
-      MATIC: process.env.MATIC_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-      ALGO: process.env.ALGO_WALLET || '47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA',
-      XDC: process.env.XDC_WALLET || 'xdc0000000000000000000000000000000000000000' // Example XDC address
+    // Only use environment variables - no fallbacks
+    const depositWallets = {
+      BTC: process.env.BTC_WALLET,
+      ETH: process.env.ETH_WALLET,
+      LTC: process.env.LTC_WALLET,
+      XRP: process.env.XRP_WALLET,
+      DOGE: process.env.DOGE_WALLET,
+      XLM: process.env.XLM_WALLET,
+      MATIC: process.env.MATIC_WALLET,
+      ALGO: process.env.ALGO_WALLET,
+      XDC: process.env.XDC_WALLET,
+      'USDT-ERC20': process.env.USDT_ERC20_WALLET,
+      'USDT-TRC20': process.env.USDT_TRC20_WALLET,
+      SOL: process.env.SOL_WALLET,
+      USDC: process.env.USDC_WALLET
     };
-
-    // Additional supported cryptocurrencies (not in your Wallet model but for deposits)
-    const additionalWallets = {
-      'USDT-ERC20': process.env.USDT_ERC20_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-      'USDT-TRC20': process.env.USDT_TRC20_WALLET || 'TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN',
-      SOL: process.env.SOL_WALLET || 'HhV3ydYWteQGxPPc3Atuj6qL1q4WWL7Ds4ogGxZZZP6n',
-      USDC: process.env.USDC_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae'
-    };
-
-    const allWallets = { ...defaultWallets, ...additionalWallets };
 
     res.render('admin/deposit-addresses', {
       title: 'Deposit Address Management',
-      wallets: allWallets,
+      wallets: depositWallets,
       user: req.session.user,
       messages: {
         success: req.flash('success'),
@@ -1357,9 +1352,6 @@ async updateDepositAddress(req, res) {
       });
     }
 
-    // In a real application, save to database or environment
-    // For now, we'll simulate saving and return success
-    
     // Log the update for security audit
     console.log(`Deposit address updated by ${req.session.user.email}: ${currency} -> ${address.trim()}`);
 
@@ -1397,29 +1389,43 @@ async updateDepositAddress(req, res) {
   }
 },
 
-// Get deposit address for specific currency
+// Get deposit address for specific currency (Admin only - no frontend exposure)
 async getDepositAddress(req, res) {
   try {
     const { currency } = req.params;
 
-    // Default deposit addresses
-    const defaultWallets = {
-      BTC: process.env.BTC_WALLET || 'bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp',
-      ETH: process.env.ETH_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-      LTC: process.env.LTC_WALLET || 'ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm',
-      XRP: process.env.XRP_WALLET || 'rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3',
-      DOGE: process.env.DOGE_WALLET || 'DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx',
-      XLM: process.env.XLM_WALLET || 'GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2',
-      MATIC: process.env.MATIC_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-      ALGO: process.env.ALGO_WALLET || '47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA',
-      XDC: process.env.XDC_WALLET || 'xdc0000000000000000000000000000000000000000',
-      'USDT-ERC20': process.env.USDT_ERC20_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-      'USDT-TRC20': process.env.USDT_TRC20_WALLET || 'TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN',
-      SOL: process.env.SOL_WALLET || 'HhV3ydYWteQGxPPc3Atuj6qL1q4WWL7Ds4ogGxZZZP6n',
-      USDC: process.env.USDC_WALLET || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae'
+    // Only return addresses to admin users
+    if (!req.session.user || !['admin', 'superadmin'].includes(req.session.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied'
+      });
+    }
+
+    const depositWallets = {
+      BTC: process.env.BTC_WALLET,
+      ETH: process.env.ETH_WALLET,
+      LTC: process.env.LTC_WALLET,
+      XRP: process.env.XRP_WALLET,
+      DOGE: process.env.DOGE_WALLET,
+      XLM: process.env.XLM_WALLET,
+      MATIC: process.env.MATIC_WALLET,
+      ALGO: process.env.ALGO_WALLET,
+      XDC: process.env.XDC_WALLET,
+      'USDT-ERC20': process.env.USDT_ERC20_WALLET,
+      'USDT-TRC20': process.env.USDT_TRC20_WALLET,
+      SOL: process.env.SOL_WALLET,
+      USDC: process.env.USDC_WALLET
     };
 
-    const address = defaultWallets[currency] || 'Address not configured';
+    const address = depositWallets[currency];
+
+    if (!address) {
+      return res.status(404).json({
+        success: false,
+        message: 'Wallet address not configured'
+      });
+    }
 
     res.json({
       success: true,
@@ -1437,7 +1443,6 @@ async getDepositAddress(req, res) {
     });
   }
 },
-
 // Get all user wallets summary (across all currencies)
 async getAllUserWallets(req, res) {
   try {
@@ -1510,6 +1515,85 @@ async getAllUserWallets(req, res) {
     console.error('Get All User Wallets Error:', error);
     req.flash('error', 'Failed to load user wallets');
     res.redirect('/admin/dashboard');
+  }
+},
+
+// Update user wallet balance (Admin only)
+async updateUserWallet(req, res) {
+  try {
+    const { userId, currency, balance, action } = req.body;
+
+    // Validate required fields
+    if (!userId || !currency || balance === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID, currency, and balance are required'
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    let wallet = await Wallet.findOne({ userId, currency });
+    
+    if (!wallet) {
+      // Create new wallet if it doesn't exist
+      wallet = new Wallet({
+        userId,
+        currency,
+        balance: parseFloat(balance)
+      });
+    } else {
+      // Update existing wallet
+      if (action === 'set') {
+        wallet.balance = parseFloat(balance);
+      } else if (action === 'add') {
+        wallet.balance += parseFloat(balance);
+      } else if (action === 'subtract') {
+        wallet.balance -= parseFloat(balance);
+      }
+    }
+
+    await wallet.save();
+
+    // Create audit transaction
+    await Transaction.create({
+      type: 'system',
+      amount: parseFloat(balance),
+      currency: currency,
+      status: 'completed',
+      description: `Wallet balance ${action} by admin`,
+      adminNote: `Updated by ${req.session.user.firstName} ${req.session.user.lastName}`,
+      metadata: {
+        adminId: req.session.user._id,
+        userId: userId,
+        currency: currency,
+        action: action,
+        newBalance: wallet.balance
+      }
+    });
+
+    res.json({
+      success: true,
+      message: 'User wallet updated successfully',
+      data: {
+        userId,
+        currency,
+        balance: wallet.balance
+      }
+    });
+
+  } catch (error) {
+    console.error('Update User Wallet Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update user wallet'
+    });
   }
 },
 

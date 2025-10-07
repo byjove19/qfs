@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Management - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your existing CSS remains the same */
+        :root {
+          --tg-body-font-family: 'Inter', serif;
+          --tg-heading-font-family: 'Inter', serif;
+          --tg-body-font-size: 16px;
+          --tg-body-line-height: 1.62;
+          --tg-heading-line-height: 1.2;
+          --tg-body-color: #9E9E9E;
+          --tg-heading-color: #ffffff;
+          --tg-theme-primary: #4b59f5;
+          --tg-theme-secondary: #0bf;
+          --tg-color-white-default: #ffffff;
+          --tg-color-dark: #0C0C0C;
+          --tg-color-dark-2: #000000;
+          --tg-color-dark-3: #262626;
+          --tg-border-1: #363636;
+          --tg-transition: all 0.3s ease-out 0s;
+        }
+
+        [data-theme="light"] {
+            --tg-body-color: #5a5a5a;
+            --tg-heading-color: #1a1a1a;
+            --tg-color-dark: #f8f9fa;
+            --tg-color-dark-2: #ffffff;
+            --tg-color-dark-3: #e9ecef;
+            --tg-border-1: #dee2e6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+          font-family: var(--tg-body-font-family);
+          font-size: var(--tg-body-font-size);
+          color: var(--tg-body-color);
+          line-height: var(--tg-body-line-height);
+          background: var(--tg-color-dark);
+        }
+
+        h1, h2, h3 {
+          font-family: var(--tg-heading-font-family);
+          color: var(--tg-heading-color);
+          margin-top: 0;
+          font-weight: 600;
+        }
+
+        .admin-wrapper { display: flex; min-height: 100vh; }
+
+        .theme-toggle {
+            position: fixed; top: 20px; right: 20px;
+            width: 50px; height: 50px;
+            background: var(--tg-color-dark-2);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 1000;
+            transition: var(--tg-transition);
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: var(--tg-color-dark-2);
+            border-right: 1px solid var(--tg-border-1);
+            display: flex; flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--tg-border-1);
+        }
+
+        .logo-text {
+            font-size: 24px; font-weight: 700;
+            color: #4b59f5;
+            text-decoration: none;
+        }
+
+        .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 5px; }
+
+        .nav-link {
+            display: flex; align-items: center;
+            padding: 12px 20px;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+        }
+
+        .nav-link.active {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-theme-primary);
+            border-left-color: var(--tg-theme-primary);
+        }
+
+        .nav-link i { width: 24px; margin-right: 12px; }
+
+        .admin-main { flex: 1; display: flex; flex-direction: column; }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: var(--tg-color-dark-2);
+            border-bottom: 1px solid var(--tg-border-1);
+        }
+
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+
+        .card {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body { padding: 25px; }
+
+        .tg-btn {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--tg-transition);
+        }
+
+        .tg-btn:hover {
+            background: var(--tg-theme-secondary);
+            transform: translateY(-2px);
+        }
+
+        .wallet-card {
+            background: var(--tg-color-dark-3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .wallet-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wallet-icon {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .wallet-address {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .address-input {
+            flex: 1;
+            background: var(--tg-color-dark-2);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: var(--tg-heading-color);
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .address-input:read-only {
+            background: var(--tg-color-dark);
+            color: var(--tg-body-color);
+        }
+
+        .action-buttons { display: flex; gap: 10px; }
+
+        .btn-icon {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            background: var(--tg-color-dark-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tg-body-color);
+            border: none;
+            cursor: pointer;
+            transition: var(--tg-transition);
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-edit { background: var(--tg-theme-primary); color: white; }
+        .btn-save { background: #28a745; color: white; }
+        .btn-cancel { background: #dc3545; color: white; }
+        .btn-copy { background: var(--tg-theme-secondary); color: white; }
+        .btn-qr { background: #865FFC; color: white; }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+
+        .alert-info {
+            background: rgba(0, 191, 255, 0.1);
+            border-color: rgba(0, 191, 255, 0.3);
+            color: var(--tg-theme-secondary);
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            border-color: rgba(40, 167, 69, 0.3);
+            color: #28a745;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body { padding: 25px; text-align: center; }
+
+        .qr-code { margin: 20px 0; }
+        .qr-code canvas { max-width: 200px; border-radius: 8px; }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            border: 2px solid var(--tg-border-1);
+            border-top: 2px solid var(--tg-theme-primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar { display: none; }
+            .wallet-address { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <button class="theme-toggle" id="themeToggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/>
+            </svg>
+        </button>
+
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS ADMIN</a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="/admin/users" class="nav-link"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="/admin/transactions" class="nav-link"><i class="fas fa-exchange-alt"></i> <span>Transactions</span></a></li>
+                    <li><a href="/admin/deposit-addresses" class="nav-link active"><i class="fas fa-coins"></i> <span>Deposit Addresses</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Deposit Address Management</h1>
+                <span class="tg-btn">Admin User</span>
+            </header>
+
+            <div class="admin-content">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>Admin Access:</strong> Only administrators can update wallet addresses. Changes are saved to database.
+                </div>
+
+                <div class="alert alert-success" id="successAlert" style="display: none;">
+                    <i class="fas fa-check-circle"></i> 
+                    <strong>Success:</strong> <span id="successMessage"></span>
+                </div>
+
+                <div class="alert alert-danger" id="errorAlert" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    <strong>Error:</strong> <span id="errorMessage"></span>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>All Cryptocurrency Wallet Addresses</h2>
+                        <div class="action-buttons">
+                            <button class="tg-btn" id="refreshBtn">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <button class="tg-btn" id="publishBtn">
+                                <i class="fas fa-paper-plane"></i> Publish to Frontend
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" id="walletContainer">
+                        <div class="loading-state" style="text-align: center; padding: 40px;">
+                            <div class="spinner"></div>
+                            <p style="margin-top: 15px;">Loading wallet addresses...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="qrModalTitle">QR Code</h3>
+                <button class="btn-icon" id="qrModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code" id="qrcode"></div>
+                <p id="qrAddress" style="font-family: monospace; margin: 15px 0;"></p>
+                <button class="tg-btn" id="copyQRBtn">
+                    <i class="fas fa-copy"></i> Copy Address
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        // API endpoints
+        const API_BASE = '/api/admin/wallets';
+        
+        // All cryptocurrencies from your frontend
+        const ALL_CRYPTOCURRENCIES = [
+            { currency: 'BTC', name: 'Bitcoin', network: 'Bitcoin' },
+            { currency: 'XRP', name: 'XRP', network: 'XRP' },
+            { currency: 'XLM', name: 'Stellar', network: 'XLM' },
+            { currency: 'ETH', name: 'Ethereum', network: 'Ethereum' },
+            { currency: 'USDT-ERC20', name: 'USDT (ERC20)', network: 'Ethereum' },
+            { currency: 'USDT-TRC20', name: 'USDT (TRC20)', network: 'TRON' },
+            { currency: 'ALGO', name: 'Algorand', network: 'Algorand' },
+            { currency: 'MATIC', name: 'Polygon', network: 'Polygon' },
+            { currency: 'LTC', name: 'Litecoin', network: 'Litecoin' },
+            { currency: 'DOGE', name: 'Dogecoin', network: 'Dogecoin' },
+            { currency: 'SOL', name: 'Solana', network: 'Solana' },
+            { currency: 'USDC', name: 'USDC (ERC20)', network: 'Ethereum' }
+        ];
+
+        let wallets = {};
+        let originalValues = {};
+
+        // Initialize
+        async function init() {
+            await loadWalletsFromDatabase();
+            attachEventListeners();
+        }
+
+        // Load wallets from database
+        async function loadWalletsFromDatabase() {
+            try {
+                showLoading(true);
+                
+                const response = await fetch(`${API_BASE}/`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    wallets = result.data;
+                    renderWallets();
+                    showAlert('success', 'Wallet addresses loaded successfully');
+                } else {
+                    throw new Error(result.message || 'Failed to load wallets');
+                }
+            } catch (error) {
+                console.error('Error loading wallets:', error);
+                showAlert('danger', `Failed to load wallets: ${error.message}`);
+                
+                // Initialize with empty addresses if none exist
+                initializeEmptyWallets();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Initialize empty wallets if none in database
+        function initializeEmptyWallets() {
+            wallets = {};
+            ALL_CRYPTOCURRENCIES.forEach(crypto => {
+                wallets[crypto.currency] = {
+                    currency: crypto.currency,
+                    name: crypto.name,
+                    address: '',
+                    network: crypto.network,
+                    isActive: false
+                };
+            });
+            renderWallets();
+        }
+
+        // Show/hide loading state
+        function showLoading(show) {
+            const container = document.getElementById('walletContainer');
+            if (show) {
+                container.innerHTML = `
+                    <div class="loading-state" style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Loading wallet addresses...</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Render all wallets
+        function renderWallets() {
+            const container = document.getElementById('walletContainer');
+            container.innerHTML = '';
+
+            ALL_CRYPTOCURRENCIES.forEach(crypto => {
+                const wallet = wallets[crypto.currency] || {
+                    currency: crypto.currency,
+                    name: crypto.name,
+                    address: '',
+                    network: crypto.network,
+                    isActive: false
+                };
+                
+                const walletCard = createWalletCard(crypto.currency, wallet);
+                container.appendChild(walletCard);
+            });
+        }
+
+        // Create wallet card element
+        function createWalletCard(key, wallet) {
+            const card = document.createElement('div');
+            card.className = 'wallet-card';
+            card.innerHTML = `
+                <div class="wallet-header">
+                    <div class="wallet-title">
+                        <div class="wallet-icon">
+                            <i class="${getWalletIcon(wallet.currency)}"></i>
+                        </div>
+                        ${wallet.name} (${wallet.currency})
+                        ${!wallet.address ? '<span style="color: #ff6b6b; font-size: 12px; margin-left: 10px;">- Not Set</span>' : ''}
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-edit" data-action="edit" data-wallet="${key}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${wallet.address ? `
+                        <button class="btn-icon btn-copy" data-action="copy" data-wallet="${key}">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="btn-icon btn-qr" data-action="qr" data-wallet="${key}">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="wallet-address">
+                    <input type="text" id="${key}-address" value="${wallet.address}" 
+                           class="address-input" readonly data-wallet="${key}" 
+                           placeholder="Enter ${wallet.name} wallet address">
+                    ${wallet.address ? `
+                    <button class="btn-icon btn-copy" data-action="copy" data-wallet="${key}">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="btn-icon btn-qr" data-action="qr" data-wallet="${key}">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
+                    ` : ''}
+                </div>
+                <div class="edit-controls" id="${key}-controls" style="display: none; margin-top: 15px;">
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-save" data-action="save" data-wallet="${key}">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="btn-icon btn-cancel" data-action="cancel" data-wallet="${key}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Get wallet icon based on currency
+        function getWalletIcon(currency) {
+            const icons = {
+                'BTC': 'fab fa-bitcoin',
+                'ETH': 'fab fa-ethereum',
+                'LTC': 'fab fa-litecoin',
+                'XRP': 'fas fa-exchange-alt',
+                'XLM': 'fas fa-star',
+                'USDT-ERC20': 'fas fa-dollar-sign',
+                'USDT-TRC20': 'fas fa-dollar-sign',
+                'USDC': 'fas fa-dollar-sign',
+                'SOL': 'fas fa-bolt',
+                'MATIC': 'fab fa-ethereum',
+                'ALGO': 'fas fa-shapes',
+                'DOGE': 'fab fa-reddit'
+            };
+            return icons[currency] || 'fas fa-wallet';
+        }
+
+        // Attach all event listeners
+        function attachEventListeners() {
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', loadWalletsFromDatabase);
+
+            // Publish button
+            document.getElementById('publishBtn').addEventListener('click', publishAddresses);
+
+            // Wallet actions (using event delegation)
+            document.getElementById('walletContainer').addEventListener('click', handleWalletAction);
+
+            // QR Modal close
+            document.getElementById('qrModalClose').addEventListener('click', closeQRModal);
+            document.getElementById('copyQRBtn').addEventListener('click', copyQRAddress);
+            document.getElementById('qrModal').addEventListener('click', (e) => {
+                if (e.target.id === 'qrModal') closeQRModal();
+            });
+        }
+
+        // Handle all wallet actions
+        function handleWalletAction(e) {
+            const button = e.target.closest('[data-action]');
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const wallet = button.dataset.wallet;
+
+            switch(action) {
+                case 'edit': toggleEdit(wallet); break;
+                case 'copy': copyToClipboard(wallet); break;
+                case 'qr': showQRCode(wallet); break;
+                case 'save': saveAddress(wallet); break;
+                case 'cancel': cancelEdit(wallet); break;
+            }
+        }
+
+        // Toggle edit mode
+        function toggleEdit(wallet) {
+            const input = document.getElementById(`${wallet}-address`);
+            const controls = document.getElementById(`${wallet}-controls`);
+            
+            originalValues[wallet] = input.value;
+            input.readOnly = false;
+            input.style.background = 'var(--tg-color-dark-3)';
+            input.focus();
+            controls.style.display = 'block';
+        }
+
+        // Save address to database
+        async function saveAddress(wallet) {
+            const input = document.getElementById(`${wallet}-address`);
+            const newAddress = input.value.trim();
+
+            if (!newAddress) {
+                showAlert('danger', 'Address cannot be empty');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                
+                const response = await fetch(`${API_BASE}/${wallet}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        address: newAddress,
+                        network: wallets[wallet]?.network || ALL_CRYPTOCURRENCIES.find(c => c.currency === wallet)?.network || 'Mainnet'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (!wallets[wallet]) {
+                        wallets[wallet] = {};
+                    }
+                    wallets[wallet].address = newAddress;
+                    input.readOnly = true;
+                    input.style.background = '';
+                    document.getElementById(`${wallet}-controls`).style.display = 'none';
+                    
+                    showAlert('success', `${wallet} address updated successfully in database!`);
+                    
+                    // Refresh the wallet display to show new buttons
+                    renderWallets();
+                } else {
+                    throw new Error(result.message || 'Failed to save address');
+                }
+            } catch (error) {
+                console.error('Error saving address:', error);
+                showAlert('danger', `Failed to save address: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Cancel edit
+        function cancelEdit(wallet) {
+            const input = document.getElementById(`${wallet}-address`);
+            input.value = originalValues[wallet] || (wallets[wallet]?.address || '');
+            input.readOnly = true;
+            input.style.background = '';
+            document.getElementById(`${wallet}-controls`).style.display = 'none';
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(wallet) {
+            const input = document.getElementById(`${wallet}-address`);
+            const address = input.value;
+            
+            if (!address) {
+                showAlert('danger', 'No address to copy');
+                return;
+            }
+            
+            input.select();
+            document.execCommand('copy');
+            showAlert('success', `${wallet} address copied to clipboard!`);
+        }
+
+        // Show QR Code
+        function showQRCode(wallet) {
+            const address = wallets[wallet]?.address;
+            if (!address) {
+                showAlert('danger', 'No address to generate QR code');
+                return;
+            }
+            
+            const modal = document.getElementById('qrModal');
+            const qrContainer = document.getElementById('qrcode');
+            
+            document.getElementById('qrModalTitle').textContent = `${wallet} QR Code`;
+            document.getElementById('qrAddress').textContent = address;
+            
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: address,
+                width: 200,
+                height: 200
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        // Close QR Modal
+        function closeQRModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+
+        // Copy QR address
+        function copyQRAddress() {
+            const address = document.getElementById('qrAddress').textContent;
+            navigator.clipboard.writeText(address);
+            showAlert('success', 'Address copied!');
+            closeQRModal();
+        }
+
+        // Publish addresses to frontend
+        async function publishAddresses() {
+            try {
+                showLoading(true);
+                
+                const response = await fetch('/api/admin/publish-wallets', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', 'All wallet addresses published to frontend successfully!');
+                } else {
+                    throw new Error(result.message || 'Failed to publish addresses');
+                }
+            } catch (error) {
+                console.error('Error publishing addresses:', error);
+                showAlert('danger', `Failed to publish addresses: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Show alert
+        function showAlert(type, message) {
+            // Hide both alerts first
+            document.getElementById('successAlert').style.display = 'none';
+            document.getElementById('errorAlert').style.display = 'none';
+            
+            if (type === 'success') {
+                const alert = document.getElementById('successAlert');
+                const messageEl = document.getElementById('successMessage');
+                messageEl.textContent = message;
+                alert.style.display = 'block';
+            } else {
+                const alert = document.getElementById('errorAlert');
+                const messageEl = document.getElementById('errorMessage');
+                messageEl.textContent = message;
+                alert.style.display = 'block';
+            }
+            
+            setTimeout(() => {
+                document.getElementById('successAlert').style.display = 'none';
+                document.getElementById('errorAlert').style.display = 'none';
+            }, 5000);
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

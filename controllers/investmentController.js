@@ -45,8 +45,16 @@ const investmentPlans = [
 // GET investment page with form
 exports.getInvestmentPage = async (req, res) => {
   try {
-    const user = await User.findById(req.session.user._id);
+    console.log('DEBUG: Session user ID:', req.session.user?.id);
     
+    const user = await User.findById(req.session.user.id); // Use .id
+    
+    if (!user) {
+      console.log('ERROR: User not found in database');
+      req.flash('error', 'User not found. Please log in again.');
+      return res.redirect('/auth/login');
+    }
+
     res.render('investment', {
       title: 'Invest Now - QFS',
       plans: investmentPlans,
@@ -62,7 +70,7 @@ exports.getInvestmentPage = async (req, res) => {
 // GET investment list/history
 exports.getInvestmentList = async (req, res) => {
   try {
-    const investments = await Investment.find({ userId: req.session.user._id })
+    const investments = await Investment.find({ userId: req.session.user.id }) // Use .id
       .sort({ createdAt: -1 });
     
     res.render('investment-list', {
@@ -87,7 +95,7 @@ exports.createInvestment = async (req, res) => {
     console.log('Plan:', plan);
     console.log('Wallet:', wallet);
     console.log('Amount:', amount);
-    console.log('Session user:', req.session.user);
+    console.log('Session user ID:', req.session.user.id); // Use .id
     console.log('================================');
     
     // Validate input
@@ -126,7 +134,7 @@ exports.createInvestment = async (req, res) => {
 
     // Create investment with PENDING status
     const investment = new Investment({
-      userId: req.session.user._id,
+      userId: req.session.user.id, // Use .id
       planName: selectedPlan.name,
       currency: wallet,
       amount: investAmount,
@@ -159,7 +167,7 @@ exports.getInvestmentDetails = async (req, res) => {
   try {
     const investment = await Investment.findOne({
       _id: req.params.id,
-      userId: req.session.user._id
+      userId: req.session.user.id // Use .id
     });
 
     if (!investment) {
@@ -183,7 +191,7 @@ exports.cancelInvestment = async (req, res) => {
   try {
     const investment = await Investment.findOne({
       _id: req.params.id,
-      userId: req.session.user._id
+      userId: req.session.user.id // Use .id
     });
 
     if (!investment) {
@@ -198,7 +206,7 @@ exports.cancelInvestment = async (req, res) => {
 
     // If investment was active, refund the amount
     if (investment.status === 'active') {
-      const user = await User.findById(req.session.user._id);
+      const user = await User.findById(req.session.user.id); // Use .id
       const walletKey = `${investment.currency.toLowerCase()}Balance`;
       user[walletKey] = (user[walletKey] || 0) + investment.amount;
       await user.save();
@@ -257,7 +265,7 @@ exports.approveInvestment = async (req, res) => {
 
     // Approve investment
     investment.status = 'active';
-    investment.approvedBy = req.session.user._id;
+    investment.approvedBy = req.session.user.id; // Use .id
     investment.approvedAt = new Date();
     await investment.save();
 
@@ -288,7 +296,7 @@ exports.rejectInvestment = async (req, res) => {
 
     investment.status = 'rejected';
     investment.rejectionReason = reason || 'No reason provided';
-    investment.approvedBy = req.session.user._id;
+    investment.approvedBy = req.session.user.id; // Use .id
     investment.approvedAt = new Date();
     await investment.save();
 
