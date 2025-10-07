@@ -226,9 +226,7 @@ app.use('/transactions', transactionRoutes);
 app.use('/', recipientRoutes);
 app.use('/', investmentRoutes);
 app.use('/', depositRoutes);
-
-
-
+app.use('/admin', adminWalletRoutes);
 app.use('/api', adminWalletRoutes);
 // ========== INDIVIDUAL PROTECTED ROUTES ==========
 

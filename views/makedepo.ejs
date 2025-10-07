@@ -75,7 +75,7 @@
           background: var(--tg-color-dark);
           margin: 0 auto;
           max-width: 100%;
-          padding: 0 20px;
+          padding: 20px;
         }
 
         /* Enhanced Deposit Page Styles */
@@ -151,12 +151,6 @@
             background: rgba(220, 53, 69, 0.1);
             border-color: rgba(220, 53, 69, 0.3);
             color: #dc3545;
-        }
-
-        .alert-warning {
-            background: rgba(255, 193, 7, 0.1);
-            border-color: rgba(255, 193, 7, 0.3);
-            color: #ffc107;
         }
 
         .deposit-body {
@@ -649,20 +643,6 @@
             border-radius: 8px;
         }
 
-        /* Success Message */
-        .success-message {
-            background: rgba(40, 167, 69, 0.1);
-            border: 1px solid rgba(40, 167, 69, 0.3);
-            color: #28a745;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin: 15px 0;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            font-weight: var(--tg-fw-medium);
-        }
-
         /* Loading Animation */
         .loading {
             display: inline-block;
@@ -805,40 +785,90 @@
                         <i class="fas fa-list-ol"></i> Deposit Instructions
                     </h3>
                     <div class="steps-list">
-                        <div class="step-item">Select cryptocurrency and enter deposit amount</div>
-                        <div class="step-item">Copy the wallet address or scan QR code</div>
-                        <div class="step-item">Send exact amount from your wallet</div>
-                        <div class="step-item">Submit payment confirmation</div>
-                        <div class="step-item">Contact support for fast verification</div>
+                        <div class="step-item">Choose QFS Asset Backed coin you want to deposit and Enter the amount</div>
+                        <div class="step-item">Copy the wallet address provided or scan the QR code to make the deposit</div>
+                        <div class="step-item">Send the exact amount to the Crypto address provided</div>
+                        <div class="step-item">After completing the deposit, click on "Submit Payment" to finalize the process</div>
+                        <div class="step-item">Contact Live Support for Fast Deposit Confirmation</div>
                     </div>
                 </div>
 
                 <!-- Dynamic Wallet Address Section -->
-                <div id="walletAddresses" class="wallet-section"></div>
+                <div id="walletAddresses" class="wallet-section">
+                    <!-- Wallet addresses will be dynamically inserted here -->
+                </div>
             </form>
 
             <div class="submit-section">
-                <button type="button" onclick="submitDeposit()" class="submit-btn" id="submitBtn">
-                    <i class="fas fa-paper-plane"></i> Confirm & Submit Payment
+                <button type="button" onclick="showSubmitModal()" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Payment
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Success Message -->
-    <div id="successMessage" class="success-message" style="display: none;">
-        <i class="fas fa-check-circle"></i> 
-        <span id="successText"></span>
+    <!-- Submit Confirmation Modal -->
+    <div class="modal-overlay" id="submitModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-check-circle"></i> Confirm Deposit
+                </h3>
+                <button class="modal-close" onclick="closeSubmitModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-success">
+                    <div class="success-icon">
+                        <i class="fas fa-question"></i>
+                    </div>
+                    <h3 style="color: var(--tg-heading-color); margin-bottom: 10px;">Confirm Your Deposit</h3>
+                    <p style="color: var(--tg-body-color);">Please confirm that you have sent the exact amount to the provided wallet address.</p>
+                </div>
+
+                <div class="transaction-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Amount:</span>
+                        <span class="detail-value" id="confirmAmount">$0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Cryptocurrency:</span>
+                        <span class="detail-value" id="confirmCurrency">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value" style="color: #ffc107;">Pending Verification</span>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Important:</strong> Make sure you have completed the cryptocurrency transfer before submitting. Contact support after submission for fast verification.
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-success" onclick="submitDeposit()">
+                        <i class="fas fa-check"></i> Yes, I've Sent the Payment
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeSubmitModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Transaction Success Modal -->
+    <!-- Success Modal -->
     <div class="modal-overlay" id="successModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">
                     <i class="fas fa-check-circle"></i> Deposit Submitted
                 </h3>
-                <button class="modal-close" id="successModalClose">
+                <button class="modal-close" onclick="closeSuccessModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -847,14 +877,14 @@
                     <div class="success-icon">
                         <i class="fas fa-check"></i>
                     </div>
-                    <h3 style="color: var(--tg-heading-color); margin-bottom: 10px;">Transaction Recorded Successfully!</h3>
-                    <p style="color: var(--tg-body-color);">Your deposit request has been submitted and is pending verification.</p>
+                    <h3 style="color: var(--tg-heading-color); margin-bottom: 10px;">Deposit Submitted Successfully!</h3>
+                    <p style="color: var(--tg-body-color);">Your deposit request has been recorded and is pending verification.</p>
                 </div>
 
                 <div class="transaction-details">
                     <div class="detail-row">
                         <span class="detail-label">Transaction ID:</span>
-                        <span class="detail-value transaction-id" id="modalTransactionId">TX-123456789</span>
+                        <span class="detail-value transaction-id" id="modalTransactionId">TX-<%= Date.now().toString().slice(-8) %></span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Amount:</span>
@@ -870,7 +900,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Date & Time:</span>
-                        <span class="detail-value" id="modalDateTime">-</span>
+                        <span class="detail-value" id="modalDateTime"><%= new Date().toLocaleString() %></span>
                     </div>
                 </div>
 
@@ -882,8 +912,8 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button class="btn btn-primary" onclick="viewTransactions()">
-                        <i class="fas fa-list"></i> View Transactions
+                    <button class="btn btn-primary" onclick="goToDashboard()">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
                     </button>
                     <button class="btn btn-secondary" onclick="closeSuccessModal()">
                         <i class="fas fa-times"></i> Close
@@ -900,7 +930,7 @@
                 <h3 class="modal-title" id="qrModalTitle">
                     <i class="fas fa-qrcode"></i> QR Code
                 </h3>
-                <button class="modal-close" id="qrModalClose">
+                <button class="modal-close" onclick="closeQRModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -984,7 +1014,7 @@
                                 </button>
                                 <button type="button" 
                                         class="btn btn-secondary" 
-                                        onclick="showQRCode('${currencyInfo.name}', 'walletAddress')">
+                                        onclick="showQRCode('${currencyInfo.name}', '${address}')">
                                     <i class="fas fa-qrcode"></i> QR Code
                                 </button>
                             </div>
@@ -1001,33 +1031,40 @@
             try {
                 const element = document.getElementById(elementId);
                 await navigator.clipboard.writeText(element.value);
-                
-                showSuccessMessage('Wallet address copied to clipboard!');
-                
+                showTemporaryMessage('Wallet address copied to clipboard!');
             } catch (err) {
                 console.error('Failed to copy text: ', err);
                 alert('Failed to copy address. Please try again.');
             }
         }
 
-        // Show success message
-        function showSuccessMessage(message) {
-            const successMessage = document.getElementById('successMessage');
-            const successText = document.getElementById('successText');
-            
-            successText.textContent = message;
-            successMessage.style.display = 'flex';
+        // Show temporary message
+        function showTemporaryMessage(message) {
+            const tempMsg = document.createElement('div');
+            tempMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--tg-theme-primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                z-index: 10001;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            tempMsg.textContent = message;
+            document.body.appendChild(tempMsg);
             
             setTimeout(() => {
-                successMessage.style.display = 'none';
+                document.body.removeChild(tempMsg);
             }, 3000);
         }
 
-        // Submit deposit function
-        async function submitDeposit() {
+        // Show submit confirmation modal
+        function showSubmitModal() {
             const amount = document.getElementById('amount').value;
             const currency = document.getElementById('currency').value;
-            const submitBtn = document.getElementById('submitBtn');
             
             if (!amount || amount < 100) {
                 alert('Please enter a valid amount (minimum $100)');
@@ -1039,73 +1076,67 @@
                 return;
             }
 
+            if (!walletAddresses[currency]) {
+                alert('Selected cryptocurrency wallet is not available. Please choose another option.');
+                return;
+            }
+
+            // Populate confirmation modal
+            document.getElementById('confirmAmount').textContent = '$' + parseFloat(amount).toLocaleString();
+            document.getElementById('confirmCurrency').textContent = currencyData[currency].name;
+            
+            // Show modal
+            document.getElementById('submitModal').style.display = 'flex';
+        }
+
+        // Close submit modal
+        function closeSubmitModal() {
+            document.getElementById('submitModal').style.display = 'none';
+        }
+
+        // Submit deposit function
+        function submitDeposit() {
+            const amount = document.getElementById('amount').value;
+            const currency = document.getElementById('currency').value;
+            const submitBtn = document.getElementById('submitBtn');
+            
             // Show loading state
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<div class="loading"></div> Processing...';
             submitBtn.disabled = true;
 
-            try {
-                // Send deposit request to server
-                const response = await fetch('/deposit/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        amount: parseFloat(amount),
-                        currency: currency,
-                        description: `Deposit request for ${amount} USD via ${currencyData[currency].name}`
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // Show success modal with transaction details
-                    showSuccessModal(result.transaction, amount, currency);
-                } else {
-                    alert('Deposit submission failed: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Deposit submission error:', error);
-                alert('Failed to submit deposit. Please try again.');
-            } finally {
-                // Restore button state
+            // Simulate API call
+            setTimeout(() => {
+                // Populate success modal
+                document.getElementById('modalAmount').textContent = '$' + parseFloat(amount).toLocaleString();
+                document.getElementById('modalCurrency').textContent = currencyData[currency].name;
+                
+                // Close submit modal and show success modal
+                closeSubmitModal();
+                document.getElementById('successModal').style.display = 'flex';
+                
+                // Reset button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-            }
-        }
-
-        // Show success modal
-        function showSuccessModal(transaction, amount, currency) {
-            const modal = document.getElementById('successModal');
-            const currencyInfo = currencyData[currency];
-            
-            // Populate modal with transaction details
-            document.getElementById('modalTransactionId').textContent = transaction._id || 'TX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            document.getElementById('modalAmount').textContent = '$' + parseFloat(amount).toLocaleString();
-            document.getElementById('modalCurrency').textContent = currencyInfo.name;
-            document.getElementById('modalDateTime').textContent = new Date().toLocaleString();
-            
-            // Show modal
-            modal.style.display = 'flex';
+                
+                // Reset form
+                document.getElementById('depositForm').reset();
+                document.getElementById('walletAddresses').innerHTML = '';
+            }, 1500);
         }
 
         // Close success modal
         function closeSuccessModal() {
             document.getElementById('successModal').style.display = 'none';
-            // Optionally redirect to transactions page
-            // window.location.href = '/transactions';
         }
 
-        // View transactions
-        function viewTransactions() {
-            window.location.href = '/transactions';
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = '/dashboard';
         }
 
         // QR Code functions
-        function showQRCode(currency, elementId) {
-            const address = document.getElementById(elementId).value;
+        function showQRCode(currency, address) {
             const qrModal = document.getElementById('qrModal');
             const qrImage = document.getElementById('qrImage');
             const qrAddress = document.getElementById('qrAddress');
@@ -1117,32 +1148,20 @@
             qrModal.style.display = 'flex';
         }
 
+        function closeQRModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+
         function copyQRAddress() {
             const qrAddress = document.getElementById('qrAddress');
-            copyToClipboardFromElement(qrAddress);
+            navigator.clipboard.writeText(qrAddress.textContent);
+            showTemporaryMessage('Address copied to clipboard!');
         }
-
-        async function copyToClipboardFromElement(element) {
-            try {
-                await navigator.clipboard.writeText(element.textContent);
-                showSuccessMessage('Address copied to clipboard!');
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                alert('Failed to copy address. Please try again.');
-            }
-        }
-
-        // Modal close handlers
-        document.getElementById('qrModalClose').addEventListener('click', function() {
-            document.getElementById('qrModal').style.display = 'none';
-        });
-
-        document.getElementById('successModalClose').addEventListener('click', closeSuccessModal);
 
         // Close modals when clicking outside
-        document.getElementById('qrModal').addEventListener('click', function(event) {
+        document.getElementById('submitModal').addEventListener('click', function(event) {
             if (event.target === this) {
-                this.style.display = 'none';
+                closeSubmitModal();
             }
         });
 
@@ -1152,39 +1171,27 @@
             }
         });
 
-        // Form submission handler
-        document.getElementById('depositForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitDeposit();
-        });
-
-        // Add interactive effects
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add focus effects to form elements
-            const formControls = document.querySelectorAll('.form-control');
-            formControls.forEach(control => {
-                control.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'translateY(-2px)';
-                });
-                
-                control.addEventListener('blur', function() {
-                    this.parentElement.style.transform = 'translateY(0)';
-                });
-            });
-
-            // Initialize with first currency selected if any
-            const currencySelect = document.getElementById('currency');
-            if (currencySelect.options.length > 1) {
-                currencySelect.selectedIndex = 1;
-                currencySelect.dispatchEvent(new Event('change'));
+        document.getElementById('qrModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeQRModal();
             }
         });
 
         // Escape key to close modals
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
+                closeSubmitModal();
                 closeSuccessModal();
-                document.getElementById('qrModal').style.display = 'none';
+                closeQRModal();
+            }
+        });
+
+        // Initialize with first currency selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const currencySelect = document.getElementById('currency');
+            if (currencySelect.options.length > 1) {
+                currencySelect.selectedIndex = 1;
+                currencySelect.dispatchEvent(new Event('change'));
             }
         });
     </script>
