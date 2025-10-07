@@ -16,12 +16,12 @@
     <!-- end css -->
     
     <!-- favicon -->
-
+  
     <link rel="icon" type="image/png" href="/images/logo.png">
 
     <script>
       'use strict';
-      var SITE_URL = "";
+      var SITE_URL = "/";
       var FIATDP = "0.00";
       var CRYPTODP = "0.00000000";
 
@@ -36,10 +36,8 @@
         document.querySelector("html").removeAttribute("dir", "rtl");
       }
     </script>
-  <script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/sqrx-email-notifier.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/" data-stencil-namespace="sqrx-email-notifier" id="sqrx-email-notifier"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/sqrx-notification-bar.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/" data-stencil-namespace="sqrx-notification-bar" id="sqrx-notification-bar"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/sqrx-dialog.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/" data-stencil-namespace="sqrx-dialog" id="sqrx-dialog"></script></head>
-  <body data-select2-id="select2-data-15-90uz">
-
-
+  <script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/sqrx-email-notifier.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/" data-stencil-namespace="sqrx-email-notifier" id="sqrx-email-notifier"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/sqrx-notification-bar.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/" data-stencil-namespace="sqrx-notification-bar" id="sqrx-notification-bar"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/sqrx-dialog.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/" data-stencil-namespace="sqrx-dialog" id="sqrx-dialog"></script><link rel="stylesheet" href="/Dashboard/widget.css" class="jv-css"></head>
+  <body>
 
     <!-- sidebar section -->
     <!-- Sidebar Start -->
@@ -126,7 +124,7 @@
                  
                 <!-- Send Money -->
                                 <li>
-                    <a href="/money-transfer" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
+                    <a href="/transactions/money-transfer" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
                         <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.46393 5.03937C5.31364 5.10324 5.107 5.30989 5.04688 5.46393C4.93041 5.74197 4.94168 5.78706 6.16653 9.46536L7.34254 12.9896L6.16277 16.5252C5.05815 19.8465 4.98677 20.072 5.0018 20.2786C5.03185 20.6882 5.3174 20.9587 5.74572 20.985L5.9937 21L13.3203 17.3367C18.5541 14.7217 20.6844 13.6359 20.7746 13.5495C20.9361 13.3879 21 13.2263 21 12.9896C21 12.7529 20.9361 12.5914 20.7746 12.4298C20.6844 12.3434 18.5541 11.2613 13.3278 8.64629C6.13272 5.05064 6.00497 4.98677 5.79081 4.98677C5.67434 4.99053 5.52405 5.01307 5.46393 5.03937ZM12.7905 10.1792C15.8601 11.7159 18.37 12.9784 18.37 12.9896C18.37 13.0159 7.20728 18.5954 7.18849 18.5766C7.18098 18.5691 7.53416 17.4908 7.97375 16.1795L8.77028 13.7974L11.0284 13.7786L13.2864 13.7599L13.433 13.6584C13.5119 13.6021 13.6208 13.4931 13.6734 13.4142C13.7523 13.2977 13.7674 13.2338 13.7674 12.9896C13.7674 12.7379 13.7561 12.6853 13.6659 12.5538C13.6096 12.4749 13.5006 12.3659 13.4217 12.3133L13.2827 12.2194L11.0284 12.2006L8.77028 12.1818L7.97375 9.81478C7.53791 8.51103 7.17722 7.43647 7.17722 7.41768C7.17346 7.40266 7.18098 7.39138 7.19225 7.39138C7.20352 7.39138 9.72085 8.64629 12.7905 10.1792Z" fill="#C1BFDF"></path>
                             </svg></span>
@@ -225,7 +223,6 @@
                     </a>
                 </li>
 
-
                 <!-- Custom Addons Header Menu -->
                         
                                                                                                                                             <!-- Custom Addons Header Menu End-->
@@ -275,7 +272,7 @@
     <div class="item">
         <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center user-list">
-                <img src="/Dashboard/1759158223.png" alt="Profile" class="img-fluid">
+                <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
             </div>
             <div class="ml-12 d-flex align-items-center h-78 w-134">
                 <p class="mb-0 f-14 text-dark gilroy-Semibold"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
@@ -289,7 +286,7 @@
         <ul class="open-notify open-drop bg-white" style="display: none;">
             <li class="d-flex align-items-center bg-secondary h-78 px-3">
                 <div class="d-flex align-items-center justify-content-center user-dp">
-                    <img src="/Dashboard/1759158223.png" alt="Profile" class="img-fluid">
+                    <img src="<%= user.profilePicture || '/images/default-avatar.png' %>" alt="Profile" class="img-fluid">
                 </div>
                 <div class="ms-3 text-white">
                     <p class="mb-0 f-15 gilroy-medium text-white"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : 'User' %></p>
@@ -333,6 +330,7 @@
 </div>
 </div>
 </nav>        <!-- end header section -->
+      <!-- end header section -->
 
       <div class="position-relative" data-select2-id="select2-data-13-5d88">
         <div class="containt-parent" data-select2-id="select2-data-12-gxwb">

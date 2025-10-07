@@ -274,6 +274,12 @@ app.get('/virtualcard', isAuthenticated, (req, res) => {
   res.render('virtualcard', { title: 'Virtual Card - QFS' });
 });
 
+app.get('/makedepo', isAuthenticated, (req, res) => {
+  res.render('makedepo', { 
+    title: 'Make a Deposit - QFS',
+    user: req.session.user 
+  });
+});
 // ========== ERROR HANDLERS ==========
 
 // 404 handler

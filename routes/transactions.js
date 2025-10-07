@@ -9,7 +9,7 @@ const { isAuthenticated, isAdmin } = require('../middleware/auth');
 // ============================
 router.get('/', isAuthenticated, transactionController.getTransactions);
 router.get('/send', isAuthenticated, transactionController.getSendMoney);
-router.get('/money-transfer', isAuthenticated, transactionController.getSendMoney); // ADD THIS
+router.get('/money-transfer', isAuthenticated, transactionController.getSendMoney);
 router.get('/request-money', isAuthenticated, transactionController.getRequestMoney);
 router.get('/request-card', isAuthenticated, transactionController.getRequestCard);
 router.get('/exchange', isAuthenticated, transactionController.getExchangeMoney);

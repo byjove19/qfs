@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Management - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /*============================================
+        /*  01. Theme Default CSS
+        ==============================================*/
+        @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+        :root {
+          --tg-body-font-family: 'Inter', serif;
+          --tg-heading-font-family: 'Inter', serif;
+          --tg-icon-font-family: "Font Awesome 5 Free";
+          --tg-body-font-size: 16px;
+          --tg-body-line-height: 1.62;
+          --tg-heading-line-height: 1.2;
+          --tg-body-color: #9E9E9E;
+          --tg-heading-color: #ffffff;
+          --tg-theme-primary: #4b59f5;
+          --tg-theme-secondary: #0bf;
+          --tg-color-white-default: #ffffff;
+          --tg-color-blue-default: #703bff;
+          --tg-color-blue-default-2: #865FFC;
+          --tg-color-dark-blue: #162561;
+          --tg-color-light-blue: #3e4af1;
+          --tg-color-gray-1: #777;
+          --tg-color-dark: #0C0C0C;
+          --tg-color-dark-2: #000000;
+          --tg-color-dark-3: #262626;
+          --tg-border-1: #363636;
+          --tg-fw-extra-bold: 800;
+          --tg-fw-bold: 700;
+          --tg-fw-semi-bold: 600;
+          --tg-fw-medium: 500;
+          --tg-fw-regular: 400;
+          --tg-fw-light: 300;
+        }
+
+        [data-theme="light"] {
+            --tg-body-color: #5a5a5a;
+            --tg-heading-color: #1a1a1a;
+            --tg-color-dark: #f8f9fa;
+            --tg-color-dark-2: #ffffff;
+            --tg-color-dark-3: #e9ecef;
+            --tg-border-1: #dee2e6;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /*=============================
+            Typography css start
+        ===============================*/
+        /* Reset default margins */
+        html, body {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          width: 100%;
+          overflow-x: hidden; /* prevents sideways scroll */
+        }
+
+        /* Ensure all elements follow box-sizing */
+        *, *::before, *::after {
+          box-sizing: inherit;
+        }
+
+        /* Main body styling */
+        body {
+          font-family: var(--tg-body-font-family);
+          font-size: var(--tg-body-font-size);
+          font-weight: var(--tg-fw-regular);
+          color: var(--tg-body-color);
+          line-height: var(--tg-body-line-height);
+          background: var(--tg-color-dark);
+
+          /* Maintain consistent content alignment */
+          margin: 0 auto;         /* centers content */
+          max-width: 100%;        /* avoids overflow */
+          padding: 0;
+        }
+
+        img,
+        .img {
+          max-width: 100%;
+          -webkit-transition: all 0.3s ease-out 0s;
+          -moz-transition: all 0.3s ease-out 0s;
+          -ms-transition: all 0.3s ease-out 0s;
+          -o-transition: all 0.3s ease-out 0s;
+          transition: all 0.3s ease-out 0s;
+        }
+
+        a,
+        button {
+          color: var(--tg-theme-primary);
+          outline: none;
+          text-decoration: none;
+          -webkit-transition: all 0.3s ease-out 0s;
+          -moz-transition: all 0.3s ease-out 0s;
+          -ms-transition: all 0.3s ease-out 0s;
+          -o-transition: all 0.3s ease-out 0s;
+          transition: all 0.3s ease-out 0s;
+        }
+
+        a:focus,
+        .btn:focus,
+        .button:focus {
+          text-decoration: none;
+          outline: none;
+          -webkit-box-shadow: none;
+          -moz-box-shadow: none;
+          -ms-box-shadow: none;
+          -o-box-shadow: none;
+          box-shadow: none;
+        }
+
+        a:hover,
+        button:hover {
+          color: var(--tg-theme-primary);
+          text-decoration: none;
+        }
+
+        button:focus,
+        input:focus,
+        input:focus,
+        textarea,
+        textarea:focus {
+          outline: 0;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: var(--tg-heading-font-family);
+          color: var(--tg-heading-color);
+          margin-top: 0px;
+          font-weight: var(--tg-fw-semi-bold);
+          line-height: var(--tg-heading-line-height);
+          text-transform: unset;
+        }
+
+        h1 a,
+        h2 a,
+        h3 a,
+        h4 a,
+        h5 a,
+        h6 a {
+          color: inherit;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        h2 {
+          font-size: 2rem;
+        }
+
+        h3 {
+          font-size: 1.75rem;
+        }
+
+        h4 {
+          font-size: 1.5rem;
+        }
+
+        h5 {
+          font-size: 1.25rem;
+        }
+
+        h6 {
+          font-size: 1rem;
+        }
+
+        .list-wrap {
+          margin: 0px;
+          padding: 0px;
+        }
+        .list-wrap li {
+          list-style: none;
+        }
+
+        p {
+          margin-bottom: 15px;
+        }
+
+        hr {
+          border-bottom: 1px solid var(--tg-border-1);
+          border-top: 0 none;
+          margin: 30px 0;
+          padding: 0;
+        }
+
+        label {
+          color: var(--tg-heading-color);
+          cursor: pointer;
+          font-size: var(--tg-body-font-size);
+          font-weight: var(--tg-fw-regular);
+        }
+
+        input[type=color] {
+          appearance: none;
+          -moz-appearance: none;
+          -webkit-appearance: none;
+          background: none;
+          border: 0;
+          cursor: pointer;
+          height: 100%;
+          width: 100%;
+          padding: 0;
+          border-radius: 50%;
+        }
+
+        *::-moz-selection {
+          background: var(--tg-theme-primary);
+          color: var(--tg-color-white-default);
+          text-shadow: none;
+        }
+
+        ::-moz-selection {
+          background: var(--tg-theme-primary);
+          color: var(--tg-color-white-default);
+          text-shadow: none;
+        }
+
+        ::selection {
+          background: var(--tg-theme-primary);
+          color: var(--tg-color-white-default);
+          text-shadow: none;
+        }
+          .logo-text {
+            font-family: "Poppins", sans-serif; /* You can change this */
+            font-size: 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--tg-color-light-blue); /* Pick your brand color */
+            text-decoration: none;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+          }
+
+          .logo-text:hover {
+            color: #0984e3; /* Hover color */
+          }
+        
+        /*=============================
+            - Input Placeholder
+        ===============================*/
+        input,
+        textarea {
+          color: var(--tg-body-color);
+        }
+
+        *::-moz-placeholder {
+          color: var(--tg-body-color);
+          font-size: var(--tg-body-font-size);
+          opacity: 1;
+        }
+
+        *::placeholder {
+          color: var(--tg-body-color);
+          font-size: var(--tg-body-font-size);
+          opacity: 1;
+        }
+
+        /*=============================
+            - Common Classes
+        ===============================*/
+        .fix {
+          overflow: hidden;
+        }
+
+        .clear {
+          clear: both;
+        }
+
+        .section-py-120 {
+          padding: 120px 0;
+        }
+        @media (max-width: 991.98px) {
+          .section-py-120 {
+            padding: 100px 0;
+          }
+        }
+
+        .section-pb-120 {
+          padding-bottom: 120px;
+        }
+        @media (max-width: 991.98px) {
+          .section-pb-120 {
+            padding-bottom: 100px;
+          }
+        }
+
+        /*=============================
+            - Bootstrap Custom
+        =============================*/
+        .container {
+          padding-left: 15px;
+          padding-right: 15px;
+        }
+
+        .row {
+          --bs-gutter-x: 30px;
+        }
+
+        .gutter-y-30 {
+          --bs-gutter-y: 30px;
+        }
+
+        .gx-0 {
+          --bs-gutter-x: 0;
+        }
+
+        /* Admin Layout Styles */
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--tg-color-dark-2);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: var(--tg-transition);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--tg-color-dark-3);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--tg-heading-color);
+            transition: var(--tg-transition);
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: 280px;
+            background: var(--tg-color-dark-2);
+            border-right: 1px solid var(--tg-border-1);
+            display: flex;
+            flex-direction: column;
+            transition: var(--tg-transition);
+            position: relative;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--tg-heading-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .sidebar-close:hover {
+            background: var(--tg-color-dark-3);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-theme-primary);
+            border-left-color: var(--tg-theme-primary);
+        }
+
+        .nav-link i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+            transition: var(--tg-transition);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--tg-border-1);
+        }
+
+        .sidebar-footer .nav-link {
+            padding: 10px 0;
+            border-left: none;
+        }
+
+        /* Main Content Styles */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--tg-transition);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: var(--tg-color-dark-2);
+            border-bottom: 1px solid var(--tg-border-1);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--tg-heading-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: var(--tg-transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--tg-color-dark-3);
+            transform: rotate(90deg);
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-name {
+            color: var(--tg-heading-color);
+            font-weight: 500;
+        }
+
+        .badge {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: var(--tg-transition);
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .tg-btn {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--tg-transition);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tg-btn:hover {
+            background: var(--tg-theme-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--tg-color-dark-3);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            color: var(--tg-heading-color);
+            font-size: 14px;
+            transition: var(--tg-transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--tg-theme-primary);
+            box-shadow: 0 0 0 2px rgba(75, 89, 245, 0.2);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--tg-heading-color);
+            font-weight: 500;
+        }
+
+        /* Wallet Address Styles */
+        .wallet-card {
+            background: var(--tg-color-dark-3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--tg-border-1);
+            transition: var(--tg-transition);
+        }
+
+        .wallet-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .wallet-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wallet-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .wallet-address {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .address-input {
+            flex: 1;
+            background: var(--tg-color-dark-2);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: var(--tg-heading-color);
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .address-input:read-only {
+            background: var(--tg-color-dark);
+            color: var(--tg-body-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--tg-color-dark-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: var(--tg-theme-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-edit {
+            background: var(--tg-theme-primary);
+            color: white;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-copy {
+            background: var(--tg-theme-secondary);
+            color: white;
+        }
+
+        .btn-qr {
+            background: var(--tg-color-blue-default);
+            color: white;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        .alert-info {
+            background: rgba(0, 191, 255, 0.1);
+            border-color: rgba(0, 191, 255, 0.3);
+            color: var(--tg-theme-secondary);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            display: none;
+        }
+
+        .modal-content {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--tg-border-1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--tg-body-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .modal-close:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            border-radius: 8px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .admin-sidebar {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                width: 220px;
+            }
+            
+            .admin-header {
+                padding: 15px 20px;
+            }
+            
+            .admin-content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-wrapper {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            
+            .admin-sidebar.sidebar-open {
+                left: 0;
+            }
+            
+            .sidebar-close {
+                display: block;
+            }
+            
+            .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .admin-header h1 {
+                font-size: 20px;
+            }
+            
+            .header-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 8px;
+            }
+            
+            .admin-name {
+                font-size: 14px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .wallet-address {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-content {
+                padding: 15px;
+            }
+            
+            .card-body {
+                padding: 20px 15px;
+            }
+        }
+
+        /* Sidebar Collapsed State */
+        .admin-wrapper.sidebar-collapsed .admin-sidebar {
+            width: 70px;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .logo-text,
+        .admin-wrapper.sidebar-collapsed .nav-link span,
+        .admin-wrapper.sidebar-collapsed .sidebar-footer .nav-link span {
+            display: none;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .nav-link {
+            justify-content: center;
+            padding: 12px;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .nav-link i {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle">
+            <svg id="themeIcon" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/>
+            </svg>
+        </button>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS ADMIN</a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="/admin/users" class="nav-link">
+                        <i class="fas fa-users"></i> <span>Users</span>
+                    </a></li>
+                    <li><a href="/admin/transactions" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                    </a></li>
+                    <li><a href="/admin/investments" class="nav-link">
+                        <i class="fas fa-chart-line"></i> <span>Investments</span>
+                    </a></li>
+                    <li><a href="/admin/tickets" class="nav-link">
+                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
+                    </a></li>
+                    <li><a href="/admin/users/balances" class="nav-link">
+                        <i class="fas fa-wallet"></i> <span>User Balances</span>
+                    </a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
+                    </a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link">
+                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                    <li><a href="/admin/deposit-addresses" class="nav-link active">
+                        <i class="fas fa-coins"></i> <span>Deposit Addresses</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Deposit Address Management</h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
+                    <span class="admin-role badge"><%= user.role %></span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Alert -->
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>Admin Access Required:</strong> Only users with admin privileges can update wallet addresses.
+                </div>
+
+                <!-- Deposit Addresses Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Cryptocurrency Wallet Addresses</h2>
+                        <div class="action-buttons">
+                            <button class="tg-btn" id="refreshBtn">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Bitcoin -->
+                        <div class="wallet-card">
+                            <div class="wallet-header">
+                                <div class="wallet-title">
+                                    <div class="wallet-icon">
+                                        <i class="fab fa-bitcoin"></i>
+                                    </div>
+                                    Bitcoin (BTC)
+                                </div>
+                                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit" onclick="toggleEdit('btc')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="wallet-address">
+                                <input type="text" id="btc-address" value="<%= wallets.btc || 'bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp' %>" 
+                                       class="address-input" readonly>
+                                <button class="btn-icon btn-copy" onclick="copyToClipboard('btc-address')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon btn-qr" onclick="showQRCode('Bitcoin', 'btc-address')">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
+                            </div>
+                            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                <div class="edit-controls" id="btc-controls" style="display: none; margin-top: 15px;">
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-save" onclick="saveAddress('btc')">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                        <button class="btn-icon btn-cancel" onclick="cancelEdit('btc')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Ethereum -->
+                        <div class="wallet-card">
+                            <div class="wallet-header">
+                                <div class="wallet-title">
+                                    <div class="wallet-icon">
+                                        <i class="fab fa-ethereum"></i>
+                                    </div>
+                                    Ethereum (ETH)
+                                </div>
+                                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit" onclick="toggleEdit('eth')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="wallet-address">
+                                <input type="text" id="eth-address" value="<%= wallets.eth || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae' %>" 
+                                       class="address-input" readonly>
+                                <button class="btn-icon btn-copy" onclick="copyToClipboard('eth-address')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon btn-qr" onclick="showQRCode('Ethereum', 'eth-address')">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
+                            </div>
+                            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                <div class="edit-controls" id="eth-controls" style="display: none; margin-top: 15px;">
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-save" onclick="saveAddress('eth')">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                        <button class="btn-icon btn-cancel" onclick="cancelEdit('eth')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- USDT (ERC20) -->
+                        <div class="wallet-card">
+                            <div class="wallet-header">
+                                <div class="wallet-title">
+                                    <div class="wallet-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    USDT (ERC20)
+                                </div>
+                                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit" onclick="toggleEdit('usdt-erc20')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="wallet-address">
+                                <input type="text" id="usdt-erc20-address" value="<%= wallets.usdtErc20 || '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae' %>" 
+                                       class="address-input" readonly>
+                                <button class="btn-icon btn-copy" onclick="copyToClipboard('usdt-erc20-address')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon btn-qr" onclick="showQRCode('USDT (ERC20)', 'usdt-erc20-address')">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
+                            </div>
+                            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                <div class="edit-controls" id="usdt-erc20-controls" style="display: none; margin-top: 15px;">
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-save" onclick="saveAddress('usdt-erc20')">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                        <button class="btn-icon btn-cancel" onclick="cancelEdit('usdt-erc20')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Add more cryptocurrency wallets here following the same pattern -->
+                        <!-- XRP -->
+                        <div class="wallet-card">
+                            <div class="wallet-header">
+                                <div class="wallet-title">
+                                    <div class="wallet-icon">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    XRP
+                                </div>
+                                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit" onclick="toggleEdit('xrp')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="wallet-address">
+                                <input type="text" id="xrp-address" value="<%= wallets.xrp || 'rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3' %>" 
+                                       class="address-input" readonly>
+                                <button class="btn-icon btn-copy" onclick="copyToClipboard('xrp-address')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon btn-qr" onclick="showQRCode('XRP', 'xrp-address')">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
+                            </div>
+                            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                <div class="edit-controls" id="xrp-controls" style="display: none; margin-top: 15px;">
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-save" onclick="saveAddress('xrp')">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                        <button class="btn-icon btn-cancel" onclick="cancelEdit('xrp')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Litecoin -->
+                        <div class="wallet-card">
+                            <div class="wallet-header">
+                                <div class="wallet-title">
+                                    <div class="wallet-icon">
+                                        <i class="fab fa-litecoin"></i>
+                                    </div>
+                                    Litecoin (LTC)
+                                </div>
+                                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit" onclick="toggleEdit('ltc')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="wallet-address">
+                                <input type="text" id="ltc-address" value="<%= wallets.ltc || 'ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm' %>" 
+                                       class="address-input" readonly>
+                                <button class="btn-icon btn-copy" onclick="copyToClipboard('ltc-address')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon btn-qr" onclick="showQRCode('Litecoin', 'ltc-address')">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
+                            </div>
+                            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                                <div class="edit-controls" id="ltc-controls" style="display: none; margin-top: 15px;">
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-save" onclick="saveAddress('ltc')">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                        <button class="btn-icon btn-cancel" onclick="cancelEdit('ltc')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Instructions Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Admin Instructions</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <strong>Note:</strong> Only administrators can update wallet addresses. Regular users can only view and copy addresses.
+                                </div>
+                                <ol>
+                                    <li>Click the edit button next to any cryptocurrency to update its wallet address</li>
+                                    <li>After editing, click save to update the address in the system</li>
+                                    <li>Use the copy button to copy addresses to clipboard</li>
+                                    <li>Use the QR code button to generate a QR code for mobile payments</li>
+                                    <li>All changes are logged for security purposes</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="qrModalTitle">QR Code</h3>
+                <button class="modal-close" id="qrModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code">
+                    <img id="qrImage" src="" alt="QR Code">
+                </div>
+                <div class="text-center">
+                    <p id="qrAddress" class="form-control" style="font-family: monospace; text-align: center;"></p>
+                    <button class="tg-btn" onclick="copyQRAddress()">
+                        <i class="fas fa-copy"></i> Copy Address
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Add click animation
+            themeToggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                themeToggle.style.transform = 'scale(1)';
+            }, 150);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        // Sidebar functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const adminWrapper = document.querySelector('.admin-wrapper');
+
+        // Desktop sidebar toggle (collapse/expand)
+        sidebarToggle.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                adminWrapper.classList.toggle('sidebar-collapsed');
+            } else {
+                // Mobile sidebar open
+                adminSidebar.classList.add('sidebar-open');
+            }
+        });
+
+        // Mobile sidebar close
+        sidebarClose.addEventListener('click', function() {
+            adminSidebar.classList.remove('sidebar-open');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 && 
+                adminSidebar.classList.contains('sidebar-open') &&
+                !adminSidebar.contains(event.target) &&
+                !sidebarToggle.contains(event.target)) {
+                adminSidebar.classList.remove('sidebar-open');
+            }
+        });
+
+        // Wallet Address Management Functions
+        function toggleEdit(currency) {
+            const input = document.getElementById(`${currency}-address`);
+            const controls = document.getElementById(`${currency}-controls`);
+            
+            if (input.readOnly) {
+                input.readOnly = false;
+                input.focus();
+                controls.style.display = 'block';
+            } else {
+                input.readOnly = true;
+                controls.style.display = 'none';
+            }
+        }
+
+        function cancelEdit(currency) {
+            const input = document.getElementById(`${currency}-address`);
+            const controls = document.getElementById(`${currency}-controls`);
+            
+            // Reset to original value (in a real app, you'd fetch from server)
+            input.value = input.defaultValue;
+            input.readOnly = true;
+            controls.style.display = 'none';
+        }
+
+        function saveAddress(currency) {
+            const input = document.getElementById(`${currency}-address`);
+            const controls = document.getElementById(`${currency}-controls`);
+            const newAddress = input.value.trim();
+            
+            if (!newAddress) {
+                alert('Please enter a valid wallet address');
+                return;
+            }
+            
+            // In a real application, you would send this to your server
+            // For now, we'll just simulate the save
+            fetch('/admin/update-wallet-address', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currency: currency,
+                    address: newAddress
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    input.defaultValue = newAddress;
+                    input.readOnly = true;
+                    controls.style.display = 'none';
+                    alert('Wallet address updated successfully!');
+                } else {
+                    alert('Error updating wallet address: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating wallet address. Please try again.');
+            });
+        }
+
+        async function copyToClipboard(elementId) {
+            try {
+                const element = document.getElementById(elementId);
+                await navigator.clipboard.writeText(element.value);
+                alert('Address copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy address to clipboard. Please try again.');
+            }
+        }
+
+        function showQRCode(currency, elementId) {
+            const address = document.getElementById(elementId).value;
+            const qrModal = document.getElementById('qrModal');
+            const qrImage = document.getElementById('qrImage');
+            const qrAddress = document.getElementById('qrAddress');
+            const qrModalTitle = document.getElementById('qrModalTitle');
+            
+            qrModalTitle.textContent = `${currency} QR Code`;
+            qrAddress.textContent = address;
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
+            qrModal.style.display = 'flex';
+        }
+
+        function copyQRAddress() {
+            const qrAddress = document.getElementById('qrAddress');
+            copyToClipboardFromElement(qrAddress);
+        }
+
+        async function copyToClipboardFromElement(element) {
+            try {
+                await navigator.clipboard.writeText(element.textContent);
+                alert('Address copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy address to clipboard. Please try again.');
+            }
+        }
+
+        // Close QR modal
+        document.getElementById('qrModalClose').addEventListener('click', function() {
+            document.getElementById('qrModal').style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('qrModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                this.style.display = 'none';
+            }
+        });
+
+        // Refresh button functionality
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            location.reload();
+        });
+
+        // Add loading animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.wallet-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
