@@ -409,7 +409,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         // API endpoints
-        const API_BASE = '/api/admin/wallets';
+       const API_BASE = '/api/admin/wallets'; 
         
         // All cryptocurrencies from your frontend
         const ALL_CRYPTOCURRENCIES = [
@@ -745,28 +745,32 @@
         }
 
         // Publish addresses to frontend
-        async function publishAddresses() {
-            try {
-                showLoading(true);
-                
-                const response = await fetch('/api/admin/publish-wallets', {
-                    method: 'POST'
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showAlert('success', 'All wallet addresses published to frontend successfully!');
-                } else {
-                    throw new Error(result.message || 'Failed to publish addresses');
-                }
-            } catch (error) {
-                console.error('Error publishing addresses:', error);
-                showAlert('danger', `Failed to publish addresses: ${error.message}`);
-            } finally {
-                showLoading(false);
+       async function publishAddresses() {
+    try {
+        showLoading(true);
+        
+        // This endpoint should update the frontend cache or trigger a refresh
+        const response = await fetch('/api/admin/wallets/publish', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert('success', 'All wallet addresses are now live on the frontend!');
+        } else {
+            throw new Error(result.message || 'Failed to publish addresses');
         }
+    } catch (error) {
+        console.error('Error publishing addresses:', error);
+        showAlert('danger', `Failed to publish addresses: ${error.message}`);
+    } finally {
+        showLoading(false);
+    }
+}
 
         // Show alert
         function showAlert(type, message) {

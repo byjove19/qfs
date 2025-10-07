@@ -118,3 +118,66 @@ exports.getWalletAddressesPublic = async (req, res) => {
     });
   }
 };
+
+// Add this to your existing adminWalletController
+
+// API: Get wallet addresses for frontend (public) - UPDATED
+exports.getWalletAddressesPublic = async (req, res) => {
+  try {
+    const wallets = await AdminWallet.find({ isActive: true })
+      .select('currency address network')
+      .lean();
+
+    // Format for frontend deposit page
+    const walletData = {};
+    wallets.forEach(wallet => {
+      walletData[wallet.currency] = wallet.address;
+    });
+
+    res.json({
+      success: true,
+      data: walletData,
+      wallets: wallets,
+      count: wallets.length
+    });
+  } catch (error) {
+    console.error('Error fetching public wallet addresses:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch wallet addresses'
+    });
+  }
+};
+
+// API: Toggle wallet active status
+exports.toggleWalletStatusAPI = async (req, res) => {
+  try {
+    const { currency } = req.params;
+    const { isActive } = req.body;
+
+    const wallet = await AdminWallet.findOneAndUpdate(
+      { currency: currency },
+      { isActive: isActive },
+      { new: true }
+    );
+
+    if (!wallet) {
+      return res.status(404).json({
+        success: false,
+        message: 'Wallet not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `${currency} wallet ${isActive ? 'activated' : 'deactivated'} successfully`,
+      data: wallet
+    });
+  } catch (error) {
+    console.error('Error toggling wallet status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update wallet status'
+    });
+  }
+};

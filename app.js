@@ -114,7 +114,7 @@ const investmentRoutes = require('./routes/investment');
 const walletController = require('./controllers/walletController');
 const depositRoutes = require('./routes/deposit');
 const adminWalletRoutes = require('./routes/adminWalletRoutes');
-const userRoutes = require('./routes/userRoutes'); 
+const userRoutes = require('./routes/userRoutes'); // Make sure this file exists
 
 // ========== PUBLIC ROUTES (No authentication required) ==========
 
@@ -226,7 +226,10 @@ app.use('/transactions', transactionRoutes);
 app.use('/', recipientRoutes);
 app.use('/', investmentRoutes);
 app.use('/', depositRoutes);
-app.use('/admin', adminWalletRoutes);
+
+
+
+app.use('/api', adminWalletRoutes);
 // ========== INDIVIDUAL PROTECTED ROUTES ==========
 
 // Wallet routes
