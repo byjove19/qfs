@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 const walletSchema = new mongoose.Schema({
@@ -10,7 +9,7 @@ const walletSchema = new mongoose.Schema({
     currency: {
         type: String,
         required: true,
-        enum: ['USD', 'BTC', 'ETH', 'LTC', 'XRP', 'Doge', 'XDC', 'XLM', 'Matic', 'ALGO'],
+        enum: ['USD', 'BTC', 'ETH', 'LTC', 'XRP', 'DOGE', 'XDC', 'XLM', 'MATIC', 'ALGO'], // Changed 'Doge' to 'DOGE', 'Matic' to 'MATIC'
         uppercase: true
     },
     balance: {

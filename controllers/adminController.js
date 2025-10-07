@@ -804,7 +804,114 @@ async updateUserBalance(req, res) {
       req.flash('error', 'Failed to update investment');
       res.redirect('/admin/investments');
     }
+  },
+  
+// Get pending deposits
+async getPendingDeposits(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [deposits, totalDeposits] = await Promise.all([
+      Transaction.find({ 
+        type: 'deposit', 
+        status: 'pending' 
+      })
+        .populate('userId', 'firstName lastName email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Transaction.countDocuments({ type: 'deposit', status: 'pending' })
+    ]);
+
+    res.render('admin/pending-deposits', {
+      title: 'Pending Deposits - Admin',
+      deposits,
+      totalDeposits,
+      currentPage: page,
+      totalPages: Math.ceil(totalDeposits / limit),
+      user: req.user,
+      messages: {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    });
+  } catch (error) {
+    console.error('Get pending deposits error:', error);
+    req.flash('error', 'Failed to load pending deposits');
+    res.redirect('/admin/dashboard');
   }
+},
+
+// Approve/Reject deposit
+async processDeposit(req, res) {
+  try {
+    const { depositId, action, adminNote } = req.body;
+    
+    if (!depositId || !action) {
+      req.flash('error', 'Missing required fields');
+      return res.redirect('/admin/pending-deposits');
+    }
+
+    const deposit = await Transaction.findById(depositId).populate('userId');
+    if (!deposit) {
+      req.flash('error', 'Deposit not found');
+      return res.redirect('/admin/pending-deposits');
+    }
+
+    if (deposit.status !== 'pending') {
+      req.flash('error', 'Deposit is not pending');
+      return res.redirect('/admin/pending-deposits');
+    }
+
+    if (action === 'approve') {
+      // Update deposit status
+      deposit.status = 'completed';
+      deposit.adminNote = adminNote || `Approved by ${req.user.firstName}`;
+      deposit.processedAt = new Date();
+
+      // Find or create user's wallet
+      let wallet = await Wallet.findOne({ 
+        userId: deposit.userId._id, 
+        currency: deposit.currency 
+      });
+      
+      if (!wallet) {
+        wallet = new Wallet({
+          userId: deposit.userId._id,
+          currency: deposit.currency,
+          balance: 0
+        });
+      }
+
+      // Add funds to wallet
+      wallet.balance += deposit.amount;
+      wallet.lastAction = new Date();
+      await wallet.save();
+
+      await deposit.save();
+
+      req.flash('success', `Deposit approved successfully. ${deposit.amount} ${deposit.currency} added to user's wallet.`);
+      
+    } else if (action === 'reject') {
+      deposit.status = 'rejected';
+      deposit.adminNote = adminNote || `Rejected by ${req.user.firstName}`;
+      deposit.processedAt = new Date();
+      await deposit.save();
+
+      req.flash('success', 'Deposit rejected successfully.');
+    }
+
+    res.redirect('/admin/pending-deposits');
+    
+  } catch (error) {
+    console.error('Process deposit error:', error);
+    req.flash('error', 'Failed to process deposit');
+    res.redirect('/admin/pending-deposits');
+  }
+}
 
 };
 

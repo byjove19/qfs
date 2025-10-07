@@ -1,12 +1,10 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing deposit modal...');
-    // Small delay to ensure Bootstrap is ready
     setTimeout(initDepositModal, 200);
 });
 
 function initDepositModal() {
-    // Check if Bootstrap is available
     if (typeof bootstrap === 'undefined') {
         console.error('Bootstrap is not loaded. Please include Bootstrap 5.');
         return;
@@ -28,6 +26,8 @@ function initDepositModal() {
     
     let currentStep = 1;
     let selectedCurrency = '';
+    let selectedPaymentMethod = '';
+    let currentDepositData = {};
     
     // Update all deposit buttons to open the modal with correct currency
     document.querySelectorAll('.deposit-modal-trigger').forEach(button => {
@@ -42,10 +42,8 @@ function initDepositModal() {
     
     // Fix for select dropdowns - ensure they're clickable
     depositModalElement.addEventListener('shown.bs.modal', function () {
-        // Remove any aria-hidden that might block interaction
         depositModalElement.removeAttribute('aria-hidden');
         
-        // Ensure selects are interactive
         const selects = depositModalElement.querySelectorAll('select');
         selects.forEach(select => {
             select.style.pointerEvents = 'auto';
@@ -67,6 +65,7 @@ function initDepositModal() {
             e.stopPropagation();
             if (validateStep1()) {
                 showStep(2);
+                updateMethodInfo();
                 updateConfirmationDetails();
             }
         });
@@ -85,7 +84,8 @@ function initDepositModal() {
             e.preventDefault();
             e.stopPropagation();
             if (validateStep2()) {
-                processDeposit();
+                // First show the receipt/confirmation
+                showReceiptStep();
             }
         });
     }
@@ -112,17 +112,16 @@ function initDepositModal() {
     if (paymentMethod) {
         paymentMethod.addEventListener('change', function() {
             console.log('Payment method changed to:', this.value);
-            const method = this.value;
+            selectedPaymentMethod = this.value;
             const currency = document.getElementById('currencySelect').value;
             
-            if (method === 'bank' && currency) {
+            if (this.value === 'bank' && currency) {
                 document.getElementById('bankError').classList.remove('d-none');
             } else {
                 document.getElementById('bankError').classList.add('d-none');
             }
         });
         
-        // Also listen for click to ensure dropdown opens
         paymentMethod.addEventListener('click', function(e) {
             console.log('Payment method clicked');
             e.stopPropagation();
@@ -143,7 +142,6 @@ function initDepositModal() {
             }
         });
         
-        // Also listen for click to ensure dropdown opens
         currencySelect.addEventListener('click', function(e) {
             console.log('Currency select clicked');
             e.stopPropagation();
@@ -183,6 +181,61 @@ function initDepositModal() {
         currentStep = step;
     }
     
+    function showReceiptStep() {
+        // Collect all deposit data
+        currentDepositData = {
+            amount: parseFloat(document.getElementById('depositAmount').value) || 0,
+            currency: document.getElementById('currencySelect').value || 'USD',
+            paymentMethod: document.getElementById('paymentMethod').value,
+            manualNotes: document.getElementById('manualNotes')?.value || '',
+            file: document.getElementById('depositFile').files[0],
+            transactionId: 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9),
+            timestamp: new Date().toISOString()
+        };
+        
+        // Update the receipt display
+        const finalAmount = document.getElementById('finalAmount');
+        const transactionId = document.getElementById('transactionId');
+        const depositMethod = document.getElementById('depositMethod');
+        
+        if (finalAmount) {
+            finalAmount.textContent = `${currentDepositData.currency} ${currentDepositData.amount.toFixed(2)}`;
+        }
+        
+        if (transactionId) {
+            transactionId.textContent = currentDepositData.transactionId;
+        }
+        
+        if (depositMethod) {
+            depositMethod.textContent = currentDepositData.paymentMethod === 'manual' ? 'Manual Transfer' : 'Bank Transfer';
+        }
+        
+        // Show step 3 (receipt)
+        showStep(3);
+        
+        // Auto-submit to server after showing receipt
+        setTimeout(() => {
+            processDepositToServer();
+        }, 1000);
+    }
+    
+    function updateMethodInfo() {
+        const method = document.getElementById('paymentMethod').value;
+        selectedPaymentMethod = method;
+        
+        // Hide all method info sections
+        document.querySelectorAll('.method-info').forEach(el => {
+            el.classList.add('d-none');
+        });
+        
+        // Show the appropriate method info
+        if (method === 'manual') {
+            document.getElementById('manualMethodInfo').classList.remove('d-none');
+        } else if (method === 'bank') {
+            document.getElementById('bankMethodInfo').classList.remove('d-none');
+        }
+    }
+    
     function validateStep1() {
         const currency = document.getElementById('currencySelect').value;
         const amount = document.getElementById('depositAmount').value;
@@ -217,6 +270,11 @@ function initDepositModal() {
     function validateStep2() {
         const fileInput = document.getElementById('depositFile');
         
+        if (!fileInput || fileInput.files.length === 0) {
+            showAlert('Please upload proof of payment. This is required for manual transfers.', 'error');
+            return false;
+        }
+        
         if (fileInput && fileInput.files.length > 0) {
             const fileSize = fileInput.files[0].size / 1024 / 1024;
             if (fileSize > 20) {
@@ -239,73 +297,87 @@ function initDepositModal() {
     function updateConfirmationDetails() {
         const amount = parseFloat(document.getElementById('depositAmount').value) || 0;
         const currency = document.getElementById('currencySelect').value || 'USD';
+        const method = document.getElementById('paymentMethod').value || 'manual';
         const fee = 0;
         const total = amount + fee;
         
         const confirmAmount = document.getElementById('confirmAmount');
         const confirmFee = document.getElementById('confirmFee');
         const confirmTotal = document.getElementById('confirmTotal');
+        const confirmMethod = document.getElementById('confirmMethod');
         
         if (confirmAmount) confirmAmount.textContent = `${currency} ${amount.toFixed(2)}`;
         if (confirmFee) confirmFee.textContent = `${currency} ${fee.toFixed(2)}`;
         if (confirmTotal) confirmTotal.textContent = `${currency} ${total.toFixed(2)}`;
+        if (confirmMethod) confirmMethod.textContent = method === 'manual' ? 'Manual Transfer' : 'Bank Transfer';
     }
     
-    async function processDeposit() {
-        const amount = parseFloat(document.getElementById('depositAmount').value) || 0;
-        const currency = document.getElementById('currencySelect').value || 'USD';
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        const fileInput = document.getElementById('depositFile');
-        
-        // Show loading state
-        const confirmBtn = document.getElementById('confirmDeposit');
-        const originalText = confirmBtn.innerHTML;
-        confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
-        confirmBtn.disabled = true;
-        
-        try {
-            const formData = new FormData();
-            formData.append('amount', amount);
-            formData.append('currency', currency);
-            formData.append('paymentMethod', paymentMethod);
-            formData.append('description', `Deposit via ${paymentMethod}`);
-            
-            if (fileInput && fileInput.files.length > 0) {
-                formData.append('deposit_proof', fileInput.files[0]);
-            }
-            
-            const response = await fetch('/deposit/process', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-Token': getCSRFToken()
-                }
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update final amount display
-                const finalAmount = document.getElementById('finalAmount');
-                if (finalAmount) {
-                    finalAmount.textContent = `${currency} ${amount.toFixed(2)}`;
-                }
-                
-                showStep(3);
-                showAlert('Deposit request submitted successfully! It will be processed after admin approval.', 'success');
-                console.log('Deposit processed successfully:', result.data);
-            } else {
-                showAlert(result.message || 'Deposit failed. Please try again.', 'error');
-            }
-        } catch (error) {
-            console.error('Deposit processing error:', error);
-            showAlert('Network error. Please check your connection and try again.', 'error');
-        } finally {
-            // Restore button state
-            confirmBtn.innerHTML = originalText;
-            confirmBtn.disabled = false;
-        }
+// In your deposit.js, update the processDepositToServer function:
+
+async function processDepositToServer() {
+    // Show loading state in step 3
+    const depositAgainBtn = document.getElementById('depositAgain');
+    const printReceiptBtn = document.getElementById('printReceipt');
+    const statusMessage = document.getElementById('statusMessage');
+    
+    if (statusMessage) {
+        statusMessage.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting to server...';
     }
+    
+    if (depositAgainBtn) depositAgainBtn.disabled = true;
+    if (printReceiptBtn) printReceiptBtn.disabled = true;
+    
+    try {
+        const formData = new FormData();
+        formData.append('amount', currentDepositData.amount);
+        formData.append('currency', currentDepositData.currency);
+        formData.append('paymentMethod', currentDepositData.paymentMethod);
+        formData.append('description', `Deposit via ${currentDepositData.paymentMethod === 'manual' ? 'Manual Transfer' : 'Bank Transfer'}`);
+        formData.append('transactionId', currentDepositData.transactionId);
+        
+        // Add manual notes if provided
+        if (currentDepositData.manualNotes) {
+            formData.append('userNotes', currentDepositData.manualNotes);
+        }
+        
+        if (currentDepositData.file) {
+            formData.append('deposit_proof', currentDepositData.file);
+        }
+        
+        const response = await fetch('/deposit/process', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-Token': getCSRFToken()
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            if (statusMessage) {
+                statusMessage.innerHTML = '<i class="fas fa-check-circle text-success me-2"></i> Successfully submitted! Pending admin approval.';
+            }
+            showAlert('Deposit request submitted successfully! It will be processed after admin approval.', 'success');
+            console.log('Deposit processed successfully:', result.data);
+        } else {
+            if (statusMessage) {
+                statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle text-warning me-2"></i> Submission failed. Please try again.';
+            }
+            showAlert(result.message || 'Deposit failed. Please try again.', 'error');
+        }
+    } catch (error) {
+        console.error('Deposit processing error:', error);
+        if (statusMessage) {
+            statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle text-danger me-2"></i> Network error. Please check connection.';
+        }
+        showAlert('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Restore button state
+        if (depositAgainBtn) depositAgainBtn.disabled = false;
+        if (printReceiptBtn) printReceiptBtn.disabled = false;
+    }
+}
     
     function resetDepositForm() {
         console.log('Resetting deposit form');
@@ -318,18 +390,26 @@ function initDepositModal() {
         if (form2) form2.reset();
         if (bankError) bankError.classList.add('d-none');
         
+        // Hide all method info
+        document.querySelectorAll('.method-info').forEach(el => {
+            el.classList.add('d-none');
+        });
+        
         const currencySelect = document.getElementById('currencySelect');
         if (currencySelect && selectedCurrency) {
             currencySelect.value = selectedCurrency;
         }
         
         currentStep = 1;
+        selectedPaymentMethod = '';
+        currentDepositData = {};
         showStep(1);
     }
     
     function printReceiptFunction() {
         const finalAmount = document.getElementById('finalAmount');
-        if (!finalAmount) return;
+        const transactionId = document.getElementById('transactionId');
+        if (!finalAmount || !transactionId) return;
         
         const receiptContent = `
             <!DOCTYPE html>
@@ -370,7 +450,7 @@ function initDepositModal() {
                         .amount-highlight { 
                             font-size: 24px; 
                             font-weight: bold; 
-                            color: #28a745; 
+                            color: #283ba7ff; 
                             text-align: center; 
                             margin: 20px 0; 
                             padding: 15px;
@@ -380,6 +460,13 @@ function initDepositModal() {
                         .status-pending {
                             color: #ffc107;
                             font-weight: bold;
+                        }
+                        .instructions {
+                            background: #f8f9fa;
+                            padding: 15px;
+                            border-radius: 8px;
+                            margin: 15px 0;
+                            font-size: 14px;
                         }
                         @media print { 
                             body { 
@@ -400,7 +487,7 @@ function initDepositModal() {
                     <div class="receipt-details">
                         <div class="detail-row">
                             <strong>Transaction ID:</strong>
-                            <span>${'TXN' + Date.now()}</span>
+                            <span>${transactionId.textContent}</span>
                         </div>
                         <div class="detail-row">
                             <strong>Status:</strong>
@@ -408,12 +495,18 @@ function initDepositModal() {
                         </div>
                         <div class="detail-row">
                             <strong>Payment Method:</strong>
-                            <span>Manual Transfer</span>
+                            <span>${currentDepositData.paymentMethod === 'manual' ? 'Manual Transfer' : 'Bank Transfer'}</span>
                         </div>
                         <div class="amount-highlight">${finalAmount.textContent}</div>
                     </div>
+                    <div class="instructions">
+                        <p><strong>Next Steps:</strong></p>
+                        <p>1. Your deposit is pending admin approval</p>
+                        <p>2. You will be notified once processed</p>
+                        <p>3. Processing time: 1-2 hours</p>
+                        <p>4. Keep this receipt for your records</p>
+                    </div>
                     <div class="thank-you">
-                        <p>Your deposit request has been submitted and is pending admin approval.</p>
                         <p>Thank you for choosing QFS!</p>
                     </div>
                     <div class="no-print" style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
@@ -433,7 +526,6 @@ function initDepositModal() {
             printWindow.document.write(receiptContent);
             printWindow.document.close();
             
-            // Auto-print after a short delay
             setTimeout(() => {
                 printWindow.print();
             }, 500);
@@ -441,7 +533,6 @@ function initDepositModal() {
     }
     
     function showAlert(message, type = 'info') {
-        // Use SweetAlert if available, otherwise fallback to basic alert
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: type,

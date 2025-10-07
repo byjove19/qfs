@@ -111,7 +111,8 @@ const adminRoutes = require('./routes/admin');
 const transactionRoutes = require('./routes/transactions');
 const recipientRoutes = require('./routes/recipients');
 const investmentRoutes = require('./routes/investment');
-const walletController = require('./controllers/walletController'); 
+const walletController = require('./controllers/walletController');
+const depositRoutes = require('./routes/deposit');
 
 // FIXED: Correct path for userRoutes
 const userRoutes = require('./routes/userRoutes'); // Make sure this file exists
@@ -225,6 +226,7 @@ app.use('/', dashboardRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/', recipientRoutes);
 app.use('/', investmentRoutes);
+app.use('/', depositRoutes);
 
 // ========== INDIVIDUAL PROTECTED ROUTES ==========
 

@@ -22,31 +22,31 @@ exports.getWalletPage = async (req, res) => {
         
         console.log('Found existing wallets:', userWallets.length);
 
-        // Define ALL available currencies (master list)
+        // Define ALL available currencies (master list) - USE UPPERCASE to match Wallet model
         const allCurrencies = [
             { currency: 'USD', type: 'Fiat', isDefault: true },
             { currency: 'BTC', type: 'Crypto', isDefault: false },
             { currency: 'ETH', type: 'Crypto', isDefault: false },
             { currency: 'LTC', type: 'Crypto', isDefault: false },
             { currency: 'XRP', type: 'Crypto', isDefault: false },
-            { currency: 'Doge', type: 'Crypto', isDefault: false },
+            { currency: 'DOGE', type: 'Crypto', isDefault: false }, // Changed from 'Doge' to 'DOGE'
             { currency: 'XDC', type: 'Crypto', isDefault: false },
             { currency: 'XLM', type: 'Crypto', isDefault: false },
-            { currency: 'Matic', type: 'Crypto', isDefault: false },
+            { currency: 'MATIC', type: 'Crypto', isDefault: false }, // Changed from 'Matic' to 'MATIC'
             { currency: 'ALGO', type: 'Crypto', isDefault: false }
         ];
 
-        // Define wallet images
+        // Define wallet images (keep original keys for image lookup)
         const walletImages = {
             'USD': '/Wallet List _ QFS_files/icons8-us-dollar-64.png',
             'BTC': '/Wallet List _ QFS_files/1698103759.png',
             'ETH': '/Wallet List _ QFS_files/1698011100.png',
             'LTC': '/Wallet List _ QFS_files/1698103966.png',
             'XRP': '/Wallet List _ QFS_files/1698104378.png',
-            'Doge': '/Wallet List _ QFS_files/1698104977.png',
+            'DOGE': '/Wallet List _ QFS_files/1698104977.png', // Updated key
             'XDC': '/Wallet List _ QFS_files/1698104836.png',
             'XLM': '/Wallet List _ QFS_files/1698104729.png',
-            'Matic': '/Wallet List _ QFS_files/1698104560.png',
+            'MATIC': '/Wallet List _ QFS_files/1698104560.png', // Updated key
             'ALGO': '/Wallet List _ QFS_files/1698105102.png'
         };
 
@@ -86,8 +86,7 @@ exports.getWalletPage = async (req, res) => {
             }
         });
 
-        // Optional: Auto-create missing wallets in database
-        // You can choose to create them on-demand or keep them virtual
+        // Auto-create missing wallets in database with CORRECT currency codes
         const missingWallets = allCurrencies.filter(currency => 
             !userWallets.some(wallet => wallet.currency === currency.currency)
         );
@@ -98,7 +97,7 @@ exports.getWalletPage = async (req, res) => {
             try {
                 const walletsToCreate = missingWallets.map(currency => ({
                     userId: userId,
-                    currency: currency.currency,
+                    currency: currency.currency, // This now uses correct uppercase codes
                     balance: 0,
                     isDefault: currency.isDefault,
                     lastAction: {

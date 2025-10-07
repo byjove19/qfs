@@ -140,7 +140,66 @@ const handleUpload = (uploadFunction) => {
   };
 };
 
+// Configure storage for deposit proofs
+const depositStorage = multer.diskStorage({
+  destination: async function (req, file, cb) {
+    const dir = path.join(__dirname, '../public/uploads/deposits');
+    try {
+      await fs.access(dir);
+    } catch (error) {
+      await fs.mkdir(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const userId = req.session.user?.id;
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const fileExtension = path.extname(file.originalname).toLowerCase();
+    
+    if (userId) {
+      const filename = `deposit-${userId}-${uniqueSuffix}${fileExtension}`;
+      cb(null, filename);
+    } else {
+      const filename = `deposit-temp-${uniqueSuffix}${fileExtension}`;
+      cb(null, filename);
+    }
+  }
+});
+
+// File filter for deposit documents
+const documentFileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/bmp',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+  
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error(`Invalid file type: ${file.mimetype}. Only images, PDF, and Word documents are allowed.`), false);
+  }
+};
+
+// Deposit file upload
+const uploadDeposit = createMulterInstance(
+  depositStorage,
+  documentFileFilter,
+  {
+    fileSize: 20 * 1024 * 1024, // 20MB
+    files: 1
+  }
+).single('deposit_proof');
+
+// Add to module.exports
 module.exports = {
   uploadProfile: handleUpload(uploadProfile),
-  uploadProfileMiddleware: uploadProfile
+  uploadProfileMiddleware: uploadProfile,
+  uploadDeposit: handleUpload(uploadDeposit),
+  uploadDepositMiddleware: uploadDeposit
 };
+
