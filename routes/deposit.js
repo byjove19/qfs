@@ -11,4 +11,7 @@ router.post('/deposit/process', isAuthenticated, uploadDeposit, depositControlle
 router.get('/deposit/history', isAuthenticated, depositController.getDepositHistory);
 router.get('/deposit/details/:id', isAuthenticated, depositController.getDepositDetails);
 
+// NEW ROUTE: Handle crypto deposit submissions from the new UI
+router.post('/deposit/submit', isAuthenticated, depositController.submitDepositRequest);
+
 module.exports = router;

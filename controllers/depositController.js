@@ -37,7 +37,151 @@ const depositController = {
     }
   },
 
-  // Process deposit request
+  // NEW METHOD: Handle crypto deposit submissions from the new UI
+  submitDepositRequest: async (req, res) => {
+    try {
+      const { amount, currency, description } = req.body;
+      const userId = req.session.user?._id || req.session.user?.id;
+      
+      // Validate required fields
+      if (!amount || !currency) {
+        return res.status(400).json({
+          success: false,
+          message: 'Amount and currency are required'
+        });
+      }
+
+      // Validate minimum amount
+      const amountNum = parseFloat(amount);
+      if (isNaN(amountNum) || amountNum < 100) {
+        return res.status(400).json({
+          success: false,
+          message: 'Minimum deposit amount is $100'
+        });
+      }
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Please login to make a deposit'
+        });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      // Map frontend currency codes to your Wallet model currencies
+      const currencyMapping = {
+        'BTC': 'BTC',
+        'ETH': 'ETH', 
+        'LTC': 'LTC',
+        'XRP': 'XRP',
+        'XLM': 'XLM',
+        'DOGE': 'DOGE',
+        'USDT-ERC20': 'ETH', // Map to ETH wallet for ERC20 tokens
+        'USDT-TRC20': 'XDC', // Map to appropriate wallet
+        'ALGO': 'ALGO',
+        'MATIC': 'MATIC',
+        'SOL': 'XDC', // Map to appropriate wallet
+        'USDC': 'ETH' // Map to ETH wallet for ERC20 tokens
+      };
+
+      const walletCurrency = currencyMapping[currency] || 'USD';
+      
+      // Find or create wallet for the currency
+      let wallet = await Wallet.findOne({ 
+        userId: userId, 
+        currency: walletCurrency 
+      });
+
+      if (!wallet) {
+        try {
+          wallet = await Wallet.create({
+            userId: userId,
+            currency: walletCurrency,
+            balance: 0
+          });
+          console.log('Created new wallet for crypto deposit:', wallet._id);
+        } catch (walletError) {
+          console.error('Error creating wallet:', walletError);
+          return res.status(500).json({
+            success: false,
+            message: 'Failed to create wallet for selected cryptocurrency'
+          });
+        }
+      }
+
+      // Create pending crypto deposit transaction
+      const transaction = new Transaction({
+        userId: userId,
+        walletId: wallet._id,
+        type: 'deposit',
+        method: 'crypto',
+        amount: amountNum,
+        currency: walletCurrency,
+        status: 'pending',
+        description: description || `Crypto deposit request for $${amount} via ${currency}`,
+        metadata: {
+          cryptoCurrency: currency,
+          originalAmountUSD: amountNum,
+          paymentMethod: 'crypto_wallet',
+          userNotes: 'Awaiting crypto transfer and verification',
+          requiresAdminApproval: true,
+          adminAttentionRequired: true,
+          submittedAt: new Date(),
+          depositType: 'crypto',
+          expectedAmount: amountNum,
+          // Store the actual crypto address for reference
+          cryptoAddress: getCryptoAddress(currency)
+        }
+      });
+
+      await transaction.save();
+
+      // Update wallet's last action
+      wallet.lastAction = {
+        amount: amountNum,
+        type: 'crypto_deposit_request',
+        date: new Date()
+      };
+      await wallet.save();
+
+      // Send notification to admin
+      await notifyAdminsAboutDeposit(transaction);
+
+      console.log(`✅ New crypto deposit request: User ${userId}, Amount: $${amount}, Crypto: ${currency}`);
+
+      return res.json({
+        success: true,
+        message: 'Crypto deposit request submitted successfully. Please send the cryptocurrency to the provided address and contact support for verification.',
+        transaction: {
+          _id: transaction._id,
+          transactionId: `TX${transaction._id.toString().substring(0, 8).toUpperCase()}`,
+          amount: transaction.amount,
+          currency: transaction.currency,
+          cryptoCurrency: currency,
+          status: transaction.status,
+          createdAt: transaction.createdAt,
+          walletId: wallet._id
+        }
+      });
+
+    } catch (error) {
+      console.error('Submit deposit request error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to submit deposit request. Please try again.',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  },
+
+  // Process deposit request (your existing method)
   processDeposit: async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -268,6 +412,25 @@ const depositController = {
     }
   }
 };
+
+// Helper function to get crypto addresses
+function getCryptoAddress(currency) {
+  const addresses = {
+    'BTC': 'bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp',
+    'ETH': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
+    'LTC': 'ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm',
+    'XRP': 'rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3',
+    'XLM': 'GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2',
+    'DOGE': 'DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx',
+    'USDT-ERC20': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
+    'USDT-TRC20': 'TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN',
+    'ALGO': '47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA',
+    'MATIC': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
+    'SOL': 'HhV3ydYWteQGxPPc3Atuj6qL1q4WWL7Ds4ogGxZZZP6n',
+    'USDC': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae'
+  };
+  return addresses[currency] || 'Address not configured';
+}
 
 // Helper function to notify admins about new deposit
 async function notifyAdminsAboutDeposit(deposit) {
