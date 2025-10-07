@@ -274,10 +274,6 @@ app.get('/virtualcard', isAuthenticated, (req, res) => {
   res.render('virtualcard', { title: 'Virtual Card - QFS' });
 });
 
-app.get('/money-transfer', isAuthenticated, (req, res) => {
-  res.render('money-transfer', { title: 'Money Transfer - QFS' });
-});
-
 // ========== ERROR HANDLERS ==========
 
 // 404 handler

@@ -133,117 +133,132 @@ const transactionController = {
     }
   },
 
-  sendMoney: async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        req.flash('formData', req.body);
-        req.flash('error', errors.array()[0].msg);
-        return res.redirect('/transactions/send');
-      }
+// In your transactionController.js - update the getSendMoney function:
 
-      const { recipientEmail, amount, currency, description } = req.body;
-      const senderId = req.session.user?._id || req.session.user?.id || req.session.userId;
-
-      if (!senderId) {
-        req.flash('error', 'Please login to send money');
-        return res.redirect('/auth/login');
-      }
-
-      // Find recipient
-      const recipient = await User.findOne({ email: recipientEmail.toLowerCase() });
-      if (!recipient) {
-        req.flash('formData', req.body);
-        req.flash('error', 'Recipient not found');
-        return res.redirect('/transactions/send');
-      }
-
-      if (recipient._id.toString() === senderId.toString()) {
-        req.flash('formData', req.body);
-        req.flash('error', 'Cannot send money to yourself');
-        return res.redirect('/transactions/send');
-      }
-
-      // Find sender's wallet
-      const senderWallet = await Wallet.findOne({ 
-        userId: senderId, 
-        currency 
-      });
-      
-      if (!senderWallet) {
-        req.flash('formData', req.body);
-        req.flash('error', `No ${currency} wallet found`);
-        return res.redirect('/transactions/send');
-      }
-
-      const amountNum = parseFloat(amount);
-      if (senderWallet.balance < amountNum) {
-        req.flash('formData', req.body);
-        req.flash('error', 'Insufficient balance');
-        return res.redirect('/transactions/send');
-      }
-
-      // Find or create recipient's wallet
-      let recipientWallet = await Wallet.findOne({ 
-        userId: recipient._id, 
-        currency 
-      });
-      
-      if (!recipientWallet) {
-        recipientWallet = new Wallet({
-          userId: recipient._id,
-          currency,
-          balance: 0
-        });
-      }
-
-      // Start a session for transaction
-      const session = await Transaction.startSession();
-      session.startTransaction();
-
-      try {
-        // Create transaction
-        const transaction = new Transaction({
-          userId: senderId,
-          walletId: senderWallet._id,
-          type: 'send',
-          method: 'manual',
-          amount: amountNum,
-          currency,
-          status: 'completed',
-          description: description || `Payment to ${recipientEmail}`,
-          recipientId: recipient._id
-        });
-
-        // Update balances
-        senderWallet.balance -= amountNum;
-        recipientWallet.balance += amountNum;
-
-        await transaction.save({ session });
-        await senderWallet.save({ session });
-        await recipientWallet.save({ session });
-
-        // Commit the transaction
-        await session.commitTransaction();
-        
-        req.flash('success', `Successfully sent ${currency} ${amount} to ${recipientEmail}`);
-        res.redirect('/transactions');
-        
-      } catch (error) {
-        // Abort transaction on error
-        await session.abortTransaction();
-        throw error;
-      } finally {
-        session.endSession();
-      }
-
-    } catch (error) {
-      console.error('Send money error:', error);
-      req.flash('error', 'Failed to send money. Please try again.');
-      res.redirect('/transactions/send');
+getSendMoney: async (req, res) => {
+  try {
+    const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+    
+    if (!userId) {
+      req.flash('error', 'Please login to send money');
+      return res.redirect('/auth/login');
     }
-  },
 
+    console.log('Fetching wallets for user:', userId);
+
+    // Fetch wallets using the same logic as wallet controller
+    const wallets = await Wallet.find({ userId }).lean();
+    
+    console.log('Found wallets:', wallets.map(w => ({ currency: w.currency, balance: w.balance })));
+
+    // If no wallets found, redirect to wallet page to create them
+    if (!wallets || wallets.length === 0) {
+      req.flash('error', 'No wallets found. Please create a wallet first.');
+      return res.redirect('/wallet');
+    }
+
+    res.render('transactions/send', {
+      title: 'Send Money - QFS',
+      wallets: wallets, // Pass the actual wallet objects
+      error: req.flash('error'),
+      success: req.flash('success'),
+      formData: req.flash('formData')[0] || {},
+      user: req.session.user
+    });
+  } catch (error) {
+    console.error('Send money page error:', error);
+    res.status(500).render('error/500', { 
+      title: 'Server Error',
+      error: req.app.get('env') === 'development' ? error : {},
+      user: req.session.user
+    });
+  }
+},
+
+// Also update the sendMoney function to handle uppercase currencies:
+sendMoney: async (req, res) => {
+  try {
+    const { recipientEmail, amount, currency, description } = req.body;
+    const senderId = req.session.user?._id || req.session.user?.id || req.session.userId;
+
+    if (!senderId) {
+      req.flash('error', 'Please login to send money');
+      return res.redirect('/auth/login');
+    }
+
+    console.log('Send money request:', { recipientEmail, amount, currency, senderId });
+
+    // Find recipient by email
+    const recipient = await User.findOne({ email: recipientEmail.toLowerCase() });
+    if (!recipient) {
+      req.flash('formData', req.body);
+      req.flash('error', 'Recipient not found in our system');
+      return res.redirect('/transactions/send');
+    }
+
+    // Check if sending to self
+    if (recipient._id.toString() === senderId.toString()) {
+      req.flash('formData', req.body);
+      req.flash('error', 'Cannot send money to yourself');
+      return res.redirect('/transactions/send');
+    }
+
+    // Find sender's wallet - ensure currency matches your wallet format (uppercase)
+    const senderWallet = await Wallet.findOne({ 
+      userId: senderId, 
+      currency: currency.toUpperCase() // Convert to uppercase to match wallet format
+    });
+    
+    console.log('Sender wallet found:', senderWallet);
+    
+    if (!senderWallet) {
+      req.flash('formData', req.body);
+      req.flash('error', `No ${currency} wallet found. Please check your wallet balance.`);
+      return res.redirect('/transactions/send');
+    }
+
+    const amountNum = parseFloat(amount);
+    if (senderWallet.balance < amountNum) {
+      req.flash('formData', req.body);
+      req.flash('error', 'Insufficient balance');
+      return res.redirect('/transactions/send');
+    }
+
+    // Create pending transaction (requires admin approval)
+    const transaction = new Transaction({
+      userId: senderId,
+      walletId: senderWallet._id,
+      type: 'send',
+      method: 'manual',
+      amount: amountNum,
+      currency: currency.toUpperCase(), // Store as uppercase
+      status: 'pending', // This requires admin approval
+      description: description || `Payment to ${recipientEmail}`,
+      recipientId: recipient._id,
+      metadata: {
+        requiresApproval: true,
+        approvalType: 'send_money',
+        senderWalletBalance: senderWallet.balance,
+        recipientEmail: recipientEmail,
+        originalBalance: senderWallet.balance,
+        currency: currency.toUpperCase() // Store as uppercase
+      }
+    });
+
+    await transaction.save();
+
+    console.log('Transaction created successfully:', transaction._id);
+
+    // User-friendly success message
+    req.flash('success', `Money sent successfully! ${currency} ${amount} has been sent to ${recipientEmail}.`);
+    res.redirect('/transactions');
+    
+  } catch (error) {
+    console.error('Send money error:', error);
+    req.flash('error', 'Failed to send money. Please try again.');
+    res.redirect('/transactions/send');
+  }
+},
   // REQUEST MONEY FUNCTIONS
   getRequestMoney: async (req, res) => {
     try {
@@ -1128,7 +1143,223 @@ const transactionController = {
         message: 'Failed to load transactions'
       });
     }
+  },
+
+  // SEND MONEY WITH ADMIN APPROVAL FUNCTION
+sendMoneyWithApproval: async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      req.flash('formData', req.body);
+      req.flash('error', errors.array()[0].msg);
+      return res.redirect('/transactions/send');
+    }
+
+    const { recipientEmail, amount, currency, description } = req.body;
+    const senderId = req.session.user?._id || req.session.user?.id || req.session.userId;
+
+    if (!senderId) {
+      req.flash('error', 'Please login to send money');
+      return res.redirect('/auth/login');
+    }
+
+    // Find recipient
+    const recipient = await User.findOne({ email: recipientEmail.toLowerCase() });
+    if (!recipient) {
+      req.flash('formData', req.body);
+      req.flash('error', 'Recipient not found');
+      return res.redirect('/transactions/send');
+    }
+
+    if (recipient._id.toString() === senderId.toString()) {
+      req.flash('formData', req.body);
+      req.flash('error', 'Cannot send money to yourself');
+      return res.redirect('/transactions/send');
+    }
+
+    // Find sender's wallet
+    const senderWallet = await Wallet.findOne({ 
+      userId: senderId, 
+      currency 
+    });
+    
+    if (!senderWallet) {
+      req.flash('formData', req.body);
+      req.flash('error', `No ${currency} wallet found`);
+      return res.redirect('/transactions/send');
+    }
+
+    const amountNum = parseFloat(amount);
+    if (senderWallet.balance < amountNum) {
+      req.flash('formData', req.body);
+      req.flash('error', 'Insufficient balance');
+      return res.redirect('/transactions/send');
+    }
+
+    // Create pending transaction (requires admin approval)
+    const transaction = new Transaction({
+      userId: senderId,
+      walletId: senderWallet._id,
+      type: 'send',
+      method: 'manual',
+      amount: amountNum,
+      currency,
+      status: 'pending', // Changed to pending for admin approval
+      description: description || `Payment to ${recipientEmail}`,
+      recipientId: recipient._id,
+      metadata: {
+        requiresApproval: true,
+        approvalType: 'send_money',
+        senderWalletBalance: senderWallet.balance,
+        recipientEmail: recipientEmail,
+        originalBalance: senderWallet.balance
+      }
+    });
+
+    await transaction.save();
+
+    req.flash('success', `Money transfer request for ${currency} ${amount} to ${recipientEmail} submitted successfully. Waiting for admin approval.`);
+    res.redirect('/transactions');
+    
+  } catch (error) {
+    console.error('Send money with approval error:', error);
+    req.flash('error', 'Failed to send money request. Please try again.');
+    res.redirect('/transactions/send');
   }
+},
+
+// APPROVE SEND MONEY REQUEST (Admin function)
+approveSendMoney: async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    const adminId = req.session.user?._id;
+
+    if (!['admin', 'superadmin'].includes(req.session.user?.role)) {
+      req.flash('error', 'Admin privileges required');
+      return res.redirect('/transactions');
+    }
+
+    const session = await Transaction.startSession();
+    session.startTransaction();
+
+    try {
+      const transaction = await Transaction.findById(transactionId).session(session);
+      if (!transaction) {
+        req.flash('error', 'Transaction not found');
+        return res.redirect('/admin/transactions');
+      }
+
+      if (transaction.status !== 'pending') {
+        req.flash('error', 'Transaction is not pending approval');
+        return res.redirect('/admin/transactions');
+      }
+
+      // Find sender's wallet
+      const senderWallet = await Wallet.findOne({ 
+        userId: transaction.userId, 
+        currency: transaction.currency 
+      }).session(session);
+      
+      if (!senderWallet) {
+        req.flash('error', 'Sender wallet not found');
+        await session.abortTransaction();
+        return res.redirect('/admin/transactions');
+      }
+
+      // Check if sender still has sufficient balance
+      if (senderWallet.balance < transaction.amount) {
+        req.flash('error', 'Sender has insufficient balance');
+        await session.abortTransaction();
+        return res.redirect('/admin/transactions');
+      }
+
+      // Find or create recipient's wallet
+      let recipientWallet = await Wallet.findOne({ 
+        userId: transaction.recipientId, 
+        currency: transaction.currency 
+      }).session(session);
+      
+      if (!recipientWallet) {
+        recipientWallet = new Wallet({
+          userId: transaction.recipientId,
+          currency: transaction.currency,
+          balance: 0
+        });
+      }
+
+      // Update balances
+      senderWallet.balance -= transaction.amount;
+      recipientWallet.balance += transaction.amount;
+
+      // Update transaction status
+      transaction.status = 'completed';
+      transaction.metadata.approvedBy = adminId;
+      transaction.metadata.approvedAt = new Date();
+      transaction.metadata.finalSenderBalance = senderWallet.balance;
+      transaction.metadata.finalRecipientBalance = recipientWallet.balance;
+
+      await transaction.save({ session });
+      await senderWallet.save({ session });
+      await recipientWallet.save({ session });
+
+      await session.commitTransaction();
+      
+      req.flash('success', 'Money transfer approved successfully');
+      res.redirect('/admin/transactions');
+      
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+
+  } catch (error) {
+    console.error('Approve send money error:', error);
+    req.flash('error', 'Failed to approve money transfer');
+    res.redirect('/admin/transactions');
+  }
+},
+
+// REJECT SEND MONEY REQUEST (Admin function)
+rejectSendMoney: async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    const adminId = req.session.user?._id;
+
+    if (!['admin', 'superadmin'].includes(req.session.user?.role)) {
+      req.flash('error', 'Admin privileges required');
+      return res.redirect('/transactions');
+    }
+
+    const transaction = await Transaction.findById(transactionId);
+    if (!transaction) {
+      req.flash('error', 'Transaction not found');
+      return res.redirect('/admin/transactions');
+    }
+
+    if (transaction.status !== 'pending') {
+      req.flash('error', 'Transaction is not pending approval');
+      return res.redirect('/admin/transactions');
+    }
+
+    transaction.status = 'rejected';
+    transaction.metadata.rejectedBy = adminId;
+    transaction.metadata.rejectedAt = new Date();
+    transaction.metadata.rejectionReason = req.body.rejectionReason || 'No reason provided';
+
+    await transaction.save();
+
+    req.flash('success', 'Money transfer request rejected');
+    res.redirect('/admin/transactions');
+    
+  } catch (error) {
+    console.error('Reject send money error:', error);
+    req.flash('error', 'Failed to reject money transfer');
+    res.redirect('/admin/transactions');
+  }
+}
 };
+
 
 module.exports = transactionController;

@@ -6,7 +6,7 @@ const Investment = require('../models/Investment');
 const Ticket = require('../models/Ticket');
 const Wallet = require('../models/Wallet');
 const CardRequest = require('../models/CardRequest');
-
+const mongoose = require('mongoose');
 
 /**
  * Admin Controller
@@ -28,7 +28,7 @@ const adminController = {
         recentUsers: [],
         pendingDeposits: 0,
         pendingWithdrawals: 0,
-        user: req.user || null
+        user: req.session.user || null
       };
 
       const [
@@ -80,7 +80,7 @@ const adminController = {
         recentUsers: [],
         pendingDeposits: 0,
         pendingWithdrawals: 0,
-        user: req.user || null,
+        user: req.session.user || null,
         messages: {
           error: 'Failed to load dashboard data.'
         }
@@ -119,7 +119,7 @@ const adminController = {
       const totalUsers = await User.countDocuments();
 
       // Ensure user data is properly passed
-      const currentUser = req.user || {
+      const currentUser = req.session.user || {
         firstName: 'Admin',
         lastName: 'User', 
         role: 'admin'
@@ -188,7 +188,7 @@ const adminController = {
         title: `User Details - ${user.firstName} ${user.lastName}`,
         user: userWithBalance,
         recentTransactions,
-        currentUser: req.user,
+        currentUser: req.session.user,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
@@ -212,7 +212,7 @@ const adminController = {
       res.render('admin/user-login-history', {
         title: `Login History - ${user.firstName} ${user.lastName}`,
         user,
-        currentUser: req.user,
+        currentUser: req.session.user,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
@@ -225,184 +225,183 @@ const adminController = {
     }
   },
 
-/** =======================
- *  USER BALANCE MANAGEMENT (Multi-currency)
- *  =======================
- */
-async getAllUserBalances(req, res) {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 15;
-    const skip = (page - 1) * limit;
+  /** =======================
+   *  USER BALANCE MANAGEMENT (Multi-currency)
+   *  =======================
+   */
+  async getAllUserBalances(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 15;
+      const skip = (page - 1) * limit;
 
-    const users = await User.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select('firstName lastName email currency createdAt isActive');
+      const users = await User.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select('firstName lastName email currency createdAt isActive');
 
-    // Get ALL wallet balances for each user
-    const usersWithBalances = await Promise.all(
-      users.map(async (user) => {
-        const wallets = await Wallet.find({ userId: user._id });
-        const balances = {};
-        let totalBalanceUSD = 0;
+      // Get ALL wallet balances for each user
+      const usersWithBalances = await Promise.all(
+        users.map(async (user) => {
+          const wallets = await Wallet.find({ userId: user._id });
+          const balances = {};
+          let totalBalanceUSD = 0;
 
-        // Calculate balances for each currency
-        wallets.forEach(wallet => {
-          balances[wallet.currency] = wallet.balance;
-          // Here you would convert to USD using exchange rates
-          // For now, we'll just sum USD and ignore crypto values
-          if (wallet.currency === 'USD') {
-            totalBalanceUSD += wallet.balance;
-          }
-        });
+          // Calculate balances for each currency
+          wallets.forEach(wallet => {
+            balances[wallet.currency] = wallet.balance;
+            // Here you would convert to USD using exchange rates
+            // For now, we'll just sum USD and ignore crypto values
+            if (wallet.currency === 'USD') {
+              totalBalanceUSD += wallet.balance;
+            }
+          });
 
-        return {
-          ...user.toObject(),
-          balances,
-          totalBalance: totalBalanceUSD
-        };
-      })
-    );
+          return {
+            ...user.toObject(),
+            balances,
+            totalBalance: totalBalanceUSD
+          };
+        })
+      );
 
-    const totalUsers = await User.countDocuments();
-    const totalBalance = usersWithBalances.reduce((sum, u) => sum + (u.totalBalance || 0), 0);
+      const totalUsers = await User.countDocuments();
+      const totalBalance = usersWithBalances.reduce((sum, u) => sum + (u.totalBalance || 0), 0);
 
-    res.render('admin/user-balances', {
-      title: 'User Balances',
-      users: usersWithBalances,
-      totalBalance,
-      currentPage: page,
-      totalPages: Math.ceil(totalUsers / limit),
-      totalUsers,
-      user: req.user,
-      messages: {
-        success: req.flash('success'),
-        error: req.flash('error')
-      }
-    });
-  } catch (error) {
-    console.error('Get Balances Error:', error);
-    req.flash('error', 'Failed to load user balances');
-    res.redirect('/admin/dashboard');
-  }
-},
-
-async updateUserBalance(req, res) {
-  try {
-    const { userId, amount, type, reason, currency } = req.body;
-    
-    // Validate required fields
-    if (!userId || !amount || !type || !currency) {
-      req.flash('error', 'Missing required fields');
-      return res.redirect(`/admin/users/${userId}`);
-    }
-
-    // Find user
-    const user = await User.findById(userId);
-    if (!user) {
-      req.flash('error', 'User not found');
-      return res.redirect('/admin/users');
-    }
-
-    // Find or create the user's wallet for the specified currency
-    let wallet = await Wallet.findOne({ userId: userId, currency: currency });
-    if (!wallet) {
-      try {
-        wallet = new Wallet({
-          userId: userId,
-          currency: currency,
-          balance: 0
-        });
-        await wallet.save();
-      } catch (createError) {
-        if (createError.code === 11000) {
-          wallet = await Wallet.findOne({ userId: userId, currency: currency });
-          if (!wallet) {
-            req.flash('error', 'Failed to create wallet. Please try again.');
-            return res.redirect(`/admin/users/${userId}`);
-          }
-        } else {
-          throw createError;
+      res.render('admin/user-balances', {
+        title: 'User Balances',
+        users: usersWithBalances,
+        totalBalance,
+        currentPage: page,
+        totalPages: Math.ceil(totalUsers / limit),
+        totalUsers,
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
         }
-      }
+      });
+    } catch (error) {
+      console.error('Get Balances Error:', error);
+      req.flash('error', 'Failed to load user balances');
+      res.redirect('/admin/dashboard');
     }
+  },
 
-    // Validate amount
-    const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount <= 0) {
-      req.flash('error', 'Invalid amount');
-      return res.redirect(`/admin/users/${userId}`);
-    }
-
-    const oldBalance = wallet.balance || 0;
-    let newBalance = oldBalance;
-    let transactionType = '';
-    let transactionDescription = '';
-
-    // Process balance update based on type
-    if (type === 'add') {
-      newBalance = oldBalance + numericAmount;
-      transactionType = 'deposit';
-      transactionDescription = `Admin credit: ${reason || 'Funds added by administrator'}`;
-    } else if (type === 'subtract') {
-      if (oldBalance < numericAmount) {
-        req.flash('error', 'Insufficient balance to deduct');
+  async updateUserBalance(req, res) {
+    try {
+      const { userId, amount, type, reason, currency } = req.body;
+      
+      // Validate required fields
+      if (!userId || !amount || !type || !currency) {
+        req.flash('error', 'Missing required fields');
         return res.redirect(`/admin/users/${userId}`);
       }
-      newBalance = oldBalance - numericAmount;
-      transactionType = 'withdrawal';
-      transactionDescription = `Admin debit: ${reason || 'Funds deducted by administrator'}`;
-    } else {
-      req.flash('error', 'Invalid operation type');
-      return res.redirect(`/admin/users/${userId}`);
-    }
 
-    // Update wallet balance
-    wallet.balance = newBalance;
-    wallet.lastAction = new Date();
-    await wallet.save();
-
-    // Create transaction record
-    await Transaction.create({
-      userId: user._id,
-      walletId: wallet._id,
-      type: transactionType,
-      method: 'manual',
-      amount: numericAmount,
-      currency: currency,
-      status: 'completed',
-      description: transactionDescription,
-      metadata: {
-        adminId: req.user._id,
-        operation: type,
-        reason: reason || 'No reason provided',
-        adminProcessed: true,
-        previousBalance: oldBalance,
-        newBalance: newBalance
+      // Find user
+      const user = await User.findById(userId);
+      if (!user) {
+        req.flash('error', 'User not found');
+        return res.redirect('/admin/users');
       }
-    });
 
-    req.flash('success', 
-      `Balance ${type === 'add' ? 'added to' : 'deducted from'} user account successfully. ` +
-      `New ${currency} balance: ${newBalance.toFixed(2)}`
-    );
-    
-    res.redirect(`/admin/users/${userId}`);
-    
-  } catch (error) {
-    console.error('Update User Balance Error:', error);
-    req.flash('error', 'Failed to update user balance: ' + error.message);
-    
-    if (req.body.userId) {
-      res.redirect(`/admin/users/${req.body.userId}`);
-    } else {
-      res.redirect('/admin/users');
+      // Find or create the user's wallet for the specified currency
+      let wallet = await Wallet.findOne({ userId: userId, currency: currency });
+      if (!wallet) {
+        try {
+          wallet = new Wallet({
+            userId: userId,
+            currency: currency,
+            balance: 0
+          });
+          await wallet.save();
+        } catch (createError) {
+          if (createError.code === 11000) {
+            wallet = await Wallet.findOne({ userId: userId, currency: currency });
+            if (!wallet) {
+              req.flash('error', 'Failed to create wallet. Please try again.');
+              return res.redirect(`/admin/users/${userId}`);
+            }
+          } else {
+            throw createError;
+          }
+        }
+      }
+
+      // Validate amount
+      const numericAmount = parseFloat(amount);
+      if (isNaN(numericAmount) || numericAmount <= 0) {
+        req.flash('error', 'Invalid amount');
+        return res.redirect(`/admin/users/${userId}`);
+      }
+
+      const oldBalance = wallet.balance || 0;
+      let newBalance = oldBalance;
+      let transactionType = '';
+      let transactionDescription = '';
+
+      // Process balance update based on type
+      if (type === 'add') {
+        newBalance = oldBalance + numericAmount;
+        transactionType = 'deposit';
+        transactionDescription = `Admin credit: ${reason || 'Funds added by administrator'}`;
+      } else if (type === 'subtract') {
+        if (oldBalance < numericAmount) {
+          req.flash('error', 'Insufficient balance to deduct');
+          return res.redirect(`/admin/users/${userId}`);
+        }
+        newBalance = oldBalance - numericAmount;
+        transactionType = 'withdrawal';
+        transactionDescription = `Admin debit: ${reason || 'Funds deducted by administrator'}`;
+      } else {
+        req.flash('error', 'Invalid operation type');
+        return res.redirect(`/admin/users/${userId}`);
+      }
+
+      // Update wallet balance
+      wallet.balance = newBalance;
+      wallet.lastAction = new Date();
+      await wallet.save();
+
+      // Create transaction record
+      await Transaction.create({
+        userId: user._id,
+        walletId: wallet._id,
+        type: transactionType,
+        method: 'manual',
+        amount: numericAmount,
+        currency: currency,
+        status: 'completed',
+        description: transactionDescription,
+        metadata: {
+          adminId: req.session.user._id,
+          operation: type,
+          reason: reason || 'No reason provided',
+          adminProcessed: true,
+          previousBalance: oldBalance,
+          newBalance: newBalance
+        }
+      });
+
+      req.flash('success', 
+        `Balance ${type === 'add' ? 'added to' : 'deducted from'} user account successfully. ` +
+        `New ${currency} balance: ${newBalance.toFixed(2)}`
+      );
+      
+      res.redirect(`/admin/users/${userId}`);
+      
+    } catch (error) {
+      console.error('Update User Balance Error:', error);
+      req.flash('error', 'Failed to update user balance: ' + error.message);
+      
+      if (req.body.userId) {
+        res.redirect(`/admin/users/${req.body.userId}`);
+      } else {
+        res.redirect('/admin/users');
+      }
     }
-  }
-},
-
+  },
 
   async updateUserCurrency(req, res) {
     try {
@@ -438,9 +437,9 @@ async updateUserBalance(req, res) {
         currency: currency,
         status: 'completed',
         description: `Currency changed from ${oldCurrency} to ${currency}`,
-        adminNote: `Updated by ${req.user.firstName} ${req.user.lastName}`,
+        adminNote: `Updated by ${req.session.user.firstName} ${req.session.user.lastName}`,
         metadata: {
-          adminId: req.user._id,
+          adminId: req.session.user._id,
           oldCurrency: oldCurrency,
           newCurrency: currency
         }
@@ -487,9 +486,9 @@ async updateUserBalance(req, res) {
         amount: 0,
         status: 'completed',
         description: `Account ${user.isActive ? 'activated' : 'deactivated'} by administrator`,
-        adminNote: `Processed by ${req.user.firstName} ${req.user.lastName}`,
+        adminNote: `Processed by ${req.session.user.firstName} ${req.session.user.lastName}`,
         metadata: {
-          adminId: req.user._id,
+          adminId: req.session.user._id,
           previousStatus: !user.isActive,
           newStatus: user.isActive
         }
@@ -514,7 +513,7 @@ async updateUserBalance(req, res) {
    *  TRANSACTIONS MANAGEMENT
    *  =======================
    */
-  getTransactions: async (req, res) => {
+  async getTransactions(req, res) {
     try {
       if (!req.session.user) {
         req.flash('error', 'You must be logged in as admin');
@@ -574,7 +573,7 @@ async updateUserBalance(req, res) {
       }
 
       transaction.status = status;
-      transaction.adminNote = adminNote || `Updated by ${req.user.firstName}`;
+      transaction.adminNote = adminNote || `Updated by ${req.session.user.firstName}`;
       transaction.processedAt = new Date();
 
       // Deposit Approval
@@ -656,7 +655,7 @@ async updateUserBalance(req, res) {
         currentPage: page,
         totalPages: Math.ceil(totalTickets / limit),
         filter: { status },
-        user: req.user,
+        user: req.session.user,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
@@ -714,7 +713,7 @@ async updateUserBalance(req, res) {
         currentPage: page,
         totalPages: Math.ceil(totalInvestments / limit),
         filter: { status },
-        user: req.user,
+        user: req.session.user,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
@@ -748,7 +747,7 @@ async updateUserBalance(req, res) {
         title: `Investment Details - ${investment.userId.firstName}`,
         investment,
         investmentReturns,
-        currentUser: req.user,
+        currentUser: req.session.user,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
@@ -778,7 +777,7 @@ async updateUserBalance(req, res) {
 
       const oldStatus = investment.status;
       investment.status = status;
-      investment.adminNote = adminNote || `Updated by ${req.user.firstName}`;
+      investment.adminNote = adminNote || `Updated by ${req.session.user.firstName}`;
 
       // If activating investment, ensure it's properly set up
       if (status === 'active' && oldStatus !== 'active') {
@@ -806,113 +805,477 @@ async updateUserBalance(req, res) {
     }
   },
   
-// Get pending deposits
-async getPendingDeposits(req, res) {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+  // Get pending deposits
+  async getPendingDeposits(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
 
-    const [deposits, totalDeposits] = await Promise.all([
-      Transaction.find({ 
-        type: 'deposit', 
-        status: 'pending' 
-      })
-        .populate('userId', 'firstName lastName email')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Transaction.countDocuments({ type: 'deposit', status: 'pending' })
-    ]);
+      const [deposits, totalDeposits] = await Promise.all([
+        Transaction.find({ 
+          type: 'deposit', 
+          status: 'pending' 
+        })
+          .populate('userId', 'firstName lastName email')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Transaction.countDocuments({ type: 'deposit', status: 'pending' })
+      ]);
 
-    res.render('admin/pending-deposits', {
-      title: 'Pending Deposits - Admin',
-      deposits,
-      totalDeposits,
-      currentPage: page,
-      totalPages: Math.ceil(totalDeposits / limit),
-      user: req.user,
-      messages: {
-        success: req.flash('success'),
-        error: req.flash('error')
-      }
-    });
-  } catch (error) {
-    console.error('Get pending deposits error:', error);
-    req.flash('error', 'Failed to load pending deposits');
-    res.redirect('/admin/dashboard');
-  }
-},
-
-// Approve/Reject deposit
-async processDeposit(req, res) {
-  try {
-    const { depositId, action, adminNote } = req.body;
-    
-    if (!depositId || !action) {
-      req.flash('error', 'Missing required fields');
-      return res.redirect('/admin/pending-deposits');
-    }
-
-    const deposit = await Transaction.findById(depositId).populate('userId');
-    if (!deposit) {
-      req.flash('error', 'Deposit not found');
-      return res.redirect('/admin/pending-deposits');
-    }
-
-    if (deposit.status !== 'pending') {
-      req.flash('error', 'Deposit is not pending');
-      return res.redirect('/admin/pending-deposits');
-    }
-
-    if (action === 'approve') {
-      // Update deposit status
-      deposit.status = 'completed';
-      deposit.adminNote = adminNote || `Approved by ${req.user.firstName}`;
-      deposit.processedAt = new Date();
-
-      // Find or create user's wallet
-      let wallet = await Wallet.findOne({ 
-        userId: deposit.userId._id, 
-        currency: deposit.currency 
+      res.render('admin/pending-deposits', {
+        title: 'Pending Deposits - Admin',
+        deposits,
+        totalDeposits,
+        currentPage: page,
+        totalPages: Math.ceil(totalDeposits / limit),
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
       });
+    } catch (error) {
+      console.error('Get pending deposits error:', error);
+      req.flash('error', 'Failed to load pending deposits');
+      res.redirect('/admin/dashboard');
+    }
+  },
+
+  // Approve/Reject deposit
+  async processDeposit(req, res) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
+    try {
+      const { depositId, action, adminNote } = req.body;
       
-      if (!wallet) {
-        wallet = new Wallet({
-          userId: deposit.userId._id,
-          currency: deposit.currency,
-          balance: 0
-        });
+      if (!depositId || !action) {
+        req.flash('error', 'Missing required fields');
+        return res.redirect('/admin/pending-deposits');
       }
 
-      // Add funds to wallet
-      wallet.balance += deposit.amount;
-      wallet.lastAction = new Date();
-      await wallet.save();
+      // Find deposit with session
+      const deposit = await Transaction.findById(depositId)
+        .populate('userId')
+        .session(session);
 
-      await deposit.save();
+      if (!deposit) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Deposit not found');
+        return res.redirect('/admin/pending-deposits');
+      }
 
-      req.flash('success', `Deposit approved successfully. ${deposit.amount} ${deposit.currency} added to user's wallet.`);
+      if (deposit.status !== 'pending') {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Deposit is not pending');
+        return res.redirect('/admin/pending-deposits');
+      }
+
+      if (action === 'approve') {
+        // Update deposit status
+        deposit.status = 'completed';
+        deposit.adminNote = adminNote || `Approved by ${req.session.user.firstName}`;
+        deposit.processedAt = new Date();
+
+        // Find or create user's wallet with session
+        let wallet = await Wallet.findOne({ 
+          userId: deposit.userId, // Use deposit.userId directly (it's populated)
+          currency: deposit.currency 
+        }).session(session);
+        
+        if (!wallet) {
+          wallet = new Wallet({
+            userId: deposit.userId,
+            currency: deposit.currency,
+            balance: 0
+          });
+        }
+
+        // Add funds to wallet
+        const oldBalance = wallet.balance;
+        wallet.balance += deposit.amount;
+        wallet.lastAction = new Date();
+        
+        await wallet.save({ session });
+        await deposit.save({ session });
+
+        // Create a transaction record for the wallet credit
+        await Transaction.create([{
+          userId: deposit.userId,
+          walletId: wallet._id,
+          type: 'deposit',
+          method: deposit.method || 'manual',
+          amount: deposit.amount,
+          currency: deposit.currency,
+          status: 'completed',
+          description: `Deposit approved by administrator`,
+          adminNote: adminNote || `Approved by ${req.session.user.firstName}`,
+          metadata: {
+            adminId: req.session.user._id,
+            originalDepositId: depositId,
+            previousBalance: oldBalance,
+            newBalance: wallet.balance,
+            adminProcessed: true
+          }
+        }], { session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash('success', `Deposit approved successfully. ${deposit.amount} ${deposit.currency} added to user's wallet.`);
+        
+      } else if (action === 'reject') {
+        deposit.status = 'rejected';
+        deposit.adminNote = adminNote || `Rejected by ${req.session.user.firstName}`;
+        deposit.processedAt = new Date();
+        
+        await deposit.save({ session });
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash('success', 'Deposit rejected successfully.');
+      } else {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Invalid action');
+        return res.redirect('/admin/pending-deposits');
+      }
+
+      res.redirect('/admin/pending-deposits');
       
-    } else if (action === 'reject') {
-      deposit.status = 'rejected';
-      deposit.adminNote = adminNote || `Rejected by ${req.user.firstName}`;
-      deposit.processedAt = new Date();
-      await deposit.save();
-
-      req.flash('success', 'Deposit rejected successfully.');
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error('Process deposit error:', error);
+      req.flash('error', 'Failed to process deposit: ' + error.message);
+      res.redirect('/admin/pending-deposits');
     }
+  },
 
-    res.redirect('/admin/pending-deposits');
+  async getPendingWithdrawals(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const [withdrawals, totalWithdrawals] = await Promise.all([
+        Transaction.find({ 
+          type: 'withdrawal', 
+          status: 'pending' 
+        })
+          .populate('userId', 'firstName lastName email')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Transaction.countDocuments({ type: 'withdrawal', status: 'pending' })
+      ]);
+
+      res.render('admin/pending-withdrawals', {
+        title: 'Pending Withdrawals - Admin',
+        withdrawals,
+        totalWithdrawals,
+        currentPage: page,
+        totalPages: Math.ceil(totalWithdrawals / limit),
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
+      });
+    } catch (error) {
+      console.error('Get pending withdrawals error:', error);
+      req.flash('error', 'Failed to load pending withdrawals');
+      res.redirect('/admin/dashboard');
+    }
+  },
+
+  async processWithdrawal(req, res) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     
-  } catch (error) {
-    console.error('Process deposit error:', error);
-    req.flash('error', 'Failed to process deposit');
-    res.redirect('/admin/pending-deposits');
-  }
-}
+    try {
+      const { withdrawalId, action, adminNote } = req.body;
+      
+      if (!withdrawalId || !action) {
+        req.flash('error', 'Missing required fields');
+        return res.redirect('/admin/pending-withdrawals');
+      }
 
+      const withdrawal = await Transaction.findById(withdrawalId)
+        .populate('userId')
+        .session(session);
+
+      if (!withdrawal) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Withdrawal not found');
+        return res.redirect('/admin/pending-withdrawals');
+      }
+
+      if (withdrawal.status !== 'pending') {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Withdrawal is not pending');
+        return res.redirect('/admin/pending-withdrawals');
+      }
+
+      if (action === 'approve') {
+        // Update withdrawal status
+        withdrawal.status = 'completed';
+        withdrawal.adminNote = adminNote || `Approved by ${req.session.user.firstName}`;
+        withdrawal.processedAt = new Date();
+        
+        // Verify the user has sufficient balance for the withdrawal
+        const wallet = await Wallet.findOne({ 
+          userId: withdrawal.userId, 
+          currency: withdrawal.currency 
+        }).session(session);
+
+        if (!wallet) {
+          await session.abortTransaction();
+          session.endSession();
+          req.flash('error', 'User wallet not found');
+          return res.redirect('/admin/pending-withdrawals');
+        }
+
+        if (wallet.balance < withdrawal.amount) {
+          await session.abortTransaction();
+          session.endSession();
+          req.flash('error', 'Insufficient balance for withdrawal');
+          return res.redirect('/admin/pending-withdrawals');
+        }
+
+        // Deduct from wallet (if not already done during withdrawal request)
+        const oldBalance = wallet.balance;
+        wallet.balance -= withdrawal.amount;
+        wallet.lastAction = new Date();
+        
+        await wallet.save({ session });
+        await withdrawal.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash('success', 'Withdrawal approved successfully.');
+        
+      } else if (action === 'reject') {
+        // Refund the amount back to user's wallet (if it was deducted during request)
+        const wallet = await Wallet.findOne({ 
+          userId: withdrawal.userId, 
+          currency: withdrawal.currency 
+        }).session(session);
+        
+        if (wallet) {
+          // Only refund if the withdrawal amount was previously deducted
+          wallet.balance += withdrawal.amount;
+          wallet.lastAction = new Date();
+          await wallet.save({ session });
+        }
+
+        withdrawal.status = 'rejected';
+        withdrawal.adminNote = adminNote || `Rejected by ${req.session.user.firstName}`;
+        withdrawal.processedAt = new Date();
+        
+        await withdrawal.save({ session });
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash('success', 'Withdrawal rejected and funds returned to user wallet.');
+      } else {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Invalid action');
+        return res.redirect('/admin/pending-withdrawals');
+      }
+
+      res.redirect('/admin/pending-withdrawals');
+      
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error('Process withdrawal error:', error);
+      req.flash('error', 'Failed to process withdrawal: ' + error.message);
+      res.redirect('/admin/pending-withdrawals');
+    }
+  },
+
+  async getPendingTransfers(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const [transfers, totalTransfers] = await Promise.all([
+        Transaction.find({ 
+          type: { $in: ['transfer', 'send'] }, 
+          status: 'pending' 
+        })
+          .populate('userId', 'firstName lastName email')
+          .populate('recipientId', 'firstName lastName email')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Transaction.countDocuments({ 
+          type: { $in: ['transfer', 'send'] }, 
+          status: 'pending' 
+        })
+      ]);
+
+      res.render('admin/pending-transfers', {
+        title: 'Pending Transfers - Admin',
+        transfers,
+        totalTransfers,
+        currentPage: page,
+        totalPages: Math.ceil(totalTransfers / limit),
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
+      });
+    } catch (error) {
+      console.error('Get pending transfers error:', error);
+      req.flash('error', 'Failed to load pending transfers');
+      res.redirect('/admin/dashboard');
+    }
+  },
+
+  async processTransfer(req, res) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
+    try {
+      const { transferId, action, adminNote } = req.body;
+      
+      if (!transferId || !action) {
+        req.flash('error', 'Missing required fields');
+        return res.redirect('/admin/pending-transfers');
+      }
+
+      const transfer = await Transaction.findById(transferId)
+        .populate('userId')
+        .populate('recipientId')
+        .session(session);
+
+      if (!transfer) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Transfer not found');
+        return res.redirect('/admin/pending-transfers');
+      }
+
+      if (transfer.status !== 'pending') {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Transfer is not pending');
+        return res.redirect('/admin/pending-transfers');
+      }
+
+      if (action === 'approve') {
+        // Check sender's wallet balance
+        const senderWallet = await Wallet.findOne({
+          userId: transfer.userId,
+          currency: transfer.currency
+        }).session(session);
+
+        if (!senderWallet || senderWallet.balance < transfer.amount) {
+          await session.abortTransaction();
+          session.endSession();
+          req.flash('error', 'Insufficient balance in sender\'s wallet');
+          return res.redirect('/admin/pending-transfers');
+        }
+
+        // Deduct from sender
+        senderWallet.balance -= transfer.amount;
+        senderWallet.lastAction = new Date();
+        await senderWallet.save({ session });
+
+        // Find or create recipient's wallet
+        let recipientWallet = await Wallet.findOne({
+          userId: transfer.recipientId,
+          currency: transfer.currency
+        }).session(session);
+
+        if (!recipientWallet) {
+          recipientWallet = new Wallet({
+            userId: transfer.recipientId,
+            currency: transfer.currency,
+            balance: 0
+          });
+        }
+
+        // Add to recipient
+        recipientWallet.balance += transfer.amount;
+        recipientWallet.lastAction = new Date();
+        await recipientWallet.save({ session });
+
+        // Update transfer status
+        transfer.status = 'completed';
+        transfer.adminNote = adminNote || `Approved by ${req.session.user.firstName}`;
+        transfer.processedAt = new Date();
+        await transfer.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash('success', 'Transfer approved successfully.');
+        
+      } else if (action === 'reject') {
+        // Update transfer status to rejected
+        transfer.status = 'rejected';
+        transfer.adminNote = adminNote || `Rejected by ${req.session.user.firstName}`;
+        transfer.processedAt = new Date();
+        
+        await transfer.save({ session });
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash('success', 'Transfer rejected successfully.');
+      } else {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Invalid action');
+        return res.redirect('/admin/pending-transfers');
+      }
+
+      res.redirect('/admin/pending-transfers');
+      
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error('Process transfer error:', error);
+      req.flash('error', 'Failed to process transfer: ' + error.message);
+      res.redirect('/admin/pending-transfers');
+    }
+  },
+
+  // Placeholder functions for other features
+  async transferBetweenUsers(req, res) {
+    req.flash('info', 'Transfer between users feature coming soon');
+    res.redirect('/admin/users');
+  },
+
+  async requestMoneyFromUser(req, res) {
+    req.flash('info', 'Request money feature coming soon');
+    res.redirect('/admin/users');
+  },
+
+  async exchangeMoney(req, res) {
+    req.flash('info', 'Exchange money feature coming soon');
+    res.redirect('/admin/users');
+  },
+
+  async adminWithdrawal(req, res) {
+    req.flash('info', 'Admin withdrawal feature coming soon');
+    res.redirect('/admin/users');
+  }
 };
 
 module.exports = adminController;
