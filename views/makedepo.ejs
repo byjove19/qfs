@@ -38,6 +38,8 @@
           --tg-fw-medium: 500;
           --tg-fw-regular: 400;
           --tg-fw-light: 300;
+          --tg-transition: all 0.3s ease;
+          --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         [data-theme="light"] {
@@ -52,21 +54,18 @@
         /*=============================
             Typography css start
         ===============================*/
-        /* Reset default margins */
         html, body {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
           width: 100%;
-          overflow-x: hidden; /* prevents sideways scroll */
+          overflow-x: hidden;
         }
 
-        /* Ensure all elements follow box-sizing */
         *, *::before, *::after {
           box-sizing: inherit;
         }
 
-        /* Main body styling */
         body {
           font-family: var(--tg-body-font-family);
           font-size: var(--tg-body-font-size);
@@ -79,270 +78,73 @@
           padding: 0 20px;
         }
 
-        img,
-        .img {
-          max-width: 100%;
-          -webkit-transition: all 0.3s ease-out 0s;
-          -moz-transition: all 0.3s ease-out 0s;
-          -ms-transition: all 0.3s ease-out 0s;
-          -o-transition: all 0.3s ease-out 0s;
-          transition: all 0.3s ease-out 0s;
-        }
-
-        a,
-        button {
-          color: var(--tg-theme-primary);
-          outline: none;
-          text-decoration: none;
-          -webkit-transition: all 0.3s ease-out 0s;
-          -moz-transition: all 0.3s ease-out 0s;
-          -ms-transition: all 0.3s ease-out 0s;
-          -o-transition: all 0.3s ease-out 0s;
-          transition: all 0.3s ease-out 0s;
-        }
-
-        a:focus,
-        .btn:focus,
-        .button:focus {
-          text-decoration: none;
-          outline: none;
-          -webkit-box-shadow: none;
-          -moz-box-shadow: none;
-          -ms-box-shadow: none;
-          -o-box-shadow: none;
-          box-shadow: none;
-        }
-
-        a:hover,
-        button:hover {
-          color: var(--tg-theme-primary);
-          text-decoration: none;
-        }
-
-        button:focus,
-        input:focus,
-        input:focus,
-        textarea,
-        textarea:focus {
-          outline: 0;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          font-family: var(--tg-heading-font-family);
-          color: var(--tg-heading-color);
-          margin-top: 0px;
-          font-weight: var(--tg-fw-semi-bold);
-          line-height: var(--tg-heading-line-height);
-          text-transform: unset;
-        }
-
-        h1 a,
-        h2 a,
-        h3 a,
-        h4 a,
-        h5 a,
-        h6 a {
-          color: inherit;
-        }
-
-        h1 {
-          font-size: 2.5rem;
-        }
-
-        h2 {
-          font-size: 2rem;
-        }
-
-        h3 {
-          font-size: 1.75rem;
-        }
-
-        h4 {
-          font-size: 1.5rem;
-        }
-
-        h5 {
-          font-size: 1.25rem;
-        }
-
-        h6 {
-          font-size: 1rem;
-        }
-
-        .list-wrap {
-          margin: 0px;
-          padding: 0px;
-        }
-        .list-wrap li {
-          list-style: none;
-        }
-
-        p {
-          margin-bottom: 15px;
-        }
-
-        hr {
-          border-bottom: 1px solid var(--tg-border-1);
-          border-top: 0 none;
-          margin: 30px 0;
-          padding: 0;
-        }
-
-        label {
-          color: var(--tg-heading-color);
-          cursor: pointer;
-          font-size: var(--tg-body-font-size);
-          font-weight: var(--tg-fw-regular);
-        }
-
-        *::-moz-selection {
-          background: var(--tg-theme-primary);
-          color: var(--tg-color-white-default);
-          text-shadow: none;
-        }
-
-        ::-moz-selection {
-          background: var(--tg-theme-primary);
-          color: var(--tg-color-white-default);
-          text-shadow: none;
-        }
-
-        ::selection {
-          background: var(--tg-theme-primary);
-          color: var(--tg-color-white-default);
-          text-shadow: none;
-        }
-
-        .logo-text {
-          font-family: "Poppins", sans-serif;
-          font-size: 28px;
-          font-weight: 700;
-          text-transform: uppercase;
-          color: var(--tg-color-light-blue);
-          text-decoration: none;
-          letter-spacing: 2px;
-          transition: color 0.3s ease;
-        }
-
-        .logo-text:hover {
-          color: #0984e3;
-        }
-        
-        /*=============================
-            - Input Placeholder
-        ===============================*/
-        input,
-        textarea {
-          color: var(--tg-body-color);
-        }
-
-        *::-moz-placeholder {
-          color: var(--tg-body-color);
-          font-size: var(--tg-body-font-size);
-          opacity: 1;
-        }
-
-        *::placeholder {
-          color: var(--tg-body-color);
-          font-size: var(--tg-body-font-size);
-          opacity: 1;
-        }
-
-        /*=============================
-            - Common Classes
-        ===============================*/
-        .fix {
-          overflow: hidden;
-        }
-
-        .clear {
-          clear: both;
-        }
-
-        .section-py-120 {
-          padding: 120px 0;
-        }
-        @media (max-width: 991.98px) {
-          .section-py-120 {
-            padding: 100px 0;
-          }
-        }
-
-        .section-pb-120 {
-          padding-bottom: 120px;
-        }
-        @media (max-width: 991.98px) {
-          .section-pb-120 {
-            padding-bottom: 100px;
-          }
-        }
-
-        /*=============================
-            - Bootstrap Custom
-        =============================*/
-        .container {
-          padding-left: 15px;
-          padding-right: 15px;
-        }
-
-        .row {
-          --bs-gutter-x: 30px;
-        }
-
-        .gutter-y-30 {
-          --bs-gutter-y: 30px;
-        }
-
-        .gx-0 {
-          --bs-gutter-x: 0;
-        }
-
-        /* Deposit Page Specific Styles */
+        /* Enhanced Deposit Page Styles */
         .deposit-container {
-            max-width: 860px;
+            max-width: 900px;
             margin: 40px auto;
             background: var(--tg-color-dark-2);
-            border-radius: 16px;
+            border-radius: 20px;
             border: 1px solid var(--tg-border-1);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .deposit-header {
-            padding: 30px;
+            padding: 40px;
             text-align: center;
             border-bottom: 1px solid var(--tg-border-1);
             background: linear-gradient(135deg, var(--tg-color-dark-2), var(--tg-color-dark-3));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deposit-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tg-theme-primary), var(--tg-color-blue-default));
         }
 
         .deposit-logo {
-            width: 100px;
+            width: 80px;
+            height: 80px;
             margin-bottom: 20px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--tg-theme-primary), var(--tg-color-blue-default));
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(75, 89, 245, 0.3);
         }
 
         .deposit-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: var(--tg-fw-bold);
             color: var(--tg-heading-color);
             margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--tg-heading-color), var(--tg-theme-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .deposit-subtitle {
             color: var(--tg-body-color);
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: var(--tg-fw-medium);
         }
 
         .alert {
-            padding: 20px;
-            margin: 20px;
+            padding: 20px 25px;
+            margin: 25px;
             border-radius: 12px;
             border: 1px solid transparent;
             font-weight: var(--tg-fw-medium);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            backdrop-filter: blur(10px);
         }
 
         .alert-danger {
@@ -351,8 +153,27 @@
             color: #dc3545;
         }
 
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+
         .deposit-body {
-            padding: 30px;
+            padding: 40px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .form-group {
@@ -361,195 +182,549 @@
 
         .form-label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: var(--tg-heading-color);
             font-weight: var(--tg-fw-semi-bold);
-            font-size: 16px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px;
-            background: var(--tg-color-dark-3);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 8px;
-            color: var(--tg-heading-color);
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--tg-theme-primary);
-            box-shadow: 0 0 0 2px rgba(75, 89, 245, 0.2);
-        }
-
-        .form-control::placeholder {
-            color: var(--tg-body-color);
-        }
-
-        .remarks {
-            background: var(--tg-color-dark-3);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .remarks-title {
-            color: var(--tg-heading-color);
-            font-weight: var(--tg-fw-bold);
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .remarks-list {
-            color: var(--tg-body-color);
-            line-height: 1.8;
-        }
-
-        .remarks-list span {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .wallet-card {
-            background: var(--tg-color-dark-3);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid var(--tg-border-1);
-            transition: all 0.3s ease;
-        }
-
-        .wallet-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .wallet-label {
-            color: var(--tg-heading-color);
-            font-weight: var(--tg-fw-semi-bold);
-            margin-bottom: 15px;
             font-size: 16px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        .form-label i {
+            color: var(--tg-theme-primary);
+            width: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--tg-color-dark-3);
+            border: 2px solid var(--tg-border-1);
+            border-radius: 12px;
+            color: var(--tg-heading-color);
+            font-size: 16px;
+            transition: var(--tg-transition);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: var(--tg-theme-primary);
+            box-shadow: 0 0 0 4px rgba(75, 89, 245, 0.1);
+            background: var(--tg-color-dark-2);
+        }
+
+        .form-control::placeholder {
+            color: var(--tg-body-color);
+            opacity: 0.7;
+        }
+
+        .instructions-card {
+            background: linear-gradient(135deg, var(--tg-color-dark-3), var(--tg-color-dark-2));
+            border: 1px solid var(--tg-border-1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .instructions-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--tg-theme-primary), var(--tg-color-blue-default));
+        }
+
+        .instructions-title {
+            color: var(--tg-heading-color);
+            font-weight: var(--tg-fw-bold);
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .steps-list {
+            color: var(--tg-body-color);
+            line-height: 1.8;
+            counter-reset: step-counter;
+        }
+
+        .step-item {
+            margin-bottom: 15px;
+            padding-left: 40px;
+            position: relative;
+            font-weight: var(--tg-fw-medium);
+        }
+
+        .step-item::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--tg-theme-primary), var(--tg-color-blue-default));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: var(--tg-fw-bold);
+        }
+
+        .wallet-section {
+            margin-top: 30px;
+        }
+
+        .wallet-card {
+            background: var(--tg-color-dark-3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid var(--tg-border-1);
+            transition: var(--tg-transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(75, 89, 245, 0.05), transparent);
+            opacity: 0;
+            transition: var(--tg-transition);
+        }
+
+        .wallet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .wallet-card:hover::before {
+            opacity: 1;
+        }
+
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wallet-title {
+            font-size: 20px;
+            font-weight: var(--tg-fw-semi-bold);
+            color: var(--tg-heading-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .wallet-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             background: linear-gradient(135deg, var(--tg-theme-primary), var(--tg-color-blue-default));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 12px;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(75, 89, 245, 0.3);
         }
 
-        .wallet-wrapper {
+        .wallet-address-container {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .wallet-address-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
 
         .wallet-input {
             flex: 1;
             background: var(--tg-color-dark-2);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 8px;
-            padding: 12px 15px;
+            border: 2px solid var(--tg-border-1);
+            border-radius: 12px;
+            padding: 15px 20px;
             color: var(--tg-heading-color);
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 14px;
             cursor: not-allowed;
+            transition: var(--tg-transition);
+        }
+
+        .wallet-input:focus {
+            border-color: var(--tg-theme-primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                width: 100%;
+                justify-content: stretch;
+            }
+            
+            .action-buttons .btn {
+                flex: 1;
+            }
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: var(--tg-fw-semi-bold);
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--tg-transition);
             display: inline-flex;
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--tg-transition);
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: var(--tg-theme-primary);
+            background: linear-gradient(135deg, var(--tg-theme-primary), var(--tg-color-blue-default));
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--tg-color-light-blue);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+            box-shadow: 0 8px 25px rgba(75, 89, 245, 0.4);
         }
 
         .btn-secondary {
-            background: var(--tg-color-blue-default);
+            background: linear-gradient(135deg, var(--tg-color-blue-default-2), var(--tg-color-light-blue));
             color: white;
         }
 
         .btn-secondary:hover {
-            background: var(--tg-color-blue-default-2);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(112, 59, 255, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
         }
 
         .submit-section {
             text-align: center;
-            padding: 30px;
+            padding: 40px;
             border-top: 1px solid var(--tg-border-1);
+            background: linear-gradient(135deg, var(--tg-color-dark-2), var(--tg-color-dark-3));
         }
 
         .submit-btn {
             background: linear-gradient(135deg, var(--tg-theme-primary), var(--tg-color-blue-default));
             color: white;
-            padding: 15px 40px;
+            padding: 18px 50px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: var(--tg-fw-semi-bold);
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: var(--tg-fw-bold);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--tg-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(75, 89, 245, 0.3);
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(75, 89, 245, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(75, 89, 245, 0.5);
         }
+
+        .submit-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        /* Enhanced Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: var(--tg-color-dark-2);
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--tg-border-1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tg-theme-primary), var(--tg-color-blue-default));
+        }
+
+        .modal-header {
+            padding: 30px 30px 20px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: var(--tg-fw-bold);
+            color: var(--tg-heading-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-close {
+            background: var(--tg-color-dark-3);
+            border: none;
+            color: var(--tg-body-color);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: var(--tg-transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--tg-theme-primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .transaction-success {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .transaction-details {
+            background: var(--tg-color-dark-3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--tg-border-1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--tg-body-color);
+            font-weight: var(--tg-fw-medium);
+        }
+
+        .detail-value {
+            color: var(--tg-heading-color);
+            font-weight: var(--tg-fw-semi-bold);
+        }
+
+        .transaction-id {
+            font-family: 'Courier New', monospace;
+            background: var(--tg-color-dark);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            border-radius: 8px;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #28a745;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-weight: var(--tg-fw-medium);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animation for wallet cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wallet-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .wallet-card:nth-child(1) { animation-delay: 0.1s; }
+        .wallet-card:nth-child(2) { animation-delay: 0.2s; }
+        .wallet-card:nth-child(3) { animation-delay: 0.3s; }
 
         /* Responsive Design */
         @media (max-width: 768px) {
             .deposit-container {
                 margin: 20px auto;
+                border-radius: 16px;
             }
 
             .deposit-header {
-                padding: 20px;
+                padding: 30px 20px;
             }
 
             .deposit-body {
-                padding: 20px;
+                padding: 25px;
             }
 
-            .wallet-wrapper {
-                flex-direction: column;
-                align-items: stretch;
+            .submit-section {
+                padding: 30px 20px;
             }
 
-            .btn {
+            .submit-btn {
                 width: 100%;
                 justify-content: center;
             }
 
-            .wallet-input {
-                margin-bottom: 10px;
+            .modal-content {
+                margin: 20px;
             }
         }
 
@@ -562,49 +737,9 @@
                 padding: 20px;
             }
 
-            .submit-btn {
-                width: 100%;
+            .modal-body {
+                padding: 20px;
             }
-        }
-
-        /* Animation for wallet cards */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .wallet-card {
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        .wallet-card:nth-child(1) { animation-delay: 0.1s; }
-        .wallet-card:nth-child(2) { animation-delay: 0.2s; }
-        .wallet-card:nth-child(3) { animation-delay: 0.3s; }
-        .wallet-card:nth-child(4) { animation-delay: 0.4s; }
-        .wallet-card:nth-child(5) { animation-delay: 0.5s; }
-        .wallet-card:nth-child(6) { animation-delay: 0.6s; }
-        .wallet-card:nth-child(7) { animation-delay: 0.7s; }
-        .wallet-card:nth-child(8) { animation-delay: 0.8s; }
-        .wallet-card:nth-child(9) { animation-delay: 0.9s; }
-        .wallet-card:nth-child(10) { animation-delay: 1.0s; }
-        .wallet-card:nth-child(11) { animation-delay: 1.1s; }
-        .wallet-card:nth-child(12) { animation-delay: 1.2s; }
-
-        /* Success message */
-        .success-message {
-            background: rgba(40, 167, 69, 0.1);
-            border: 1px solid rgba(40, 167, 69, 0.3);
-            color: #28a745;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin: 10px 0;
-            display: none;
         }
     </style>
 </head>
@@ -612,79 +747,175 @@
 <body>
     <div class="deposit-container">
         <div class="deposit-header">
-            <img src="https://hostedpage.coin2pay.io/assets/img/logo/logo-coin2pay_icon-light.png" alt="QFS Logo" class="deposit-logo">
-            <h1 class="deposit-title">Quantum Financial System Direct Deposit</h1>
-            <p class="deposit-subtitle">Secure cryptocurrency deposits for your QFS account</p>
+            <div class="deposit-logo">
+                <i class="fas fa-coins" style="font-size: 32px;"></i>
+            </div>
+            <h1 class="deposit-title">Quantum Financial System</h1>
+            <p class="deposit-subtitle">Secure Cryptocurrency Deposits</p>
         </div>
 
         <div class="alert alert-danger">
             <i class="fas fa-exclamation-triangle"></i>
-            <strong>Important:</strong> After successfully completing a deposit, kindly contact the QFS online assistance service to help verify your deposit. This will enable instant reflection of your coin on your QFS dashboard.
+            <div>
+                <strong>Important Notice:</strong> After completing your deposit, contact QFS support for verification to ensure instant reflection in your dashboard.
+            </div>
         </div>
 
         <div class="deposit-body">
             <form id="depositForm">
-                <div class="form-group">
-                    <label class="form-label" for="amount">
-                        <i class="fas fa-money-bill-wave"></i> Enter Amount (USD)
-                    </label>
-                    <input type="number" 
-                           id="amount" 
-                           name="amount" 
-                           class="form-control" 
-                           placeholder="Minimum amount $100" 
-                           min="100" 
-                           step="0.01" 
-                           required>
-                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="amount">
+                            <i class="fas fa-money-bill-wave"></i> Deposit Amount (USD)
+                        </label>
+                        <input type="number" 
+                               id="amount" 
+                               name="amount" 
+                               class="form-control" 
+                               placeholder="Enter amount (Minimum: $100)" 
+                               min="100" 
+                               step="0.01" 
+                               required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="currency">
-                        <i class="fas fa-coins"></i> Select Cryptocurrency
-                    </label>
-                    <select id="currency" name="currency" class="form-control" required>
-                        <option value="">-- Select your cryptocurrency --</option>
-                        <option value="BTC">Bitcoin (BTC)</option>
-                        <option value="ETH">Ethereum (ETH)</option>
-                        <option value="LTC">Litecoin (LTC)</option>
-                        <option value="XRP">XRP</option>
-                        <option value="XLM">Stellar (XLM)</option>
-                        <option value="DOGE">Dogecoin (DOGE)</option>
-                        <option value="USDT-ERC20">USDT (ERC20)</option>
-                        <option value="USDT-TRC20">USDT (TRC20)</option>
-                        <option value="ALGO">Algorand (ALGO)</option>
-                        <option value="MATIC">Polygon (MATIC)</option>
-                        <option value="SOL">Solana (SOL)</option>
-                        <option value="USDC">USDC (ERC20)</option>
-                    </select>
-                </div>
-
-                <div class="remarks">
-                    <h3 class="remarks-title">Direct Deposit Steps:</h3>
-                    <div class="remarks-list">
-                        <span>1. Choose QFS Asset Backed coin you want to deposit and Enter the amount</span>
-                        <span>2. Copy the wallet address provided or generate QR code to make the deposit</span>
-                        <span>3. Send the exact amount to the Crypto address provided</span>
-                        <span>4. After completing the deposit, click on "Submit Payment" to finalize the process</span>
-                        <span>5. Contact Live Support for Fast Deposit Confirmation</span>
+                    <div class="form-group">
+                        <label class="form-label" for="currency">
+                            <i class="fas fa-coins"></i> Select Cryptocurrency
+                        </label>
+                        <select id="currency" name="currency" class="form-control" required>
+                            <option value="">-- Choose Cryptocurrency --</option>
+                            <option value="BTC">Bitcoin (BTC)</option>
+                            <option value="ETH">Ethereum (ETH)</option>
+                            <option value="LTC">Litecoin (LTC)</option>
+                            <option value="XRP">XRP</option>
+                            <option value="XLM">Stellar (XLM)</option>
+                            <option value="DOGE">Dogecoin (DOGE)</option>
+                            <option value="USDT-ERC20">USDT (ERC20)</option>
+                            <option value="USDT-TRC20">USDT (TRC20)</option>
+                            <option value="ALGO">Algorand (ALGO)</option>
+                            <option value="MATIC">Polygon (MATIC)</option>
+                            <option value="SOL">Solana (SOL)</option>
+                            <option value="USDC">USDC (ERC20)</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Dynamic Wallet Addresses will be shown here -->
-                <div id="walletAddresses"></div>
+                <div class="instructions-card">
+                    <h3 class="instructions-title">
+                        <i class="fas fa-list-ol"></i> Deposit Instructions
+                    </h3>
+                    <div class="steps-list">
+                        <div class="step-item">Select cryptocurrency and enter deposit amount</div>
+                        <div class="step-item">Copy the wallet address or scan QR code</div>
+                        <div class="step-item">Send exact amount from your wallet</div>
+                        <div class="step-item">Submit payment confirmation</div>
+                        <div class="step-item">Contact support for fast verification</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Wallet Address Section -->
+                <div id="walletAddresses" class="wallet-section"></div>
             </form>
 
             <div class="submit-section">
-                <button type="button" onclick="submitDeposit()" class="submit-btn">
-                    <i class="fas fa-paper-plane"></i> Submit Payment
+                <button type="button" onclick="submitDeposit()" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Confirm & Submit Payment
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Success Message Element -->
+    <!-- Success Message -->
     <div id="successMessage" class="success-message" style="display: none;">
-        <i class="fas fa-check-circle"></i> Address copied to clipboard successfully!
+        <i class="fas fa-check-circle"></i> 
+        <span id="successText"></span>
+    </div>
+
+    <!-- Transaction Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-check-circle"></i> Deposit Submitted
+                </h3>
+                <button class="modal-close" id="successModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-success">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3 style="color: var(--tg-heading-color); margin-bottom: 10px;">Transaction Recorded Successfully!</h3>
+                    <p style="color: var(--tg-body-color);">Your deposit request has been submitted and is pending verification.</p>
+                </div>
+
+                <div class="transaction-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction ID:</span>
+                        <span class="detail-value transaction-id" id="modalTransactionId">TX-123456789</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount:</span>
+                        <span class="detail-value" id="modalAmount">$0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Cryptocurrency:</span>
+                        <span class="detail-value" id="modalCurrency">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value" style="color: #ffc107;">Pending Verification</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date & Time:</span>
+                        <span class="detail-value" id="modalDateTime">-</span>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <strong>Next Steps:</strong> Contact support with your Transaction ID for fast verification. Funds will appear after admin approval.
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="viewTransactions()">
+                        <i class="fas fa-list"></i> View Transactions
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeSuccessModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="qrModalTitle">
+                    <i class="fas fa-qrcode"></i> QR Code
+                </h3>
+                <button class="modal-close" id="qrModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code">
+                    <img id="qrImage" src="" alt="QR Code">
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <p id="qrAddress" class="form-control" style="font-family: monospace; text-align: center; margin-bottom: 20px;"></p>
+                    <button class="btn btn-primary" onclick="copyQRAddress()">
+                        <i class="fas fa-copy"></i> Copy Address
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -704,36 +935,20 @@
             'USDC': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae'
         };
 
-        // Currency icons mapping
-        const currencyIcons = {
-            'BTC': 'fab fa-bitcoin',
-            'ETH': 'fab fa-ethereum',
-            'LTC': 'fab fa-litecoin',
-            'XRP': 'fas fa-exchange-alt',
-            'XLM': 'fas fa-star',
-            'DOGE': 'fab fa-reddit',
-            'USDT-ERC20': 'fas fa-dollar-sign',
-            'USDT-TRC20': 'fas fa-dollar-sign',
-            'ALGO': 'fas fa-chart-line',
-            'MATIC': 'fas fa-layer-group',
-            'SOL': 'fas fa-bolt',
-            'USDC': 'fas fa-dollar-sign'
-        };
-
-        // Currency display names
-        const currencyNames = {
-            'BTC': 'Bitcoin',
-            'ETH': 'Ethereum',
-            'LTC': 'Litecoin',
-            'XRP': 'XRP',
-            'XLM': 'Stellar',
-            'DOGE': 'Dogecoin',
-            'USDT-ERC20': 'USDT (ERC20)',
-            'USDT-TRC20': 'USDT (TRC20)',
-            'ALGO': 'Algorand',
-            'MATIC': 'Polygon',
-            'SOL': 'Solana',
-            'USDC': 'USDC (ERC20)'
+        // Currency icons and names
+        const currencyData = {
+            'BTC': { icon: 'fab fa-bitcoin', name: 'Bitcoin' },
+            'ETH': { icon: 'fab fa-ethereum', name: 'Ethereum' },
+            'LTC': { icon: 'fab fa-litecoin', name: 'Litecoin' },
+            'XRP': { icon: 'fas fa-exchange-alt', name: 'XRP' },
+            'XLM': { icon: 'fas fa-star', name: 'Stellar' },
+            'DOGE': { icon: 'fab fa-reddit', name: 'Dogecoin' },
+            'USDT-ERC20': { icon: 'fas fa-dollar-sign', name: 'USDT (ERC20)' },
+            'USDT-TRC20': { icon: 'fas fa-dollar-sign', name: 'USDT (TRC20)' },
+            'ALGO': { icon: 'fas fa-chart-line', name: 'Algorand' },
+            'MATIC': { icon: 'fas fa-layer-group', name: 'Polygon' },
+            'SOL': { icon: 'fas fa-bolt', name: 'Solana' },
+            'USDC': { icon: 'fas fa-dollar-sign', name: 'USDC (ERC20)' }
         };
 
         // Show wallet address when currency is selected
@@ -743,33 +958,36 @@
             
             if (selectedCurrency && walletAddresses[selectedCurrency]) {
                 const address = walletAddresses[selectedCurrency];
-                const iconClass = currencyIcons[selectedCurrency];
-                const currencyName = currencyNames[selectedCurrency];
+                const currencyInfo = currencyData[selectedCurrency];
                 
                 walletAddressesDiv.innerHTML = `
                     <div class="wallet-card">
-                        <div class="wallet-label">
-                            <div class="wallet-icon">
-                                <i class="${iconClass}"></i>
+                        <div class="wallet-header">
+                            <div class="wallet-title">
+                                <div class="wallet-icon">
+                                    <i class="${currencyInfo.icon}"></i>
+                                </div>
+                                ${currencyInfo.name} Wallet Address
                             </div>
-                            ${currencyName} Address:
                         </div>
-                        <div class="wallet-wrapper">
+                        <div class="wallet-address-container">
                             <input type="text" 
                                    value="${address}" 
                                    readonly 
                                    class="wallet-input"
                                    id="walletAddress">
-                            <button type="button" 
-                                    class="btn btn-primary" 
-                                    onclick="copyToClipboard('walletAddress')">
-                                <i class="fas fa-copy"></i> Copy
-                            </button>
-                            <a href="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(address)}&size=200x200" 
-                               target="_blank" 
-                               class="btn btn-secondary">
-                                <i class="fas fa-qrcode"></i> QR Code
-                            </a>
+                            <div class="action-buttons">
+                                <button type="button" 
+                                        class="btn btn-primary" 
+                                        onclick="copyToClipboard('walletAddress')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-secondary" 
+                                        onclick="showQRCode('${currencyInfo.name}', 'walletAddress')">
+                                    <i class="fas fa-qrcode"></i> QR Code
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -784,26 +1002,32 @@
                 const element = document.getElementById(elementId);
                 await navigator.clipboard.writeText(element.value);
                 
-                // Show success message
-                const successMessage = document.getElementById('successMessage');
-                successMessage.style.display = 'block';
-                successMessage.textContent = '✓ Address copied to clipboard successfully!';
-                
-                // Hide message after 3 seconds
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 3000);
+                showSuccessMessage('Wallet address copied to clipboard!');
                 
             } catch (err) {
                 console.error('Failed to copy text: ', err);
-                alert('Failed to copy address to clipboard. Please try again.');
+                alert('Failed to copy address. Please try again.');
             }
         }
 
+        // Show success message
+        function showSuccessMessage(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            
+            successText.textContent = message;
+            successMessage.style.display = 'flex';
+            
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
         // Submit deposit function
-        function submitDeposit() {
+        async function submitDeposit() {
             const amount = document.getElementById('amount').value;
             const currency = document.getElementById('currency').value;
+            const submitBtn = document.getElementById('submitBtn');
             
             if (!amount || amount < 100) {
                 alert('Please enter a valid amount (minimum $100)');
@@ -814,31 +1038,119 @@
                 alert('Please select a cryptocurrency');
                 return;
             }
-            
-            // Show confirmation
-            const confirmation = confirm(
-                `Confirm Deposit:\n\n` +
-                `Amount: $${amount}\n` +
-                `Currency: ${currencyNames[currency]}\n\n` +
-                `Please ensure you have:\n` +
-                `1. Copied the wallet address correctly\n` +
-                `2. Sent the exact amount\n` +
-                `3. Contacted support for verification\n\n` +
-                `Proceed to submit payment?`
-            );
-            
-            if (confirmation) {
-                // In a real application, you would submit to your server here
-                // For now, we'll simulate the process
-                
-                alert("Deposit submitted successfully! Please contact support for verification.");
-                
-                // Redirect to dashboard after successful submission
-                setTimeout(() => {
-                    window.location.href = "/dashboard";
-                }, 2000);
+
+            // Show loading state
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="loading"></div> Processing...';
+            submitBtn.disabled = true;
+
+            try {
+                // Send deposit request to server
+                const response = await fetch('/deposit/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: parseFloat(amount),
+                        currency: currency,
+                        description: `Deposit request for ${amount} USD via ${currencyData[currency].name}`
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success modal with transaction details
+                    showSuccessModal(result.transaction, amount, currency);
+                } else {
+                    alert('Deposit submission failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Deposit submission error:', error);
+                alert('Failed to submit deposit. Please try again.');
+            } finally {
+                // Restore button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
         }
+
+        // Show success modal
+        function showSuccessModal(transaction, amount, currency) {
+            const modal = document.getElementById('successModal');
+            const currencyInfo = currencyData[currency];
+            
+            // Populate modal with transaction details
+            document.getElementById('modalTransactionId').textContent = transaction._id || 'TX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            document.getElementById('modalAmount').textContent = '$' + parseFloat(amount).toLocaleString();
+            document.getElementById('modalCurrency').textContent = currencyInfo.name;
+            document.getElementById('modalDateTime').textContent = new Date().toLocaleString();
+            
+            // Show modal
+            modal.style.display = 'flex';
+        }
+
+        // Close success modal
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+            // Optionally redirect to transactions page
+            // window.location.href = '/transactions';
+        }
+
+        // View transactions
+        function viewTransactions() {
+            window.location.href = '/transactions';
+        }
+
+        // QR Code functions
+        function showQRCode(currency, elementId) {
+            const address = document.getElementById(elementId).value;
+            const qrModal = document.getElementById('qrModal');
+            const qrImage = document.getElementById('qrImage');
+            const qrAddress = document.getElementById('qrAddress');
+            const qrModalTitle = document.getElementById('qrModalTitle');
+            
+            qrModalTitle.innerHTML = `<i class="fas fa-qrcode"></i> ${currency} QR Code`;
+            qrAddress.textContent = address;
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
+            qrModal.style.display = 'flex';
+        }
+
+        function copyQRAddress() {
+            const qrAddress = document.getElementById('qrAddress');
+            copyToClipboardFromElement(qrAddress);
+        }
+
+        async function copyToClipboardFromElement(element) {
+            try {
+                await navigator.clipboard.writeText(element.textContent);
+                showSuccessMessage('Address copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy address. Please try again.');
+            }
+        }
+
+        // Modal close handlers
+        document.getElementById('qrModalClose').addEventListener('click', function() {
+            document.getElementById('qrModal').style.display = 'none';
+        });
+
+        document.getElementById('successModalClose').addEventListener('click', closeSuccessModal);
+
+        // Close modals when clicking outside
+        document.getElementById('qrModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                this.style.display = 'none';
+            }
+        });
+
+        document.getElementById('successModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeSuccessModal();
+            }
+        });
 
         // Form submission handler
         document.getElementById('depositForm').addEventListener('submit', function(e) {
@@ -846,7 +1158,7 @@
             submitDeposit();
         });
 
-        // Add some interactive effects
+        // Add interactive effects
         document.addEventListener('DOMContentLoaded', function() {
             // Add focus effects to form elements
             const formControls = document.querySelectorAll('.form-control');
@@ -859,6 +1171,21 @@
                     this.parentElement.style.transform = 'translateY(0)';
                 });
             });
+
+            // Initialize with first currency selected if any
+            const currencySelect = document.getElementById('currency');
+            if (currencySelect.options.length > 1) {
+                currencySelect.selectedIndex = 1;
+                currencySelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Escape key to close modals
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSuccessModal();
+                document.getElementById('qrModal').style.display = 'none';
+            }
         });
     </script>
 </body>
