@@ -8,10 +8,15 @@ class TransactionManager {
 
     init() {
         console.log('TransactionManager initialized');
-        setTimeout(() => {
-            this.loadTransactions();
-            this.setupEventListeners();
-        }, 100);
+        this.setupEventListeners();
+        
+        // Only load via AJAX if no transactions were rendered server-side
+        const existingTransactions = document.querySelectorAll('.transaction-card');
+        if (existingTransactions.length === 0) {
+            this.loadTransactions(1);
+        } else {
+            this.updateLoadMoreButton();
+        }
     }
 
     async loadTransactions(page = 1, append = false) {
@@ -21,12 +26,9 @@ class TransactionManager {
         this.currentPage = page;
 
         try {
-            console.log('Loading transactions, page:', page);
-            
             const container = document.getElementById('transactionsContainer');
             if (!container) return;
 
-            // Show loading indicator
             if (!append) {
                 container.innerHTML = `
                     <div class="text-center py-4">
@@ -43,10 +45,7 @@ class TransactionManager {
                 limit: '10'
             });
 
-            const apiUrl = `/transactions/api/transactions?${queryParams}`;
-            console.log('Fetching from:', apiUrl);
-
-            const response = await fetch(apiUrl, {
+            const response = await fetch(`/api/transactions?${queryParams}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,64 +54,22 @@ class TransactionManager {
                 credentials: 'include'
             });
 
-            console.log('Response status:', response.status);
-
-            if (response.status === 401) {
-                const errorData = await response.json();
-                console.log('401 Error:', errorData);
-                this.showError(errorData.message || 'Your session has expired. Please refresh the page to log in again.');
-                return;
-            }
-
-            if (response.status === 404) {
-                // Handle 404 gracefully - show "no transactions" instead of error
-                console.log('No transactions found (404)');
-                this.renderNoTransactions();
-                return;
-            }
-
             if (!response.ok) {
-                throw new Error(`Failed to load transactions: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log('Transactions data:', data);
-
-            if (data.success) {
-                // Check if we actually have transactions
-                if (data.data.transactions && data.data.transactions.length > 0) {
-                    this.renderTransactions(data.data.transactions, append);
-                    this.hasMore = data.data.pagination.hasMore || false;
-                    this.updatePaginationInfo(data.data.pagination);
-                } else {
-                    // No transactions in response
-                    if (!append) {
-                        this.renderNoTransactions();
-                    }
-                    this.hasMore = false;
-                }
+            
+            if (data.success && data.data && data.data.transactions) {
+                this.renderTransactions(data.data.transactions, append);
+                this.hasMore = data.data.pagination?.hasMore || false;
             } else {
-                // API returned success: false but with 200 status
-                if (data.message && data.message.includes('not found') || data.message.includes('No transactions')) {
-                    this.renderNoTransactions();
-                } else {
-                    throw new Error(data.message || 'Failed to load transactions');
-                }
+                this.renderNoTransactions();
             }
 
         } catch (error) {
             console.error('Error loading transactions:', error);
-            
-            // Check if it's a "no transactions" type error
-            if (error.message.includes('not found') || 
-                error.message.includes('No transactions') || 
-                error.message.includes('404')) {
-                this.renderNoTransactions();
-            } else if (error.message.includes('Failed to fetch')) {
-                this.showError('Network error. Please check your connection and try again.');
-            } else {
-                this.showError(error.message);
-            }
+            this.showError('Failed to load transactions. Please try again.');
         } finally {
             this.isLoading = false;
             this.updateLoadMoreButton();
@@ -128,9 +85,7 @@ class TransactionManager {
         }
 
         if (!transactions || transactions.length === 0) {
-            if (!append) {
-                this.renderNoTransactions();
-            }
+            this.renderNoTransactions();
             return;
         }
 
@@ -140,64 +95,109 @@ class TransactionManager {
         });
     }
 
-    renderNoTransactions() {
-        const container = document.getElementById('transactionsContainer');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="text-center py-5">
-                <div class="empty-state">
-                    <i class="fas fa-exchange-alt fa-4x text-muted mb-4 opacity-50"></i>
-                    <h5 class="text-muted mb-3">No Transactions Yet</h5>
-                    <p class="text-muted mb-4">You haven't made any transactions yet. Your transactions will appear here once you start using the platform.</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <button class="btn btn-primary" onclick="window.location.href='/dashboard'">
-                            <i class="fas fa-home me-2"></i>Go to Dashboard
-                        </button>
-                        <button class="btn btn-outline-primary" onclick="transactionManager.loadTransactions(1)">
-                            <i class="fas fa-refresh me-2"></i>Refresh
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Also hide pagination and load more button when no transactions
-        this.hasMore = false;
-        this.updateLoadMoreButton();
-        
-        const paginationInfo = document.getElementById('paginationInfo');
-        if (paginationInfo) {
-            paginationInfo.textContent = 'No transactions';
-        }
-    }
-
     createTransactionElement(transaction) {
         const div = document.createElement('div');
-        div.className = 'transaction-card border rounded p-3 mb-3';
+        div.className = 'transaction-card border rounded p-3 mb-3 cursor-pointer';
+        div.setAttribute('data-bs-toggle', 'modal');
+        div.setAttribute('data-bs-target', `#transactionModal${transaction._id}`);
+        
+        // Determine status class and text
+        const statusClass = transaction.status === 'completed' ? 'text-success' : 
+                           transaction.status === 'pending' ? 'text-warning' : 'text-danger';
+        const statusText = transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1);
+        
+        // Determine amount display
+        const isPositive = transaction.type === 'receive' || transaction.type === 'deposit';
+        const amountDisplay = `₦${transaction.amount?.toLocaleString() || '0'}`;
+        
         div.innerHTML = `
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <p class="mb-0 f-15 gilroy-medium text-dark">
                         ${this.escapeHtml(transaction.type)} 
                         <span class="text-muted">|</span> 
-                        <span class="${transaction.statusClass}">${this.escapeHtml(transaction.statusText)}</span>
+                        <span class="${statusClass}">${this.escapeHtml(statusText)}</span>
                     </p>
                     <p class="mb-0 text-gray-100 f-13">
-                        ${this.escapeHtml(transaction.formattedDate)}
+                        ${transaction.createdAt ? new Date(transaction.createdAt).toLocaleDateString() : 'Unknown Date'}
                     </p>
-                    ${transaction.description ? `
-                        <p class="mb-0 text-gray-100 f-12">
-                            ${this.escapeHtml(transaction.description)}
-                        </p>
-                    ` : ''}
                 </div>
-                <p class="mb-0 f-15 gilroy-semibold ${transaction.isPositive ? 'text-success' : 'text-danger'}">
-                    ${transaction.isPositive ? '+' : '-'}${this.escapeHtml(transaction.displayAmount)}
+                <p class="mb-0 f-15 gilroy-semibold ${isPositive ? 'text-success' : 'text-primary'}">
+                    ${amountDisplay}
                 </p>
             </div>
         `;
+        
         return div;
+    }
+
+// Print functionality
+ printTransaction(transactionId) {
+    const modal = document.getElementById(`transactionModal${transactionId}`);
+    if (!modal) return;
+    
+    // Clone the modal content for printing
+    const printContent = modal.querySelector('.modal-content').cloneNode(true);
+    
+    // Remove unnecessary elements
+    const closeBtn = printContent.querySelector('.close-btn');
+    if (closeBtn) closeBtn.remove();
+    
+    // Create print window
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Transaction Receipt</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .print-header { text-align: center; margin-bottom: 30px; }
+                .print-header h3 { color: #007bff; }
+                @media print {
+                    body { margin: 0; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-header">
+                <h3>TRANSACTION RECEIPT</h3>
+                <p>Generated on: ${new Date().toLocaleString()}</p>
+            </div>
+            <div class="container">
+                ${printContent.innerHTML}
+            </div>
+            <div class="text-center mt-4 no-print">
+                <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
+                <button onclick="window.close()" class="btn btn-secondary">Close</button>
+            </div>
+        </body>
+        </html>
+    `)
+    
+    printWindow.document.close();
+    
+    // Auto-print after content loads
+    printWindow.onload = function() {
+        printWindow.focus();
+        // printWindow.print(); // Uncomment to auto-print
+    };
+}
+    renderNoTransactions() {
+        const container = document.getElementById('transactionsContainer');
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <p class="mt-2 text-gray-100">No transactions found.</p>
+            </div>
+        `;
+        
+        this.hasMore = false;
+        this.updateLoadMoreButton();
     }
 
     escapeHtml(text) {
@@ -207,27 +207,19 @@ class TransactionManager {
         return div.innerHTML;
     }
 
-    updatePaginationInfo(pagination) {
-        const paginationInfo = document.getElementById('paginationInfo');
-        if (paginationInfo && pagagination) {
-            paginationInfo.textContent = `Page ${pagination.current} of ${pagination.pages}`;
-        } else if (paginationInfo) {
-            paginationInfo.textContent = '';
-        }
-    }
-
     updateLoadMoreButton() {
         const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        
+        if (loadMoreContainer) {
+            loadMoreContainer.classList.toggle('d-none', !this.hasMore);
+        }
+        
         if (loadMoreBtn) {
-            if (this.hasMore) {
-                loadMoreBtn.style.display = 'block';
-                loadMoreBtn.disabled = this.isLoading;
-                loadMoreBtn.innerHTML = this.isLoading ? 
-                    '<i class="fas fa-spinner fa-spin me-2"></i>Loading...' : 
-                    '<i class="fas fa-plus me-2"></i>Load More Transactions';
-            } else {
-                loadMoreBtn.style.display = 'none';
-            }
+            loadMoreBtn.disabled = this.isLoading;
+            loadMoreBtn.innerHTML = this.isLoading ? 
+                '<i class="fas fa-spinner fa-spin me-2"></i>Loading...' : 
+                'Load More Transactions';
         }
     }
 
@@ -235,22 +227,12 @@ class TransactionManager {
         const container = document.getElementById('transactionsContainer');
         if (container) {
             container.innerHTML = `
-                <div class="alert alert-warning">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-exclamation-triangle me-3 fs-5"></i>
-                        <div class="flex-grow-1">
-                            <strong>Unable to Load Transactions</strong>
-                            <p class="mb-0 mt-1">${this.escapeHtml(message)}</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 d-flex gap-2">
-                        <button class="btn btn-sm btn-warning" onclick="transactionManager.loadTransactions(1)">
-                            <i class="fas fa-refresh me-2"></i>Try Again
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="window.location.reload()">
-                            <i class="fas fa-redo me-2"></i>Reload Page
-                        </button>
-                    </div>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${this.escapeHtml(message)}
+                    <button class="btn btn-sm btn-outline-danger ms-2" onclick="transactionManager.loadTransactions(1)">
+                        Try Again
+                    </button>
                 </div>
             `;
         }
@@ -263,51 +245,11 @@ class TransactionManager {
                 this.loadTransactions(this.currentPage + 1, true);
             });
         }
-
-        // Add refresh button listener if exists
-        const refreshBtn = document.getElementById('refreshTransactions');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                this.loadTransactions(1);
-            });
-        }
-    }
-
-    // Method to manually trigger refresh
-    refresh() {
-        this.loadTransactions(1);
     }
 }
 
-// Initialize with better error handling
+
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing TransactionManager');
-    try {
-        window.transactionManager = new TransactionManager();
-    } catch (error) {
-        console.error('Failed to initialize TransactionManager:', error);
-        
-        // Show user-friendly error message
-        const container = document.getElementById('transactionsContainer');
-        if (container) {
-            container.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    Failed to initialize transactions. Please refresh the page.
-                    <button class="btn btn-sm btn-outline-danger ms-2" onclick="window.location.reload()">
-                        Refresh Page
-                    </button>
-                </div>
-            `;
-        }
-    }
+    window.transactionManager = new TransactionManager();
 });
-
-// Make it available globally for manual refresh
-if (typeof window !== 'undefined') {
-    window.refreshTransactions = function() {
-        if (window.transactionManager) {
-            window.transactionManager.refresh();
-        }
-    };
-}

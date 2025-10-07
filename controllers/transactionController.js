@@ -836,6 +836,298 @@ const transactionController = {
       req.flash('error', 'Failed to load transaction details');
       res.redirect('/transactions');
     }
+  },
+
+  // PRINT TRANSACTION FUNCTION
+  printTransaction: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+      const userRole = req.session.user?.role;
+
+      console.log('=== PRINT TRANSACTION REQUEST ===');
+      console.log('Transaction ID:', id);
+      console.log('User ID:', userId);
+      console.log('User Role:', userRole);
+
+      if (!userId) {
+        req.flash('error', 'Please login to print transaction');
+        return res.redirect('/auth/login');
+      }
+
+      // Find transaction with detailed population
+      const transaction = await Transaction.findById(id)
+        .populate('userId', 'firstName lastName email phone address')
+        .populate('recipientId', 'firstName lastName email phone')
+        .populate('senderId', 'firstName lastName email phone');
+
+      if (!transaction) {
+        req.flash('error', 'Transaction not found');
+        return res.redirect('/transactions');
+      }
+
+      // Check if user has permission to view this transaction
+      const isUserInvolved = 
+        transaction.userId?._id?.toString() === userId.toString() ||
+        transaction.recipientId?._id?.toString() === userId.toString() ||
+        transaction.senderId?._id?.toString() === userId.toString();
+
+      if (!['admin', 'superadmin'].includes(userRole) && !isUserInvolved) {
+        req.flash('error', 'Access denied to view this transaction');
+        return res.redirect('/transactions');
+      }
+
+      // Get current user info for the receipt
+      const currentUser = await User.findById(userId).select('firstName lastName email phone address');
+
+      // Prepare transaction data for printing
+      const printData = {
+        transaction: {
+          _id: transaction._id,
+          type: transaction.type,
+          amount: transaction.amount,
+          currency: transaction.currency,
+          status: transaction.status,
+          method: transaction.method,
+          description: transaction.description,
+          fee: transaction.fee || 0,
+          totalAmount: transaction.amount + (transaction.fee || 0),
+          createdAt: transaction.createdAt,
+          updatedAt: transaction.updatedAt
+        },
+        user: {
+          firstName: currentUser?.firstName || 'User',
+          lastName: currentUser?.lastName || '',
+          email: currentUser?.email || '',
+          phone: currentUser?.phone || 'Not provided',
+          address: currentUser?.address || 'Not provided'
+        },
+        counterparty: {},
+        company: {
+          name: 'QFS Financial Services',
+          address: '123 Financial District, Lagos, Nigeria',
+          phone: '+234-800-QFS-BANK',
+          email: 'support@qfs.com',
+          website: 'www.qfs.com'
+        }
+      };
+
+      // Determine counterparty based on transaction type
+      if (transaction.type === 'send' && transaction.recipientId) {
+        printData.counterparty = {
+          name: `${transaction.recipientId.firstName} ${transaction.recipientId.lastName}`,
+          email: transaction.recipientId.email,
+          phone: transaction.recipientId.phone || 'Not provided',
+          role: 'Recipient'
+        };
+      } else if (transaction.type === 'receive' && transaction.userId) {
+        printData.counterparty = {
+          name: `${transaction.userId.firstName} ${transaction.userId.lastName}`,
+          email: transaction.userId.email,
+          phone: transaction.userId.phone || 'Not provided',
+          role: 'Sender'
+        };
+      } else if (transaction.type === 'request' && transaction.recipientId) {
+        printData.counterparty = {
+          name: `${transaction.recipientId.firstName} ${transaction.recipientId.lastName}`,
+          email: transaction.recipientId.email,
+          phone: transaction.recipientId.phone || 'Not provided',
+          role: 'Requested From'
+        };
+      } else {
+        printData.counterparty = {
+          name: 'System',
+          email: 'system@qfs.com',
+          phone: 'N/A',
+          role: 'System'
+        };
+      }
+
+      // Add metadata if available
+      if (transaction.metadata) {
+        printData.metadata = transaction.metadata;
+      }
+
+      console.log('✅ Printing transaction:', printData.transaction._id);
+
+      // Render print template
+      res.render('transactions/print', {
+        title: `Transaction Receipt - ${transaction._id}`,
+        ...printData,
+        layout: 'print-layout', // You might want a special layout for printing
+        user: req.session.user
+      });
+
+    } catch (error) {
+      console.error('❌ Print transaction error:', error);
+      req.flash('error', 'Failed to generate transaction receipt');
+      res.redirect('/transactions');
+    }
+  },
+
+  // API endpoint for filtering transactions
+  filterTransactions: async (req, res) => {
+    try {
+      const { type, status, wallet, from, to, page = 1, limit = 10 } = req.query;
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+      const userRole = req.session.user?.role;
+      
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+
+      // Build query based on user role
+      let filter = {};
+      
+      if (['admin', 'superadmin'].includes(userRole)) {
+        // Admins can see all transactions
+        filter = {};
+      } else {
+        // Regular users see their own transactions
+        filter = {
+          $or: [
+            { userId }, 
+            { recipientId: userId },
+            { 
+              $and: [
+                { $or: [{ userId }, { recipientId: userId }] },
+                { status: { $in: ['completed', 'approved'] } }
+              ]
+            }
+          ]
+        };
+      }
+      
+      // Apply filters
+      if (type && type !== 'all') {
+        filter.type = type;
+      }
+      
+      if (status && status !== 'all') {
+        filter.status = status;
+      }
+      
+      if (wallet && wallet !== 'all') {
+        filter.currency = wallet;
+      }
+      
+      // Date range filter
+      if (from && to) {
+        filter.createdAt = {
+          $gte: new Date(from),
+          $lte: new Date(to + 'T23:59:59.999Z') // Include entire end day
+        };
+      }
+      
+      const transactions = await Transaction.find(filter)
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .populate('recipientId', 'firstName lastName email')
+        .populate('userId', 'firstName lastName email');
+        
+      const totalCount = await Transaction.countDocuments(filter);
+      
+      res.json({
+        success: true,
+        data: {
+          transactions,
+          totalCount,
+          currentPage: parseInt(page),
+          totalPages: Math.ceil(totalCount / limit),
+          pagination: {
+            current: parseInt(page),
+            pages: Math.ceil(totalCount / limit),
+            hasMore: parseInt(page) < Math.ceil(totalCount / limit)
+          }
+        }
+      });
+      
+    } catch (error) {
+      console.error('Filter error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to filter transactions'
+      });
+    }
+  },
+
+  // API endpoint for loading transactions (for AJAX)
+  getTransactionsAPI: async (req, res) => {
+    try {
+      console.log('=== TRANSACTIONS API REQUEST ===');
+      
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+      const userRole = req.session.user?.role;
+      
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      // Build query based on user role
+      let query = {};
+      
+      if (['admin', 'superadmin'].includes(userRole)) {
+        query = {};
+      } else {
+        query = {
+          $or: [
+            { userId }, 
+            { recipientId: userId },
+            { 
+              $and: [
+                { $or: [{ userId }, { recipientId: userId }] },
+                { status: { $in: ['completed', 'approved'] } }
+              ]
+            }
+          ]
+        };
+      }
+
+      const [transactions, total] = await Promise.all([
+        Transaction.find(query)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .populate('userId', 'firstName lastName email role')
+          .populate('recipientId', 'firstName lastName email role')
+          .populate('senderId', 'firstName lastName email role')
+          .lean(),
+        Transaction.countDocuments(query)
+      ]);
+
+      console.log(`✅ API: Found ${transactions.length} transactions`);
+
+      res.json({
+        success: true,
+        data: {
+          transactions,
+          pagination: {
+            current: page,
+            pages: Math.ceil(total / limit),
+            total,
+            hasMore: page < Math.ceil(total / limit)
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Transactions API error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to load transactions'
+      });
+    }
   }
 };
 
