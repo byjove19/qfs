@@ -373,7 +373,87 @@
             </div>
         </div>
     </div>
+
+    <!-- Add this modal code before the closing </body> tag -->
+
+<!-- Create Ticket Modal -->
+<div class="modal fade" id="createTicketModal" tabindex="-1" aria-labelledby="createTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title gilroy-Semibold f-20 text-dark" id="createTicketModalLabel">Create New Ticket</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="ticketForm">
+                    <div class="mb-3">
+                        <label for="ticketSubject" class="form-label gilroy-medium text-dark">Subject</label>
+                        <input type="text" class="form-control" id="ticketSubject" placeholder="Enter ticket subject" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ticketPriority" class="form-label gilroy-medium text-dark">Priority</label>
+                        <select class="form-select" id="ticketPriority" required>
+                            <option value="">Select Priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ticketCategory" class="form-label gilroy-medium text-dark">Category</label>
+                        <select class="form-select" id="ticketCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="technical">Technical Issue</option>
+                            <option value="billing">Billing/Payment</option>
+                            <option value="account">Account Issue</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="feature">Feature Request</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ticketMessage" class="form-label gilroy-medium text-dark">Message</label>
+                        <textarea class="form-control" id="ticketMessage" rows="5" placeholder="Describe your issue in detail..." required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ticketAttachment" class="form-label gilroy-medium text-dark">Attachment (Optional)</label>
+                        <input type="file" class="form-control" id="ticketAttachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitTicketBtn">Submit Ticket</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#28a745"/>
+                    </svg>
+                </div>
+                <h5 class="gilroy-Semibold text-success mb-2">Ticket Created Successfully!</h5>
+                <p class="gilroy-regular text-muted mb-0">Your ticket has been submitted and sent to admin.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="mt-4">
+
     
 </div>
             <!-- main-containt -->
@@ -460,7 +540,149 @@
 			}
 		});
 	});  
+// Add this script after your existing JavaScript
 
+// Show create ticket modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Replace the existing "Create Ticket" link with modal trigger
+    const createTicketBtn = document.querySelector('.addnew');
+    if (createTicketBtn) {
+        createTicketBtn.href = '#';
+        createTicketBtn.setAttribute('data-bs-toggle', 'modal');
+        createTicketBtn.setAttribute('data-bs-target', '#createTicketModal');
+    }
+
+    // Handle form submission
+    const submitTicketBtn = document.getElementById('submitTicketBtn');
+    const ticketForm = document.getElementById('ticketForm');
+
+    submitTicketBtn.addEventListener('click', function() {
+        if (validateTicketForm()) {
+            submitTicket();
+        }
+    });
+
+    // Enter key support
+    ticketForm.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && validateTicketForm()) {
+            submitTicket();
+        }
+    });
+});
+
+function validateTicketForm() {
+    const subject = document.getElementById('ticketSubject').value.trim();
+    const priority = document.getElementById('ticketPriority').value;
+    const category = document.getElementById('ticketCategory').value;
+    const message = document.getElementById('ticketMessage').value.trim();
+
+    if (!subject) {
+        alert('Please enter a subject for your ticket.');
+        return false;
+    }
+
+    if (!priority) {
+        alert('Please select a priority level.');
+        return false;
+    }
+
+    if (!category) {
+        alert('Please select a category.');
+        return false;
+    }
+
+    if (!message) {
+        alert('Please enter a detailed message.');
+        return false;
+    }
+
+    return true;
+}
+
+function submitTicket() {
+    const submitBtn = document.getElementById('submitTicketBtn');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
+    submitBtn.disabled = true;
+
+    // Get form data
+    const formData = {
+        subject: document.getElementById('ticketSubject').value.trim(),
+        priority: document.getElementById('ticketPriority').value,
+        category: document.getElementById('ticketCategory').value,
+        message: document.getElementById('ticketMessage').value.trim(),
+        attachment: document.getElementById('ticketAttachment').files[0] || null,
+        status: 'open',
+        createdAt: new Date().toISOString()
+    };
+
+    // Simulate API call (replace with actual API endpoint)
+    setTimeout(() => {
+        // Here you would typically send data to your backend
+        console.log('Ticket data:', formData);
+        
+        // Send notification to admin (simulated)
+        notifyAdmin(formData);
+        
+        // Show success message
+        const modal = bootstrap.Modal.getInstance(document.getElementById('createTicketModal'));
+        modal.hide();
+        
+        // Show success modal
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+        
+        // Reset form
+        ticketForm.reset();
+        
+        // Reset button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        // Refresh ticket list (you might want to implement this)
+        refreshTicketList();
+        
+    }, 1500);
+}
+
+function notifyAdmin(ticketData) {
+    // This function would typically send a notification to admin
+    // You can implement email, push notification, or in-app notification
+    
+    console.log('Admin notified about new ticket:', {
+        subject: ticketData.subject,
+        priority: ticketData.priority,
+        category: ticketData.category,
+        user: 'Current User', // You would get this from your auth system
+        timestamp: new Date().toLocaleString()
+    });
+    
+    // Example: Send to backend endpoint
+    fetch('/api/tickets/notify-admin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(ticketData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Admin notification sent:', data);
+    })
+    .catch(error => {
+        console.error('Error notifying admin:', error);
+    });
+}
+
+function refreshTicketList() {
+    // This function would refresh the ticket list after creating a new ticket
+    // You can implement this based on your existing ticket list functionality
+    console.log('Refreshing ticket list...');
+    // location.reload(); // Simple refresh, or use AJAX to update the list
+}
 </script>
 
 <script src="/Tickets _ QFS_files/ticket.min.js" type="text/javascript"></script>
