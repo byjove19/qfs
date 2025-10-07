@@ -6,7 +6,8 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        --tg-body-font-family: 'Inter', sans-serif;
+        :root {
+            --tg-body-font-family: 'Inter', sans-serif;
             --tg-heading-font-family: 'Inter', sans-serif;
             --tg-body-font-size: 16px;
             --tg-body-color: #9E9E9E;
@@ -522,92 +523,206 @@
             transform: translateY(-2px);
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .quick-action-card {
-            background: var(--tg-color-dark-3);
+        /* Transaction Card Styles */
+        .transaction-card {
+            background: var(--tg-color-dark-2);
             border-radius: 12px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: var(--tg-transition);
+            padding: 20px;
+            margin-bottom: 15px;
             border: 1px solid var(--tg-border-1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quick-action-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(75, 89, 245, 0.1), transparent);
-            opacity: 0;
             transition: var(--tg-transition);
+            cursor: pointer;
         }
 
-        .quick-action-card:hover {
+        .transaction-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: var(--tg-color-dark-3);
         }
 
-        .quick-action-card:hover::before {
-            opacity: 1;
-        }
-
-        .action-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+        .transaction-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+            margin-bottom: 10px;
         }
 
-        .action-icon i {
-            font-size: 24px;
-            color: white;
-        }
-
-        .action-info {
-            position: relative;
-            z-index: 2;
-        }
-
-        .action-info h3 {
-            font-size: 18px;
+        .transaction-type {
             font-weight: 600;
             color: var(--tg-heading-color);
-            margin-bottom: 8px;
+            font-size: 16px;
         }
 
-        .action-info p {
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .transaction-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 14px;
             color: var(--tg-body-color);
-            font-weight: 500;
         }
 
-        .action-count {
-            background: var(--tg-theme-primary);
-            color: white;
+        .transaction-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .transaction-status {
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
-            margin-left: 8px;
+        }
+
+        .status-completed {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-failed {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .amount-positive {
+            color: #28a745;
+        }
+
+        .amount-negative {
+            color: #dc3545;
+        }
+
+        .amount-neutral {
+            color: var(--tg-heading-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--tg-border-1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--tg-body-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .modal-close:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .transaction-summary {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+        }
+
+        .transaction-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        }
+
+        .transaction-icon i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .transaction-amount-large {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .transaction-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: var(--tg-body-color);
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            color: var(--tg-heading-color);
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
         }
 
         /* Empty State */
@@ -654,10 +769,6 @@
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -719,6 +830,14 @@
                 width: 45px;
                 height: 45px;
             }
+
+            .transaction-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 576px) {
@@ -747,16 +866,6 @@
             .stat-info h3 {
                 font-size: 28px;
             }
-            
-            .quick-action-card {
-                padding: 20px;
-            }
-            
-            .action-icon {
-                width: 50px;
-                height: 50px;
-                margin-right: 15px;
-            }
         }
 
         /* Sidebar Collapsed State */
@@ -782,10 +891,20 @@
 </head>
 <body>
     <div class="admin-wrapper">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle">
+            <svg id="themeIcon" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/>
+            </svg>
+        </button>
+
         <!-- Sidebar -->
-        <aside class="admin-sidebar">
+        <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
                 <a href="/admin" class="logo-text">QFS ADMIN</a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <nav class="sidebar-nav">
                 <ul>
@@ -841,214 +960,185 @@
             </header>
 
             <div class="admin-content">
-
-<!-- User Info Header -->
-<div class="user-info-section mb-4 p-3 bg-light rounded">
-  <div class="d-flex justify-content-between align-items-center">
-    <div>
-
-<!-- Transactions Container -->
-<div id="transactionsContainer">
-  <% if (transactions && transactions.length > 0) { %>
-    <% transactions.forEach((transaction, index) => { %>
-      <!-- Transaction Card - Clickable to open modal -->
-      <div class="transaction-card border rounded p-3 mb-3 cursor-pointer" 
-           data-bs-toggle="modal" 
-           data-bs-target="#transactionModal<%= transaction._id %>">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <p class="mb-0 f-15 gilroy-medium text-dark">
-              <%= transaction.type %> 
-              <span class="text-muted">|</span> 
-              <%= transaction.status %>
-              <% if (['admin_credit', 'admin_debit', 'system'].includes(transaction.type)) { %>
-                <span class="badge bg-info ms-2">Admin</span>
-              <% } %>
-            </p>
-            <p class="mb-0 text-gray-100 f-13">
-              <%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleDateString() : 'Unknown Date' %>
-              <% if (transaction.userId && transaction.userId.role && ['admin', 'superadmin'].includes(transaction.userId.role)) { %>
-                <span class="text-info"> • By Admin</span>
-              <% } %>
-            </p>
-          </div>
-          <p class="mb-0 f-15 gilroy-semibold 
-            <%= transaction.type === 'admin_credit' ? 'text-success' : 
-                transaction.type === 'admin_debit' ? 'text-danger' : 'text-primary' %>">
-            <%= transaction.type === 'admin_debit' ? '-' : '' %><%= transaction.currency %> <%= transaction.amount.toLocaleString() %>
-          </p>
-        </div>
-      </div>
-
-      <!-- Dynamic Modal for each transaction -->
-      <div class="modal fade modal-overly" id="transactionModal<%= transaction._id %>" tabindex="-1" aria-hidden="true">
-        <div class="transac modal-dialog modal-dialog-centered modal-lg res-dialog">
-          <div class="modal-content modal-transac transaction-modal">
-            <div class="modal-body modal-themeBody">
-              <div class="d-flex position-relative modal-res">
-                <button type="button" class="cursor-pointer close-btn" data-bs-dismiss="modal" aria-label="Close">
-                  <svg class="position-absolute close-btn text-gray-100" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M5.24408 5.24408C5.56951 4.91864 6.09715 4.91864 6.42259 5.24408L10 8.82149L13.5774 5.24408C13.9028 4.91864 14.4305 4.91864 14.7559 5.24408C15.0814 5.56951 15.0814 6.09715 14.7559 6.42259L11.1785 10L14.7559 13.5774C15.0814 13.9028 15.0814 14.4305 14.7559 14.7559C14.4305 15.0814 13.9028 15.0814 13.5774 14.7559L10 11.1785L6.42259 14.7559C6.09715 15.0814 5.56951 15.0814 5.24408 14.7559C4.91864 14.4305 4.91864 13.9028 5.24408 13.5774L8.82149 10L5.24408 6.42259C4.91864 6.09715 4.91864 5.56951 5.24408 5.24408Z" fill="currentColor"></path>
-                  </svg>
-                </button>
-                <div class="deposit-transac d-flex flex-column justify-content-center p-4 text-wrap">
-                  <div class="d-flex justify-content-center text-primary align-items-center transac-img">
-                    <img src="/images/transactions/<%= transaction.type %>.svg" alt="<%= transaction.type %>" class="img-fluid" onerror="this.src='/images/transactions/default.svg'">
-                  </div>
-                  <p class="mb-0 mt-28 text-dark gilroy-medium f-15 r-f-12 r-mt-18 text-center">
-                    <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %> Amount
-                  </p>
-                  <p class="mb-0 text-dark gilroy-Semibold f-24 leading-29 r-f-26 text-center l-s2 mt-10">
-                    <%= transaction.currency %> <%= transaction.amount.toLocaleString() %>
-                  </p>
-                  <p class="mb-0 mt-18 text-gray-100 gilroy-medium f-13 leading-20 r-f-14 text-center">
-                    <%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleString() : 'Unknown Date' %>
-                    <% if (transaction.userId && transaction.userId.role && ['admin', 'superadmin'].includes(transaction.userId.role)) { %>
-                      <br><span class="text-info">Initiated by Administrator</span>
-                    <% } %>
-                  </p>
-                  <div class="d-flex justify-content-center">
-                    <a href="/transactions/print/<%= transaction._id %>" class="infoBtn-print cursor-pointer f-14 gilroy-medium text-dark mt-35 d-flex justify-content-center align-items-center" target="_blank">
-                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.15385 16.5H13.8462V13.5H4.15385V16.5ZM4.15385 9H13.8462V4.5H12.1154C11.8269 4.5 11.5817 4.39062 11.3798 4.17188C11.1779 3.95312 11.0769 3.6875 11.0769 3.375V1.5H4.15385V9ZM16.6154 9.75C16.6154 9.54688 16.5469 9.37109 16.4099 9.22266C16.2728 9.07422 16.1106 9 15.9231 9C15.7356 9 15.5733 9.07422 15.4363 9.22266C15.2993 9.37109 15.2308 9.54688 15.2308 9.75C15.2308 9.95312 15.2993 10.1289 15.4363 10.2773C15.5733 10.4258 15.7356 10.5 15.9231 10.5C16.1106 10.5 16.2728 10.4258 16.4099 10.2773C16.5469 10.1289 16.6154 9.95312 16.6154 9.75ZM18 9.75V14.625C18 14.7266 17.9657 14.8145 17.8972 14.8887C17.8287 14.9629 17.7476 15 17.6538 15H15.2308V16.875C15.2308 17.1875 15.1298 17.4531 14.9279 17.6719C14.726 17.8906 14.4808 18 14.1923 18H3.80769C3.51923 18 3.27404 17.8906 3.07212 17.6719C2.87019 17.4531 2.76923 17.1875 2.76923 16.875V15H0.346154C0.252404 15 0.171274 14.9629 0.102764 14.8887C0.0342548 14.8145 0 14.7266 0 14.625V9.75C0 9.13281 0.203726 8.60352 0.611178 8.16211C1.01863 7.7207 1.50721 7.5 2.07692 7.5H2.76923V1.125C2.76923 0.8125 2.87019 0.546875 3.07212 0.328125C3.27404 0.109375 3.51923 0 3.80769 0H11.0769C11.3654 0 11.6827 0.078125 12.0288 0.234375C12.375 0.390625 12.649 0.578125 12.851 0.796875L14.4952 2.57812C14.6971 2.79688 14.8702 3.09375 15.0144 3.46875C15.1587 3.84375 15.2308 4.1875 15.2308 4.5V7.5H15.9231C16.4928 7.5 16.9814 7.7207 17.3888 8.16211C17.7963 8.60352 18 9.13281 18 9.75Z" fill="currentColor"></path>
-                      </svg>&nbsp;
-                      <span>Print</span>
-                    </a>
-                  </div>
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= totalTransactions || 0 %></h3>
+                            <p>Total Transactions</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= completedTransactions || 0 %></h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= pendingTransactions || 0 %></h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= failedTransactions || 0 %></h3>
+                            <p>Failed</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="ml-20 trans-details">
-                  <p class="mb-0 mt-9 text-dark dark-5B f-20 gilroy-Semibold transac-title">Transaction Details</p>
 
-                  <div class="row gx-sm-5">
-                    <div class="col-6">
-                      <p class="mb-0 mt-4 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">
-                        <%= transaction.type === 'send' ? 'Sent To' : 
-                           transaction.type === 'admin_credit' ? 'Credited By' :
-                           transaction.type === 'admin_debit' ? 'Debited By' : 'Received From' %>
-                      </p>
-                      <p class="mb-0 mt-5p text-dark gilroy-medium f-15 leading-22 r-text">
-                        <% if (transaction.type === 'send' && transaction.recipientId) { %>
-                          <%= transaction.recipientId.firstName %> <%= transaction.recipientId.lastName %>
-                        <% } else if (transaction.type === 'receive' && transaction.userId) { %>
-                          <%= transaction.userId.firstName %> <%= transaction.userId.lastName %>
-                        <% } else if (['admin_credit', 'admin_debit', 'system'].includes(transaction.type)) { %>
-                          System Administrator
-                        <% } else { %>
-                          <%= user.firstName %> <%= user.lastName %>
+                <!-- Transactions Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Transaction History</h2>
+                        <div class="action-buttons">
+                            <button class="tg-btn" id="exportBtn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="tg-btn" id="filterBtn">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Transactions Container -->
+                        <div id="transactionsContainer">
+                            <% if (transactions && transactions.length > 0) { %>
+                                <% transactions.forEach((transaction, index) => { %>
+                                    <div class="transaction-card" data-transaction-id="<%= transaction._id %>">
+                                        <div class="transaction-header">
+                                            <div class="transaction-type">
+                                                <%= transaction.type.toUpperCase() %>
+                                                <% if (['admin_credit', 'admin_debit', 'system'].includes(transaction.type)) { %>
+                                                    <span class="status-badge active" style="margin-left: 8px;">Admin</span>
+                                                <% } %>
+                                            </div>
+                                            <div class="transaction-amount <%= 
+                                                transaction.type === 'admin_debit' || transaction.type === 'withdrawal' ? 'amount-negative' : 
+                                                transaction.type === 'admin_credit' || transaction.type === 'deposit' ? 'amount-positive' : 'amount-neutral'
+                                            %>">
+                                                <%= transaction.type === 'admin_debit' || transaction.type === 'withdrawal' ? '-' : '+' %>
+                                                <%= transaction.currency %> <%= transaction.amount.toLocaleString() %>
+                                            </div>
+                                        </div>
+                                        <div class="transaction-details">
+                                            <div class="transaction-date">
+                                                <i class="far fa-calendar"></i>
+                                                <%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleDateString() : 'Unknown Date' %>
+                                            </div>
+                                            <div class="transaction-status <%= 
+                                                transaction.status === 'completed' ? 'status-completed' : 
+                                                transaction.status === 'pending' ? 'status-pending' : 'status-failed'
+                                            %>">
+                                                <%= transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <p>No transactions found</p>
+                                    <p class="text-muted">Transactions will appear here once they are processed.</p>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Load More Button -->
+                        <% if (transactions && transactions.length > 5) { %>
+                            <div class="text-center mt-4">
+                                <button id="loadMoreBtn" class="tg-btn">
+                                    <i class="fas fa-plus"></i> Load More Transactions
+                                </button>
+                            </div>
                         <% } %>
-                      </p>
                     </div>
-                    <div class="col-6">
-                      <p class="mb-0 mt-4 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Currency</p>
-                      <p class="mb-0 mt-5p text-dark gilroy-medium f-15 leading-22 r-text"><%= transaction.currency %></p>
-                    </div>
-                  </div>
-                  <div class="row gx-sm-5">
-                    <div class="col-6">
-                      <p class="mb-0 mt-20 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Transaction ID</p>
-                      <p class="mb-0 mt-5p text-dark gilroy-medium f-15 leading-22 r-text"><%= transaction._id.toString().substring(0, 13).toUpperCase() %></p>
-                    </div>
-                    <div class="col-6">
-                      <p class="mb-0 mt-20 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Transaction Fee</p>
-                      <p class="mb-0 mt-5p text-dark gilroy-medium f-15 leading-22 r-text">
-                        <%= transaction.fee ? `${transaction.currency} ${transaction.fee.toLocaleString()}` : '-' %>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="row gx-sm-5">
-                    <div class="col-6">
-                      <p class="mb-0 mt-20 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Payment Method</p>
-                      <p class="mb-0 mt-5p text-dark gilroy-medium f-15 leading-22 r-text">
-                        <%= transaction.method ? transaction.method.charAt(0).toUpperCase() + transaction.method.slice(1) : 
-                           ['admin_credit', 'admin_debit', 'system'].includes(transaction.type) ? 'System' : 'Manual' %>
-                      </p>
-                    </div>
-                    <div class="col-6">
-                      <p class="mb-0 mt-20 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Status</p>
-                      <p class="mb-0 mt-5p 
-                        <%= transaction.status === 'completed' ? 'text-success' : 
-                           transaction.status === 'pending' ? 'text-warning' : 'text-danger' %> 
-                        gilroy-medium f-15 leading-22 r-text">
-                        <%= transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) %>
-                      </p>
-                    </div>
-                  </div>
-                  <p class="hr-border w-100 mb-0"></p>
-                  <div class="row gx-sm-5">
-                    <div class="col-6">
-                      <p class="mb-0 mt-4 text-gray-100 dark-B87 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">
-                        <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %> Amount
-                      </p>
-                      <p class="mb-0 mt-5p text-dark dark-CDO gilroy-medium f-15 leading-22 r-text">
-                        <%= transaction.currency %> <%= transaction.amount.toLocaleString() %>
-                      </p>
-                    </div>
-                    <div class="col-6">
-                      <p class="mb-0 mt-4 text-gray-100 dark-B87 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Total Amount</p>
-                      <p class="mb-0 mt-5p text-dark dark-CDO gilroy-medium f-15 leading-22 r-text">
-                        <%= transaction.currency %> 
-                        <%= (transaction.amount + (transaction.fee || 0)).toLocaleString() %>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <!-- Transaction Description -->
-                  <% if (transaction.description) { %>
-                    <div class="row gx-sm-5">
-                      <div class="col-12">
-                        <p class="mb-0 mt-20 text-gray-100 gilroy-medium f-13 leading-20 r-f-9 r-mt-11">Description</p>
-                        <p class="mb-0 mt-5p text-dark gilroy-medium f-15 leading-22 r-text"><%= transaction.description %></p>
-                      </div>
-                    </div>
-                  <% } %>
-
-                  <!-- Admin Transaction Note -->
-                  <% if (['admin_credit', 'admin_debit', 'system'].includes(transaction.type)) { %>
-                    <div class="row gx-sm-5">
-                      <div class="col-12">
-                        <p class="mb-0 mt-20 text-info gilroy-medium f-13 leading-20 r-f-9 r-mt-11">
-                          <i class="fas fa-info-circle"></i> Admin Transaction
-                        </p>
-                        <p class="mb-0 mt-5p text-info gilroy-medium f-12 leading-18 r-text">
-                          This transaction was processed by system administration.
-                        </p>
-                      </div>
-                    </div>
-                  <% } %>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    <% }) %>
-  <% } else { %>
-    <div class="text-center py-5">
-      <p class="mt-2 text-gray-100">No transactions found for <%= userEmail %>.</p>
+        </main>
     </div>
-  <% } %>
-</div>
 
-<!-- Load More Button -->
-<div id="loadMoreContainer" class="text-center mt-4 <%= (transactions && transactions.length > 5) ? '' : 'd-none' %>">
-  <button id="loadMoreBtn" class="btn btn-outline-primary">Load More Transactions</button>
-</div>
+    <!-- Transaction Modal -->
+    <div class="modal-overlay" id="transactionModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Transaction Details</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-summary">
+                    <div class="transaction-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="transaction-amount-large" id="modalAmount">
+                        <!-- Amount will be populated by JavaScript -->
+                    </div>
+                    <div class="transaction-type" id="modalType">
+                        <!-- Type will be populated by JavaScript -->
+                    </div>
+                    <div class="transaction-date" id="modalDate">
+                        <!-- Date will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="transaction-detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Transaction ID</div>
+                        <div class="detail-value" id="modalId"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value" id="modalStatus"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Currency</div>
+                        <div class="detail-value" id="modalCurrency"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Fee</div>
+                        <div class="detail-value" id="modalFee"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Payment Method</div>
+                        <div class="detail-value" id="modalMethod"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">User</div>
+                        <div class="detail-value" id="modalUser"></div>
+                    </div>
+                </div>
 
-<style>
-.cursor-pointer {
-  cursor: pointer;
-}
-.cursor-pointer:hover {
-  background-color: #f8f9fa;
-}
-</style>
-    
-<div class="mt-4">
-    
-</div>
+                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
+                    <div class="modal-actions">
+                        <button class="tg-btn" id="editBtn">
+                            <i class="fas fa-edit"></i> Edit Transaction
+                        </button>
+                        <button class="tg-btn" style="background: #dc3545;" id="deleteBtn">
+                            <i class="fas fa-trash"></i> Delete Transaction
+                        </button>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
 
     <script>
-       // Theme toggle functionality
+        // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         
@@ -1111,39 +1201,79 @@
             }
         });
 
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                adminSidebar.classList.remove('sidebar-open');
-            adminWrapper.classList.remove('sidebar-collapsed');
-            adminWrapper.style.marginLeft = '0';
-            adminWrapper.style.width = '100%';
-            adminSidebar.style.left = '0';
-            adminSidebar.style.position = 'relative';
-            adminSidebar.style.height = 'auto';
-            adminSidebar.style.width = '280px';
-            adminSidebar.style.transform = 'none';
-        } else {
-            adminSidebar.style.position = 'fixed';
-            adminSidebar.style.height = '100vh';
-            adminSidebar.style.width = '100%';
-            adminSidebar.style.left = '-100%';
-        }
+        // Transaction Modal Functionality
+        const transactionCards = document.querySelectorAll('.transaction-card');
+        const transactionModal = document.getElementById('transactionModal');
+        const modalClose = document.getElementById('modalClose');
+
+        transactionCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const transactionId = this.getAttribute('data-transaction-id');
+                // In a real application, you would fetch detailed transaction data here
+                // For now, we'll use the data from the card
+                
+                const type = this.querySelector('.transaction-type').textContent.trim();
+                const amount = this.querySelector('.transaction-amount').textContent.trim();
+                const date = this.querySelector('.transaction-date').textContent.trim();
+                const status = this.querySelector('.transaction-status').textContent.trim();
+                
+                // Populate modal with data
+                document.getElementById('modalAmount').textContent = amount;
+                document.getElementById('modalType').textContent = type;
+                document.getElementById('modalDate').textContent = date;
+                document.getElementById('modalId').textContent = transactionId;
+                document.getElementById('modalStatus').textContent = status;
+                document.getElementById('modalCurrency').textContent = 'USD'; // Default, would come from data
+                document.getElementById('modalFee').textContent = '0.00'; // Default, would come from data
+                document.getElementById('modalMethod').textContent = 'Bank Transfer'; // Default
+                document.getElementById('modalUser').textContent = 'User Name'; // Default
+                
+                // Show modal
+                transactionModal.style.display = 'flex';
+            });
         });
 
-        // Initialize responsive behavior on load
-        window.addEventListener('load', function() {
-            if (window.innerWidth <= 768) {
-                adminSidebar.style.position = 'fixed';
-                adminSidebar.style.height = '100vh';
-                adminSidebar.style.width = '100%';
-                adminSidebar.style.left = '-100%';
+        // Close modal
+        modalClose.addEventListener('click', function() {
+            transactionModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        transactionModal.addEventListener('click', function(event) {
+            if (event.target === transactionModal) {
+                transactionModal.style.display = 'none';
+            }
+        });
+
+        // Export functionality
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            alert('Export functionality would be implemented here');
+        });
+
+        // Filter functionality
+        document.getElementById('filterBtn').addEventListener('click', function() {
+            alert('Filter functionality would be implemented here');
+        });
+
+        // Load more functionality
+        document.getElementById('loadMoreBtn')?.addEventListener('click', function() {
+            alert('Load more functionality would be implemented here');
+        });
+
+        // Admin actions
+        document.getElementById('editBtn')?.addEventListener('click', function() {
+            alert('Edit transaction functionality would be implemented here');
+        });
+
+        document.getElementById('deleteBtn')?.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this transaction?')) {
+                alert('Delete transaction functionality would be implemented here');
             }
         });
 
         // Add loading animation for cards
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.stat-card, .quick-action-card');
+            const cards = document.querySelectorAll('.stat-card, .transaction-card');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
@@ -1154,9 +1284,6 @@
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
-        });
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.admin-wrapper').classList.toggle('sidebar-collapsed');
         });
     </script>
 </body>
