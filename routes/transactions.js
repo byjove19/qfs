@@ -25,7 +25,9 @@ router.get('/withdrawal-details/:id', isAuthenticated, transactionController.get
 // ACTION ROUTES
 // ============================
 router.post('/send', isAuthenticated, transactionController.sendMoney);
+router.post('/money-transfer', isAuthenticated, transactionController.sendMoney); // ADD THIS
 router.post('/request-money', isAuthenticated, transactionController.requestMoney);
+router.post('/request-card', isAuthenticated, transactionController.requestCard);
 router.post('/exchange', isAuthenticated, transactionController.exchangeMoney);
 router.post('/withdraw', isAuthenticated, transactionController.withdraw);
 
@@ -42,9 +44,5 @@ router.get('/print/:id', isAuthenticated, transactionController.printTransaction
 router.post('/approve/:transactionId', isAuthenticated, isAdmin, transactionController.approveRequest);
 router.post('/approve-send/:transactionId', isAuthenticated, isAdmin, transactionController.approveSendMoney);
 router.post('/reject-send/:transactionId', isAuthenticated, isAdmin, transactionController.rejectSendMoney);
-
-
-router.get('/card-requests', isAuthenticated, transactionController.getUserCardRequests);
-
 
 module.exports = router;

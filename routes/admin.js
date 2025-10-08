@@ -57,11 +57,4 @@ router.get('/investments', adminController.getInvestments);
 router.get('/investments/:id', adminController.getInvestmentDetail);
 router.post('/investments/update-status', adminController.updateInvestmentStatus);
 
-
-// Card request management routes
-router.get('/card-requests', adminController.getCardRequests);
-router.get('/card-requests/:id', adminController.getCardRequestDetail);
-router.post('/card-requests/:id/approve', adminController.approveCardRequest);
-router.post('/card-requests/:id/reject', adminController.rejectCardRequest);
-
 module.exports = router;

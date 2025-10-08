@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-
-<html lang="en" class="hydrated"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0053)https://quantumfinancial-system.com/virtualcard/index -->
+<html lang="en" class="hydrated" data-select2-id="select2-data-16-0s2g"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="twoone.tech">
     <meta name="csrf-token" content="25BYbh04ywsyJEKOSgmEqK03W1akIOOHgJUtAkRg">
 
-    <title>Virtual Card |  QFS</title>
+    <title>Page Not Found |  QFS</title>
 
     <!-- css -->
-    <link rel="stylesheet" href="/virtual/bootstrap.min.css">
-<link rel="stylesheet" href="/virtual/select2.min.css">
-<link rel="stylesheet" href="/virtual/style.min.css">
-<link rel="stylesheet" href="/virtual/styles.css">
-
+    <link rel="stylesheet" href="./Page Not Found _ QFS_files/bootstrap.min.css">
+<link rel="stylesheet" href="./Page Not Found _ QFS_files/select2.min.css">
+<link rel="stylesheet" href="./Page Not Found _ QFS_files/style.min.css">
+    <!-- end css -->
     
+      
     <link rel="icon" type="image/png" href="/images/logo.png">
 
     <script>
@@ -331,9 +331,9 @@
 </nav>        <!-- end header section -->
 
 
-      <div class="position-relative">
-        <div class="containt-parent">
-          <div class="main-containt">
+      <div class="position-relative" data-select2-id="select2-data-14-gzlv">
+        <div class="containt-parent" data-select2-id="select2-data-13-sj58">
+          <div class="main-containt" data-select2-id="select2-data-12-z7pk">
             
             <!-- main-containt -->
             
@@ -346,10 +346,11 @@
            
             <div class="col-xl-12 col-md-12" style="margin: 0 auto;">
                 <div class="card custom-card">
-                    <a href="/virtualcard/"><img class="card-img-top w-100 blog-img" src="/virtual/vcardimage.jpeg" alt=""></a>
+                    <a href="https://quantumfinancial-system.com/virtualcard/index#"><img class="card-img-top w-100 blog-img" src="./Page Not Found _ QFS_files/vcardimage.jpeg" alt=""></a>
                     <div class="card-body text-center">
                                                  
-                    <button class="btn btn-info ml-3 addBtn" id="requestCardBtn">Request New Card</button>
+                                                <button class="btn btn-info ml-3 addBtn" id="">Request New Card</button>
+
                     </div>
                     
                 </div>
@@ -361,7 +362,7 @@
             <div class="notfound mt-16 bg-white p-4 shadow">
             <div class="d-flex flex-wrap justify-content-center align-items-center gap-26">
                 <div class="image-notfound">
-                    <img src="/virtual/not-found.png" class="img-fluid">
+                    <img src="./Page Not Found _ QFS_files/not-found.png" class="img-fluid">
                 </div>
                 <div class="text-notfound">
                     <p class="mb-0 f-20 leading-25 gilroy-medium text-dark">Sorry! No data found.</p>
@@ -370,209 +371,113 @@
             </div>
         </div>
         
-    <!-- Request New Card Modal -->
-<div class="modal fade" id="requestCardModal" tabindex="-1" aria-labelledby="requestCardModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title gilroy-Semibold" id="requestCardModalLabel">Request New Card</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <div class="modal-body">
-        <!-- Step 1: Card Selection -->
-        <div id="cardStep1" class="card-step">
-          <div class="text-center mb-4">
-            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 1 of 3</p>
-            <h4 class="gilroy-Semibold text-dark">Select Card Type</h4>
-          </div>
-          
-          <p class="text-center mb-4 f-14 text-gray">Please select a card type below, then select the currency and enter an amount to pre-fund your credit card with.</p>
-          
-          <form id="cardFormStep1">
-            <div class="mb-4">
-              <label class="form-label f-14 gilroy-medium text-dark mb-2">Card Type</label>
-              <select class="form-select custom-select-card" id="cardType" required>
-                <option value="">Select Card Type</option>
-                <option value="amex">QFS American Express</option>
-                <option value="mastercard">QFS Mastercard</option>
-                <option value="verve">QFS Verve Card</option>
-                <option value="visa">QFS Visa Card</option>
-              </select>
-            </div>
-            
-            <div class="mb-4">
-              <label class="form-label f-14 gilroy-medium text-dark mb-2">Card Currency</label>
-              <select class="form-select custom-select-card" id="cardCurrency" required>
-                <option value="">Select Currency</option>
-                <option value="USD">USD (Default)</option>
-                <option value="BTC">BTC - Bitcoin</option>
-                <option value="ETH">ETH - Ethereum</option>
-                <option value="LTC">LTC - Litecoin</option>
-                <option value="XRP">XRP - Ripple</option>
-                <option value="DOGE">DOGE - Dogecoin</option>
-                <option value="XDC">XDC - XDC Network</option>
-                <option value="XLM">XLM - Stellar</option>
-                <option value="MATIC">MATIC - Polygon</option>
-                <option value="ALGO">ALGO - Algorand</option>
-              </select>
-              <div class="form-text f-12 mt-1">Fee (0.00%+0.00) Total Fee: 0.00</div>
-            </div>
-            
-            <div class="mb-4">
-              <label class="form-label f-14 gilroy-medium text-dark mb-2">Pre-fund Amount</label>
-              <input type="number" class="form-control card-input" id="cardAmount" placeholder="0.00" step="0.01" min="0" required>
-              <div class="form-text f-12 mt-1">Minimum amount: $10.00</div>
-            </div>
-            
-            <!-- Balance Check -->
-            <div class="card bg-light p-3 mt-4">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="f-14 text-gray">Available Balance:</span>
-                <span class="f-14 gilroy-medium text-dark" id="availableBalance">USD 0.00</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-2">
-                <span class="f-14 text-gray">Total Cost:</span>
-                <span class="f-14 gilroy-medium text-dark" id="totalCost">USD 0.00</span>
-              </div>
-            </div>
-            
-            <!-- Insufficient Balance Error -->
-            <div id="balanceError" class="alert alert-danger d-none mt-3" role="alert">
-              <i class="fa fa-exclamation-triangle me-2"></i> Insufficient balance! Please add funds to your wallet.
-            </div>
-          </form>
-        </div>
+    <div id="addModal" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog" role="document" data-select2-id="select2-data-11-fvwa">
+            <div class="modal-content" data-select2-id="select2-data-10-9hfe">
+                <div class="modal-header">
+                    <h5 class="modal-title">QFS CARDS</h5>
 
-        <!-- Step 2: Confirmation -->
-        <div id="cardStep2" class="card-step d-none">
-          <div class="text-center mb-4">
-            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 2 of 3</p>
-            <h4 class="gilroy-Semibold text-dark">Confirm Card Request</h4>
-          </div>
-          
-          <p class="text-center mb-4 f-14 text-gray">Please review your card request details before confirmation.</p>
-          
-          <div class="card-details-card bg-light p-4">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Card Type:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmCardType">-</p>
                 </div>
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Currency:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmCurrency">-</p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Pre-fund Amount:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmAmount">-</p>
-                </div>
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Issuance Fee:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark" id="confirmFee">USD 0.00</p>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="d-flex justify-content-between">
-              <span class="f-14 gilroy-medium text-dark">Total Amount:</span>
-              <span class="f-16 gilroy-Semibold text-dark" id="confirmTotal">USD 0.00</span>
-            </div>
-          </div>
-          
-          <div class="form-check mt-4">
-            <input class="form-check-input" type="checkbox" id="termsAgreement">
-            <label class="form-check-label f-14 text-gray" for="termsAgreement">
-              I agree to the <a href="/terms" class="text-primary">Terms and Conditions</a> and <a href="/privacy" class="text-primary">Privacy Policy</a>
-            </label>
-          </div>
-        </div>
+                
 
-        <!-- Step 3: Success -->
-        <div id="cardStep3" class="card-step d-none">
-          <div class="text-center mb-4">
-            <p class="mb-1 f-16 gilroy-medium text-gray">Step: 3 of 3</p>
-            <h4 class="gilroy-Semibold text-dark">Card Request Complete</h4>
-          </div>
-          
-          <div class="text-center mb-4">
-            <div class="circle-success mx-auto mb-3">
-              <i class="fa fa-check"></i>
+                    <div class="modal-body">
+
+                        <form method="post" action="https://quantumfinancial-system.com/virtualcard/index" id="sendMoneyCreateForm" data-select2-id="select2-data-sendMoneyCreateForm">
+                            <input type="hidden" name="_token" value="25BYbh04ywsyJEKOSgmEqK03W1akIOOHgJUtAkRg">                            <input type="hidden" name="percentage_fee" id="feesPercentage" value="0">
+                            <input type="hidden" name="fixed_fee" id="feesFixed" value="0.00000000">
+                            <input type="hidden" name="total_fee" id="totalFees" value="0">
+                            <input type="hidden" name="sendMoneyProcessedBy" id="sendMoneyProcessedBy">
+                
+                            <div class="row">
+                
+                                <!-- Plan -->
+                
+                                <div class="col-md-12" data-select2-id="select2-data-9-s1g3">
+                                    <div class="param-ref mt-20" data-select2-id="select2-data-8-qee0">
+                                        <label class="gilroy-medium text-gray-100 mb-2 f-15">Card Type</label>
+                                        <select class="select2 select2-hidden-accessible" data-minimum-results-for-search="Infinity" name="type" id="type" data-select2-id="select2-data-type" tabindex="-1" aria-hidden="true">
+                                            <option selected="" disabled="" data-select2-id="select2-data-2-hgcq">Select Card Type</option>
+                                            <option data-select2-id="select2-data-17-bluq">QFS American Express</option>
+                                            <option data-select2-id="select2-data-18-c5uw">QFS Mastercard</option>
+                                            <option data-select2-id="select2-data-19-qbj7">QFS Verve Card</option>
+                                            <option data-select2-id="select2-data-20-f0vu">QFS Visa Card</option> 
+                                        </select><span class="select2 select2-container select2-container--default select2-container--below" dir="ltr" data-select2-id="select2-data-1-jnow" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-type-container" aria-controls="select2-type-container"><span class="select2-selection__rendered" id="select2-type-container" role="textbox" aria-readonly="true" title="QFS Visa Card">QFS Visa Card</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                                                                <span class="receiverError custom-error"></span>
+                                    </div>
+                                </div>
+                
+                                <!-- Currency -->
+                
+                                <div class="col-md-6" data-select2-id="select2-data-23-gjcr">
+                                    <div class="param-ref mt-20" data-select2-id="select2-data-22-1pg6">
+                                        <label class="gilroy-medium text-gray-100 mb-2 f-15">Select Card Currency</label>
+                                        <select class="select2 select2-hidden-accessible" data-minimum-results-for-search="Infinity" name="wallet" id="wallet" data-old="fiat" data-select2-id="select2-data-wallet" tabindex="-1" aria-hidden="true">
+                                                                                            <option data-type="fiat" value="112725" selected="&quot;selected&quot;" data-select2-id="select2-data-4-gaj8">
+                                                    USD</option>
+                                                                                            <option data-type="fiat" value="112726" data-select2-id="select2-data-24-zmna">
+                                                    BTC</option>
+                                                                                            <option data-type="fiat" value="112727" data-select2-id="select2-data-25-39ef">
+                                                    LTC</option>
+                                                                                            <option data-type="fiat" value="112728" data-select2-id="select2-data-26-2rxi">
+                                                    ETH</option>
+                                                                                            <option data-type="fiat" value="112729" data-select2-id="select2-data-27-atcq">
+                                                    XRP</option>
+                                                                                            <option data-type="fiat" value="112730" data-select2-id="select2-data-28-qd67">
+                                                    Matic</option>
+                                                                                            <option data-type="fiat" value="112731" data-select2-id="select2-data-29-r6ob">
+                                                    XLM</option>
+                                                                                            <option data-type="fiat" value="112732" data-select2-id="select2-data-30-5s53">
+                                                    XDC</option>
+                                                                                            <option data-type="fiat" value="112733" data-select2-id="select2-data-31-tf10">
+                                                    Doge</option>
+                                                                                            <option data-type="fiat" value="112734" data-select2-id="select2-data-32-jx65">
+                                                    ALGO</option>
+                                                                                    </select><span class="select2 select2-container select2-container--default select2-container--below" dir="ltr" data-select2-id="select2-data-3-6wyq" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-wallet-container" aria-controls="select2-wallet-container"><span class="select2-selection__rendered" id="select2-wallet-container" role="textbox" aria-readonly="true" title="
+                                                    USD">
+                                                    USD</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        <span id="walletlHelp" class="mb-0 text-gray-100 dark-B87 gilroy-regular f-12 mt-2">
+                                            Fee (<span id="formattedFeesPercentage">0</span>%+<span id="formattedFeesFixed">0</span>)&nbsp;Total Fee:&nbsp;<span id="formattedTotalFees">0</span>
+                                        </span>
+                                    </div>
+                                </div>
+                
+                                <!-- Amount -->
+                                <div class="col-md-6">
+                                    <div class="label-top mt-20">
+                                        <label class="gilroy-medium text-gray-100 mb-2 f-15">Prefund Amount</label>
+                                        <input type="text" class="form-control input-form-control apply-bg l-s2 not-focus-bg" name="amount" id="amount" placeholder="0.00" onkeypress="return isNumberOrDecimalPointKey(this, event);" oninput="restrictNumberToPrefdecimalOnInput(this)" required="" data-value-missing="This field is required." value="1200"><label class="custom-error amount-limit-error" style="">Not have enough balance !</label>
+                
+                                                                                </div>
+                                </div>
+                
+                                <div id="planDetails"></div>
+                
+                                <input type="hidden" id="receiver" name="receiver">
+                
+                                <!-- Note -->
+                
+                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-lg btn-primary mt-4" id="sendMoneyCreateSubmitBtn" disabled="disabled">
+                                        <div class="spinner spinner-border text-white spinner-border-sm mx-2 d-none" role="status">
+                                            <span class="visually-hidden"></span>
+                                        </div>
+                                        <span class="px-1" id="sendMoneyCreateSubmitBtnText">Proceed</span>
+                                        <span id="sendMoneySvgIcon"><svg class="position-relative ms-1 rtl-wrap-one nscaleX-1" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.11648 12.216C3.81274 11.9123 3.81274 11.4198 4.11648 11.1161L8.23317 6.99937L4.11648 2.88268C3.81274 2.57894 3.81274 2.08647 4.11648 1.78273C4.42022 1.47899 4.91268 1.47899 5.21642 1.78273L9.88309 6.4494C10.1868 6.75314 10.1868 7.2456 9.88309 7.54934L5.21642 12.216C4.91268 12.5198 4.42022 12.5198 4.11648 12.216Z" fill="currentColor"></path>
+                            </svg></span>
+                                    </button>
+                                    <br>
+                                    <button type="button" class="btn btn-lg btn-warning" data-bs-dismiss="modal">Close</button>
+
+                                </div>
+                        
+
+                    </div></form> 
             </div>
-            <h5 class="text-success gilroy-Semibold">Success!</h5>
-            <p class="f-14 text-gray">Your virtual card request has been processed successfully.</p>
-          </div>
-          
-          <div class="card-details-card bg-light p-4 mb-4">
-            <div class="text-center">
-              <span class="text-gray f-14">Transaction ID</span>
-              <h5 class="gilroy-Semibold text-dark mt-2" id="transactionId">TXN-123456789</h5>
-            </div>
-            
-            <div class="row mt-4">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Card Type:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark" id="successCardType">-</p>
-                </div>
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Amount Loaded:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark" id="successAmount">-</p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Status:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-success">Processing</p>
-                </div>
-                <div class="mb-3">
-                  <span class="f-14 text-gray">Estimated Delivery:</span>
-                  <p class="mb-0 f-14 gilroy-medium text-dark">24-48 hours</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="alert alert-info" role="alert">
-            <div class="d-flex">
-              <i class="fa fa-info-circle me-3 mt-1"></i>
-              <div>
-                <h6 class="alert-heading gilroy-Semibold mb-2">What's Next?</h6>
-                <p class="mb-2 f-14">Your virtual card is being processed and will be available in your account within 24-48 hours.</p>
-                <p class="mb-0 f-14">You'll receive an email notification once your card is ready for use.</p>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-      
-      <div class="modal-footer">
-        <!-- Step 1 buttons -->
-        <div id="cardStep1Buttons">
-          <button type="button" class="btn btn-secondary gilroy-medium" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary gilroy-medium" id="nextToCardStep2">Proceed</button>
-        </div>
-        
-        <!-- Step 2 buttons -->
-        <div id="cardStep2Buttons" class="d-none">
-          <button type="button" class="btn btn-secondary gilroy-medium" id="backToCardStep1">Back</button>
-          <button type="button" class="btn btn-primary gilroy-medium" id="confirmCardRequest">Confirm Request</button>
-        </div>
-        
-        <!-- Step 3 buttons -->
-        <div id="cardStep3Buttons" class="d-none">
-          <button type="button" class="btn btn-secondary gilroy-medium" id="printCardReceipt">
-            <i class="fa fa-print me-2"></i> Print Receipt
-          </button>
-          <button type="button" class="btn btn-primary gilroy-medium" id="requestAnotherCard">Request Another Card</button>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
+            <!-- main-containt -->
 
           </div>
         </div>
@@ -581,7 +486,7 @@
        <!-- footer -->
        <footer class="d-flex align-items-center justify-content-between bg-white w-100 px-4 footer-sec">
     <div class="res-order d-flex align-items-center">
-        <p class="mb-0 gilroy-medium">Copyright © 2025&nbsp;<a href="/" class="link-text">QFS</a>&nbsp;|&nbsp;All Rights Reserved.</p>
+        <p class="mb-0 gilroy-medium">Copyright © 2025&nbsp;<a href="https://quantumfinancial-system.com/" class="link-text">QFS</a>&nbsp;|&nbsp;All Rights Reserved.</p>
         <span class="d-none">4.0.1</span>
     </div>
     <div class="d-flex f-link align-items-center">
@@ -589,7 +494,7 @@
             <div class="d-flex align-items-center text-gray-100 f-13 blink-w sp" id="select_language">
                 <div class="form-group selectParent f-13">
                     <select class="select2 form-control f-13 mb-2n select2-hidden-accessible" data-minimum-results-for-search="Infinity" id="select-height" data-select2-id="select2-data-select-height" tabindex="-1" aria-hidden="true">
-                                                    <option class="f-13 gilroy-medium" selected="" value="en" data-select2-id="select2-data-6-pd9y">English</option>
+                                                    <option class="f-13 gilroy-medium" selected="" value="en" data-select2-id="select2-data-6-9r1v">English</option>
                                                     <option class="f-13 gilroy-medium" value="ar">عربى</option>
                                                     <option class="f-13 gilroy-medium" value="fr">Français</option>
                                                     <option class="f-13 gilroy-medium" value="pt">Português</option>
@@ -597,7 +502,7 @@
                                                     <option class="f-13 gilroy-medium" value="es">Español</option>
                                                     <option class="f-13 gilroy-medium" value="tr">Türkçe</option>
                                                     <option class="f-13 gilroy-medium" value="ch">中文 (繁體)</option>
-                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-5-drhx" style="width: 95px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-select-height-container" aria-controls="select2-select-height-container"><span class="select2-selection__rendered" id="select2-select-height-container" role="textbox" aria-readonly="true" title="English">English</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-5-1tv7" style="width: 95px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-select-height-container" aria-controls="select2-select-height-container"><span class="select2-selection__rendered" id="select2-select-height-container" role="textbox" aria-readonly="true" title="English">English</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                 </div>
             </div>
         </div>
@@ -608,18 +513,113 @@
 
     </div>
 
-  <!-- js -->
-<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
+    <!-- js -->
+    <script src="./Page Not Found _ QFS_files/jquery-3.6.1.min.js.download"></script>
+<script src="./Page Not Found _ QFS_files/bootstrap.bundle.min.js.download"></script>
+<script src="./Page Not Found _ QFS_files/select2.min.js.download"></script>
+<script src="./Page Not Found _ QFS_files/chart.umd.min.js.download"></script>
+<script src="./Page Not Found _ QFS_files/main.min.js.download"></script>
+<script src="./Page Not Found _ QFS_files/common.min.js.download"></script>
 
-<!-- Your custom scripts - these will need to be fixed separately -->
-<script src="/virtual/main.min.js"></script>
-<script src="/virtual/common.min.js"></script>
-<script src="/virtual/card-request.js"></script>
-<script src="/virtual/validation.min.js"></script>
+<script type="text/javascript">
+    var SITE_URL = "https://quantumfinancial-system.com";
+    var FIATDP = "0.00";
+    var CRYPTODP = "0.00000000";
+
+	$(document).ready(function() {
+		$("#select_language").on("change", function() {
+			if($("#select_language select").val() == 'ar'){
+				localStorage.setItem('lang', 'ar');
+				let lang = $("#select_language select").val();
+
+				$.ajax({
+					type: 'get',
+					url: 'https://quantumfinancial-system.com/change-lang',
+					data: {lang: lang},
+					success: function (msg) {
+						if (msg == 1) {
+							location.reload();
+							$("html").attr("dir", "rtl");
+						}
+					}
+				});
+
+			} else {
+				let lang = $("#select_language select").val();
+				$.ajax({
+					type: 'get',
+					url: 'https://quantumfinancial-system.com/change-lang',
+					data: {lang: lang},
+					success: function (msg) {
+						if (msg == 1) {
+							location.reload()
+							localStorage.setItem('lang', lang);
+							$("html").removeAttr("dir", "rtl");
+						}
+					}
+				});
+			}
+		});
+	});  
+
+</script>
+
+<script> 
+
+    (function ($) {
+
+    "use strict";
+    $('.addBtn').on('click', (e)=> {
+        var modal = $('#addModal');
+        modal.modal('show');
+    });
+    })(jQuery);
+</script>
+    
+    <script type="text/javascript">
+    function restrictNumberToPrefdecimal(e, type) {
+        let decimalFormat =
+            type === "fiat" ?
+            "2" :
+            "8";
+
+        let num = $.trim(e.value);
+        if (num.length > 0 && !isNaN(num)) {
+            e.value = digitCheck(num, 8, decimalFormat);
+            return e.value;
+        }
+    }
+
+    function digitCheck(num, beforeDecimal, afterDecimal) {
+        return num
+            .replace(/[^\d.]/g, "")
+            .replace(new RegExp("(^[\\d]{" + beforeDecimal + "})[\\d]", "g"), "$1")
+            .replace(/(\..*)\./g, "$1")
+            .replace(new RegExp("(\\.[\\d]{" + afterDecimal + "}).", "g"), "$1");
+    }
+
+</script>    <script>
+    var isNumberOrDecimalPointKey = function(value, e) {
+
+        var charCode = (e.which) ? e.which : e.keyCode;
+
+        if (charCode == 46) {
+            if (value.value.indexOf('.') === -1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+        }
+        return true;
+    }
+</script>
+
+    <script src="./Page Not Found _ QFS_files/validation.min.js.download"></script>
+    <script src="./Page Not Found _ QFS_files/jquery.ba-throttle-debounce.min.js.download"></script>
+
 
     <script type="text/javascript">
         'use strict';
@@ -631,10 +631,13 @@
         let validPhoneMessage = placeHolder.replace(':x', 'phone (ex: +12015550123)');
         let validEmailOrPhoneMessage = placeHolder.replace(':x', 'email (ex: user@gmail.com) or phone (ex: +12015550123)');
         let lowBalanceText = "Not have enough balance !";
-        let receiverStatusUrl = "/transfer-user-email-phone-receiver-status-validate";
-        let checkAmountLimitUrl = "/amount-limit";
+        let receiverStatusUrl = "https://quantumfinancial-system.com/transfer-user-email-phone-receiver-status-validate";
+        let checkAmountLimitUrl = "https://quantumfinancial-system.com/amount-limit";
         let submitBtnText = 'Processing...';
     </script>
-    <script src="/virtual/send-money.min.js"></script>
+    <script src="./Page Not Found _ QFS_files/send-money.min.js.download"></script>
     <!-- end js -->
  
+
+  
+</div><div id="sqrx-content-container"><div class="squarex_ext_modal"><div class="squarex_ext_dialog-container"><div id="module_dialog_root__disposableFileViewer"><div class="squarex_ext_dialog squarex_ext_light squarex_ext__hidden squarex_ext_no-transition"></div></div></div></div></div></body></html>
