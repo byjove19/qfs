@@ -1,7 +1,6 @@
-
 const AdminWallet = require('../models/adminWallet');
 
-// Get all wallet addresses for admin page
+// Get all wallet addresses for admin page (HTML)
 exports.getWalletAddresses = async (req, res) => {
   try {
     const wallets = await AdminWallet.find().sort({ currency: 1 });
@@ -26,6 +25,7 @@ exports.getWalletAddresses = async (req, res) => {
 // API: Get all wallet addresses for admin panel (JSON)
 exports.getWalletAddressesAPI = async (req, res) => {
   try {
+    console.log('API: Fetching wallet addresses...');
     const wallets = await AdminWallet.find().sort({ currency: 1 });
     
     // Format for admin panel
@@ -33,12 +33,14 @@ exports.getWalletAddressesAPI = async (req, res) => {
     wallets.forEach(wallet => {
       walletData[wallet.currency] = {
         currency: wallet.currency,
+        name: wallet.currency, // Add name field
         address: wallet.address,
         network: wallet.network,
         isActive: wallet.isActive
       };
     });
 
+    console.log(`API: Returning ${wallets.length} wallets`);
     res.json({
       success: true,
       data: walletData,
@@ -48,7 +50,8 @@ exports.getWalletAddressesAPI = async (req, res) => {
     console.error('Error fetching wallet addresses API:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch wallet addresses'
+      message: 'Failed to fetch wallet addresses',
+      error: error.message
     });
   }
 };
@@ -58,6 +61,8 @@ exports.updateWalletAddressAPI = async (req, res) => {
   try {
     const { currency } = req.params;
     const { address, network } = req.body;
+
+    console.log(`API: Updating ${currency} wallet...`);
 
     if (!address) {
       return res.status(400).json({
@@ -79,6 +84,7 @@ exports.updateWalletAddressAPI = async (req, res) => {
       { new: true, upsert: true }
     );
 
+    console.log(`API: ${currency} wallet updated successfully`);
     res.json({
       success: true,
       message: `${currency} address updated successfully`,
@@ -88,7 +94,8 @@ exports.updateWalletAddressAPI = async (req, res) => {
     console.error('Error updating wallet address:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to update wallet address'
+      message: 'Failed to update wallet address',
+      error: error.message
     });
   }
 };
@@ -96,6 +103,7 @@ exports.updateWalletAddressAPI = async (req, res) => {
 // API: Get wallet addresses for frontend (public)
 exports.getWalletAddressesPublic = async (req, res) => {
   try {
+    console.log('Public API: Fetching active wallet addresses...');
     const wallets = await AdminWallet.find({ isActive: true })
       .select('currency address network')
       .lean();
@@ -105,35 +113,7 @@ exports.getWalletAddressesPublic = async (req, res) => {
       walletData[wallet.currency] = wallet.address;
     });
 
-    res.json({
-      success: true,
-      data: walletData,
-      wallets: wallets
-    });
-  } catch (error) {
-    console.error('Error fetching public wallet addresses:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch wallet addresses'
-    });
-  }
-};
-
-// Add this to your existing adminWalletController
-
-// API: Get wallet addresses for frontend (public) - UPDATED
-exports.getWalletAddressesPublic = async (req, res) => {
-  try {
-    const wallets = await AdminWallet.find({ isActive: true })
-      .select('currency address network')
-      .lean();
-
-    // Format for frontend deposit page
-    const walletData = {};
-    wallets.forEach(wallet => {
-      walletData[wallet.currency] = wallet.address;
-    });
-
+    console.log(`Public API: Returning ${wallets.length} active wallets`);
     res.json({
       success: true,
       data: walletData,
@@ -144,7 +124,8 @@ exports.getWalletAddressesPublic = async (req, res) => {
     console.error('Error fetching public wallet addresses:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch wallet addresses'
+      message: 'Failed to fetch wallet addresses',
+      error: error.message
     });
   }
 };
@@ -154,6 +135,8 @@ exports.toggleWalletStatusAPI = async (req, res) => {
   try {
     const { currency } = req.params;
     const { isActive } = req.body;
+
+    console.log(`API: Toggling ${currency} status to ${isActive}`);
 
     const wallet = await AdminWallet.findOneAndUpdate(
       { currency: currency },
@@ -168,6 +151,7 @@ exports.toggleWalletStatusAPI = async (req, res) => {
       });
     }
 
+    console.log(`API: ${currency} status updated`);
     res.json({
       success: true,
       message: `${currency} wallet ${isActive ? 'activated' : 'deactivated'} successfully`,
@@ -177,7 +161,8 @@ exports.toggleWalletStatusAPI = async (req, res) => {
     console.error('Error toggling wallet status:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to update wallet status'
+      message: 'Failed to update wallet status',
+      error: error.message
     });
   }
 };

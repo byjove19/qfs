@@ -4,22 +4,23 @@ const adminWalletController = require('../controllers/adminWalletController');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 
 // ===== ADMIN PAGE ROUTES =====
+// Accessible at /admin/wallet-addresses
 router.get('/wallet-addresses', isAuthenticated, isAdmin, adminWalletController.getWalletAddresses);
 
 // ===== ADMIN API ROUTES =====
-// These will be mounted under /admin/api/wallets
-router.get('/api/wallets', isAuthenticated, isAdmin, adminWalletController.getWalletAddressesAPI);
-router.put('/api/wallets/:currency', isAuthenticated, isAdmin, adminWalletController.updateWalletAddressAPI);
-router.patch('/api/wallets/:currency/status', isAuthenticated, isAdmin, adminWalletController.toggleWalletStatusAPI);
+// When mounted at /api/admin in app.js, these become:
+// GET    /api/admin/wallets/
+// PUT    /api/admin/wallets/:currency
+// PATCH  /api/admin/wallets/:currency/status
+// POST   /api/admin/wallets/publish
+router.get('/wallets/', isAuthenticated, isAdmin, adminWalletController.getWalletAddressesAPI);
+router.put('/wallets/:currency', isAuthenticated, isAdmin, adminWalletController.updateWalletAddressAPI);
+router.patch('/wallets/:currency/status', isAuthenticated, isAdmin, adminWalletController.toggleWalletStatusAPI);
 
-// ===== PUBLIC API ROUTES =====
-// These will be mounted under /api/wallet-addresses
-router.get('/wallet-addresses/public', adminWalletController.getWalletAddressesPublic);
-
-// Add the missing publish route
-router.post('/api/wallets/publish', isAuthenticated, isAdmin, async (req, res) => {
+// Publish route
+router.post('/wallets/publish', isAuthenticated, isAdmin, async (req, res) => {
     try {
-        // This route just confirms the addresses are published
+        // This route confirms the addresses are published
         res.json({
             success: true,
             message: 'Wallet addresses are now live on the frontend!'
@@ -32,5 +33,10 @@ router.post('/api/wallets/publish', isAuthenticated, isAdmin, async (req, res) =
         });
     }
 });
+
+// ===== PUBLIC API ROUTES =====
+// When mounted at /api in app.js, this becomes:
+// GET /api/wallet-addresses/public
+router.get('/wallet-addresses/public', adminWalletController.getWalletAddressesPublic);
 
 module.exports = router;

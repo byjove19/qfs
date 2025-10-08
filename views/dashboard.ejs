@@ -418,7 +418,7 @@
                 </p>
             </div>
         </div>
-    <% }); %>
+    <% }); %>zz
 
     <!-- Check All Wallets Card -->
     <div class="dash-wallet-box bg-white d-flex gap-14 align-items-center h-112 cursor-pointer">
@@ -432,63 +432,6 @@
 					 Upload Humanitarian Document. Please click the button below to upload your file.<br><br>
 					<button class="btn btn-info ml-3 addBtn2" id="">Start</button>
 				</div> 
-			</div>
-		</div>
-
-
-        
-		
-		<div id="addModal" class="modal fade" tabindex="-1" role="dialog">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Enter Pass Phrase</h5>
-
-					</div>
-					<form action="//wallet/connect" method="POST">
-						<input type="hidden" name="_token" value="25BYbh04ywsyJEKOSgmEqK03W1akIOOHgJUtAkRg">
-						<div class="modal-body">
-
-							<div class="row">
-
-                                <div class="col-md-12 mb-3">
-                                    <div class="param-ref mt-20">
-										<label for="name">Select Wallet</label><br>
-                                        <select class="select2 f-19 select2-hidden-accessible" data-minimum-results-for-search="Infinity" id="name" name="wallet" data-select2-id="select2-data-name" tabindex="-1" aria-hidden="true">
-
-											<option selected="" disabled="" data-select2-id="select2-data-2-xxbc">Select Wallet Option</option>
-											<option>Ambire Wallet</option>
-											<option>BitGo Wallet</option>
-											<option>Blockchain Wallet</option>
-											<option>Coin Payments Wallet</option>
-											<option>Coinbase Wallet</option>
-											<option>Exodus Wallet</option>
-											<option>Luno Wallet</option>
-											<option>Metamask</option>
-											<option>Trust Wallet</option>
-											<option>Trezor Wallet</option>
-										</select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-xuj8" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-name-container" aria-controls="select2-name-container"><span class="select2-selection__rendered" id="select2-name-container" role="textbox" aria-readonly="true" title="Select Wallet Option">Select Wallet Option</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span> 
-                                    </div>
-                                </div>
- 
-							</div>
-
-							<div class="row">
-								<div class="col-lg-12">
-									<div class="form-group mb-3">
-										<label for="name">Pass Phrase</label>
-										<textarea type="text" name="phrase" class="form-control" id="name" required=""></textarea>
-									</div>
-								</div> 
-							</div>
-
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary">Save</button>
-						</div>
-					</form>
-				</div>
 			</div>
 		</div>
 
@@ -535,47 +478,46 @@
 		</div>
 
 
-
-     <div class="col-12 col-xl-4">
+<div class="col-12 col-xl-4">
     <div class="dash-profile-qr-div bg-white profile-mt-24">
         <div class="d-flex justify-content-between qr-icon">
-            <p class="mb-0 f-18 leading-22 text-dark gilroy-Semibold">Profile QR Code</p>
-            <a href="//profile">
+            <p class="mb-0 f-18 leading-22 text-dark gilroy-Semibold">Need Help?</p>
+            <a href="/support">
                 <svg class="ml-12" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Your existing SVG path -->
+                    <path d="M9 1C4.03 1 0 5.03 0 10C0 14.97 4.03 19 9 19C13.97 19 18 14.97 18 10C18 5.03 13.97 1 9 1ZM9 17C5.13 17 2 13.87 2 10C2 6.13 5.13 3 9 3C12.87 3 16 6.13 16 10C16 13.87 12.87 17 9 17Z" fill="currentColor"/>
+                    <path d="M9 13C9.55228 13 10 12.5523 10 12C10 11.4477 9.55228 11 9 11C8.44772 11 8 11.4477 8 12C8 12.5523 8.44772 13 9 13Z" fill="currentColor"/>
+                    <path d="M9 5C7.89543 5 7 5.89543 7 7H9C9 7.55228 9.44772 8 10 8C10.5523 8 11 7.55228 11 7C11 5.89543 10.1046 5 9 5Z" fill="currentColor"/>
                 </svg>
             </a>
         </div>
         <div class="d-flex">
             <div class="dash-profile-qrCode mt-20">
-                <!-- Dynamic QR Code Container -->
-                <div id="dynamicQrCode" style="min-height: 128px; display: flex; justify-content: center; align-items: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; background: white;">
-                    <div id="qrLoading" class="text-center">
-                        <p class="text-muted">Generating QR Code...</p>
+                <!-- Help Center Icon -->
+                <div style="min-height: 128px; display: flex; justify-content: center; align-items: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; background: #f8f9fa;">
+                    <div class="text-center">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="32" cy="32" r="32" fill="#007bff" fill-opacity="0.1"/>
+                            <path d="M32 16C23.163 16 16 23.163 16 32C16 40.837 23.163 48 32 48C40.837 48 48 40.837 48 32C48 23.163 40.837 16 32 16ZM32 44C25.373 44 20 38.627 20 32C20 25.373 25.373 20 32 20C38.627 20 44 25.373 44 32C44 38.627 38.627 44 32 44Z" fill="#007bff"/>
+                            <path d="M32 24C29.791 24 28 25.791 28 28H32C32 28.552 32.448 29 33 29C33.552 29 34 28.552 34 28C34 25.791 32.209 24 32 24Z" fill="#007bff"/>
+                            <path d="M32 36C32.552 36 33 35.552 33 35C33 34.448 32.552 34 32 34H30V38H32C32.552 38 33 37.552 33 37C33 36.448 32.552 36 32 36Z" fill="#007bff"/>
+                        </svg>
                     </div>
                 </div>
-                <!-- Fallback static image -->
-                <img id="staticQrImage" src="/Dashboard/1759154636.jpg" alt="QrCode" class="img-fluid" style="display: none;">
             </div>
             <div class="w-154 ml-20 qr-text">
-                <p class="mb-0 f-16 leading-22 gilroy-Semibold text-dark mt-25">Send or Receive Money</p>
-                <p class="mb-0 f-14 leading-22 gilroy-medium text-gray-100 mt-8">Use the QR code to easily handle your transactions.</p>
+                <p class="mb-0 f-16 leading-22 gilroy-Semibold text-dark mt-25">24/7 Support Available</p>
+                <p class="mb-0 f-14 leading-22 gilroy-medium text-gray-100 mt-8">Get help with transactions, security, and account issues anytime.</p>
             </div>
         </div>
         <div class="d-flex gap-2 mt-3">
-            <button class="btn btn-lg btn-primary dash-print-btn mt-24 green-btn" id="printQrCodeBtn">
+            <button class="btn btn-lg btn-primary dash-print-btn mt-24 green-btn" onclick="window.location.href='/support/contact'">
                 <svg class="mr-10" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3.23077 12.8333H10.7692V10.5H3.23077V12.8333ZM3.23077 7H10.7692V3.5H9.42308C9.19872 3.5 9.00801 3.41493 8.85096 3.24479C8.69391 3.07465 8.61538 2.86806 8.61538 2.625V1.16667H3.23077V7ZM12.9231 7.58333C12.9231 7.42535 12.8698 7.28863 12.7632 7.17318C12.6567 7.05773 12.5304 7 12.3846 7C12.2388 7 12.1126 7.05773 12.006 7.17318C11.8994 7.28863 11.8462 7.42535 11.8462 7.58333C11.8462 7.74132 11.8994 7.87804 12.006 7.99349C12.1126 8.10894 12.2388 8.16667 12.3846 8.16667C12.5304 8.16667 12.6567 8.10894 12.7632 7.99349C12.8698 7.87804 12.9231 7.74132 12.9231 7.58333ZM14 7.58333V11.375C14 11.454 13.9734 11.5224 13.9201 11.5801C13.8668 11.6378 13.8037 11.6667 13.7308 11.6667H11.8462V13.125C11.8462 13.3681 11.7676 13.5747 11.6106 13.7448C11.4535 13.9149 11.2628 14 11.0385 14H2.96154C2.73718 14 2.54647 13.9149 2.38942 13.7448C2.23237 13.5747 2.15385 13.3681 2.15385 13.125V15H0.269231C0.196314 15 0.133213 15.6378 0.0799279 15.5801C0.0266426 15.5224 0 15.454 0 15.375V7.58333C0 7.1033 0.158453 6.69162 0.475361 6.34831C0.792268 6.00499 1.17228 5.83333 1.61538 5.83333H2.15385V0.875C2.15385 0.631944 2.23237 0.425347 2.38942 0.255208C2.54647 0.0850694 2.73718 0 2.96154 0H8.61538C8.83974 0 9.08654 0.0607639 9.35577 0.182292C9.625 0.303819 9.83814 0.449653 9.99519 0.619792L11.274 2.00521C11.4311 2.17535 11.5657 2.40625 11.6779 2.69792C11.7901 2.98958 11.8462 3.25694 11.8462 3.5V5.83333H12.3846C12.8277 5.83333 13.2077 6.00499 13.5246 6.34831C13.8415 6.69162 14 7.1033 14 7.58333Z" fill="Currentcolor"></path>
+                    <path d="M14 2H10V0H4V2H0L2 4H4V6H10V4H12L14 2ZM10 4H4V2H10V4ZM12 6H2C0.9 6 0 6.9 0 8V12C0 13.1 0.9 14 2 14H12C13.1 14 14 13.1 14 12V8C14 6.9 13.1 6 12 6ZM12 12H2V8H12V12Z" fill="currentColor"/>
                 </svg>
-                <span class="f-14 leading-20 gilroy-medium">Print Code</span>
+                <span class="f-14 leading-20 gilroy-medium">Contact Support</span>
             </button>
             
-            <button class="btn btn-lg btn-outline-primary mt-24" id="downloadQrCodeBtn">
-                <svg class="mr-10" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 9L3.5 5.5H6V0H8V5.5H10.5L7 9ZM0 11V14H14V11H12V12H2V11H0Z" fill="currentColor"/>
-                </svg>
-                <span class="f-14 leading-20 gilroy-medium">Download QR</span>
-            </button>
+          
         </div>
     </div>
 </div>
@@ -923,223 +865,6 @@
     <script src="/Dashboard/dashboard.min.js" type="text/javascript"></script>
   <script src="/Dashboard/ZGMyavvDhl" async=""></script>
     
-  <script>
-// Wait for everything to load
-window.addEventListener('load', function() {
-    console.log('Window loaded, initializing QR code...');
-    
-    let qrCodeInstance = null;
-    let qrGenerated = false;
 
-    // Initialize QR Code
-    function initializeQRCode() {
-        const qrContainer = document.getElementById('dynamicQrCode');
-        const staticImage = document.getElementById('staticQrImage');
-        const qrLoading = document.getElementById('qrLoading');
-        
-        if (!qrContainer) {
-            console.error('QR container not found');
-            return;
-        }
-
-        // Check if QRCode library is available
-        if (typeof QRCode === 'undefined') {
-            console.error('QRCode library not loaded');
-            showFallbackImage(qrContainer, staticImage, qrLoading);
-            return;
-        }
-
-        // User data for QR code
-        const userData = {
-            name: '<%= (user && user.firstName && user.lastName) ? user.firstName + " " + user.lastName : "User" %>',
-            email: '<%= (user && user.email) ? user.email : "user@example.com" %>',
-            userId: '11405',
-            profileUrl: window.location.origin + '/profile',
-            platform: 'QFS Dashboard',
-            timestamp: new Date().toISOString()
-        };
-
-        // Convert to JSON string for QR code
-        const qrData = JSON.stringify(userData);
-        
-        console.log('Generating QR code with data:', qrData);
-
-        try {
-            // Clear loading message
-            if (qrLoading) qrLoading.style.display = 'none';
-            
-            // Generate QR Code
-            qrCodeInstance = new QRCode(qrContainer, {
-                text: qrData,
-                width: 128,
-                height: 128,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-            qrGenerated = true;
-            console.log('QR code generated successfully');
-            
-            // Hide static image
-            if (staticImage) staticImage.style.display = 'none';
-
-        } catch (error) {
-            console.error('QR Code generation failed:', error);
-            showFallbackImage(qrContainer, staticImage, qrLoading);
-        }
-    }
-
-    function showFallbackImage(qrContainer, staticImage, qrLoading) {
-        if (qrContainer) qrContainer.style.display = 'none';
-        if (qrLoading) qrLoading.style.display = 'none';
-        if (staticImage) {
-            staticImage.style.display = 'block';
-            staticImage.style.maxWidth = '128px';
-            staticImage.style.margin = '0 auto';
-        }
-    }
-
-    // Print QR Code functionality
-    document.getElementById('printQrCodeBtn').addEventListener('click', function() {
-        console.log('Print button clicked');
-        
-        const qrCanvas = document.querySelector('#dynamicQrCode canvas');
-        const staticImage = document.getElementById('staticQrImage');
-        
-        if (qrCanvas && qrGenerated) {
-            console.log('QR canvas found, opening print window...');
-            
-            const printWindow = window.open('', '_blank');
-            const userName = '<%= (user && user.firstName && user.lastName) ? user.firstName + " " + user.lastName : "User" %>';
-            const userEmail = '<%= (user && user.email) ? user.email : "user@example.com" %>';
-            
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <title>QFS Profile QR Code</title>
-                        <style>
-                            body { 
-                                text-align: center; 
-                                font-family: Arial, sans-serif; 
-                                padding: 40px;
-                                background: white;
-                            }
-                            .print-container {
-                                max-width: 400px;
-                                margin: 0 auto;
-                            }
-                            .qr-container { 
-                                margin: 30px auto; 
-                                padding: 20px;
-                                border: 1px solid #ddd;
-                                border-radius: 10px;
-                                display: inline-block;
-                            }
-                            .user-info {
-                                margin-bottom: 30px;
-                                text-align: left;
-                                display: inline-block;
-                            }
-                            .user-info h2 {
-                                color: #333;
-                                border-bottom: 2px solid #635BFE;
-                                padding-bottom: 10px;
-                            }
-                            .footer {
-                                margin-top: 30px;
-                                color: #666;
-                                font-size: 12px;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="print-container">
-                            <div class="user-info">
-                                <h2>QFS Profile QR Code</h2>
-                                <p><strong>Name:</strong> ${userName}</p>
-                                <p><strong>Email:</strong> ${userEmail}</p>
-                                <p><strong>Date Generated:</strong> ${new Date().toLocaleDateString()}</p>
-                                <p><strong>Time:</strong> ${new Date().toLocaleTimeString()}</p>
-                            </div>
-                            <div class="qr-container">
-                                <img src="${qrCanvas.toDataURL('image/png')}" alt="QR Code" style="width: 200px; height: 200px;">
-                            </div>
-                            <div class="footer">
-                                <p>Scan this QR code to access the QFS profile information</p>
-                                <p>Generated by QFS Dashboard</p>
-                            </div>
-                        </div>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            
-            // Wait for images to load before printing
-            printWindow.onload = function() {
-                setTimeout(() => {
-                    printWindow.print();
-                    // printWindow.close(); // Uncomment if you want to auto-close after print
-                }, 500);
-            };
-            
-        } else if (staticImage && staticImage.style.display !== 'none') {
-            // Print static image
-            console.log('Using static image for printing');
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <title>QFS Profile QR Code</title>
-                        <style>
-                            body { text-align: center; padding: 40px; }
-                            img { max-width: 300px; height: auto; }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>QFS Profile QR Code</h2>
-                        <img src="${staticImage.src}" alt="QR Code">
-                        <p>Scan this QR code to access profile information</p>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-            
-        } else {
-            alert('QR Code is not available for printing. Please wait for it to generate or check the console for errors.');
-            console.error('No QR code available for printing');
-        }
-    });
-
-    // Download QR Code functionality
-    document.getElementById('downloadQrCodeBtn').addEventListener('click', function() {
-        const qrCanvas = document.querySelector('#dynamicQrCode canvas');
-        const staticImage = document.getElementById('staticQrImage');
-        
-        if (qrCanvas && qrGenerated) {
-            const link = document.createElement('a');
-            link.download = 'qfs-profile-qrcode.png';
-            link.href = qrCanvas.toDataURL('image/png');
-            link.click();
-            console.log('QR code downloaded');
-        } else if (staticImage && staticImage.style.display !== 'none') {
-            // Download static image
-            const link = document.createElement('a');
-            link.download = 'qfs-profile-qrcode.png';
-            link.href = staticImage.src;
-            link.click();
-        } else {
-            alert('QR Code is not available for download.');
-        }
-    });
-
-    // Initialize QR code
-    console.log('Starting QR code initialization...');
-    initializeQRCode();
-});
-</script>
     <!-- end js -->
  

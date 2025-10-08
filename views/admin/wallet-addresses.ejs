@@ -633,56 +633,66 @@
             controls.style.display = 'block';
         }
 
-        // Save address to database
-        async function saveAddress(wallet) {
-            const input = document.getElementById(`${wallet}-address`);
-            const newAddress = input.value.trim();
+       // Save address to database
+async function saveAddress(wallet) {
+    const input = document.getElementById(`${wallet}-address`);
+    const newAddress = input.value.trim();
 
-            if (!newAddress) {
-                showAlert('danger', 'Address cannot be empty');
-                return;
+    if (!newAddress) {
+        showAlert('danger', 'Address cannot be empty');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        const response = await fetch(`${API_BASE}/${wallet}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                address: newAddress,
+                network: wallets[wallet]?.network || ALL_CRYPTOCURRENCIES.find(c => c.currency === wallet)?.network || 'Mainnet'
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            if (!wallets[wallet]) {
+                wallets[wallet] = {};
             }
-
-            try {
-                showLoading(true);
-                
-                const response = await fetch(`${API_BASE}/${wallet}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        address: newAddress,
-                        network: wallets[wallet]?.network || ALL_CRYPTOCURRENCIES.find(c => c.currency === wallet)?.network || 'Mainnet'
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    if (!wallets[wallet]) {
-                        wallets[wallet] = {};
-                    }
-                    wallets[wallet].address = newAddress;
-                    input.readOnly = true;
-                    input.style.background = '';
-                    document.getElementById(`${wallet}-controls`).style.display = 'none';
-                    
-                    showAlert('success', `${wallet} address updated successfully in database!`);
-                    
-                    // Refresh the wallet display to show new buttons
-                    renderWallets();
-                } else {
-                    throw new Error(result.message || 'Failed to save address');
-                }
-            } catch (error) {
-                console.error('Error saving address:', error);
-                showAlert('danger', `Failed to save address: ${error.message}`);
-            } finally {
-                showLoading(false);
+            wallets[wallet].address = newAddress;
+            
+            // Refresh the wallet display first
+            renderWallets();
+            
+            // Then get fresh DOM references and reset edit state
+            const freshInput = document.getElementById(`${wallet}-address`);
+            const freshControls = document.getElementById(`${wallet}-controls`);
+            
+            if (freshInput) {
+                freshInput.readOnly = true;
+                freshInput.style.background = '';
             }
+            
+            if (freshControls) {
+                freshControls.style.display = 'none';
+            }
+            
+            showAlert('success', `${wallet} address updated successfully in database!`);
+            
+        } else {
+            throw new Error(result.message || 'Failed to save address');
         }
-
+    } catch (error) {
+        console.error('Error saving address:', error);
+        showAlert('danger', `Failed to save address: ${error.message}`);
+    } finally {
+        showLoading(false);
+    }
+}
         // Cancel edit
         function cancelEdit(wallet) {
             const input = document.getElementById(`${wallet}-address`);

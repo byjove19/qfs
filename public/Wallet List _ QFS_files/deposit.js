@@ -20,37 +20,50 @@ function initDepositModal() {
 
     console.log('Bootstrap found, modal element found');
     
-    const depositModal = new bootstrap.Modal(depositModalElement, {
-        backdrop: 'static',
-        keyboard: false,
-        focus: true
-    });
-    
+    let depositModal = null;
     let currentStep = 1;
     let selectedCurrency = '';
     
+    // Initialize modal
+    try {
+        depositModal = new bootstrap.Modal(depositModalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+        console.log('Modal initialized successfully');
+    } catch (error) {
+        console.error('Modal initialization error:', error);
+        return;
+    }
+
+    // FIX: Proper modal event listeners for cleanup
+    depositModalElement.addEventListener('hidden.bs.modal', function () {
+        console.log('Modal hidden - cleaning up');
+        cleanupModal();
+    });
+
+    depositModalElement.addEventListener('show.bs.modal', function () {
+        console.log('Modal showing - resetting form');
+        resetDepositForm();
+    });
+
     // Update all deposit buttons to open the modal with correct currency
     document.querySelectorAll('.deposit-modal-trigger').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             selectedCurrency = this.getAttribute('data-currency') || 'USD';
             console.log('Opening modal for currency:', selectedCurrency);
-            resetDepositForm();
-            depositModal.show();
-        });
-    });
-    
-    // Fix for select dropdowns - ensure they're clickable
-    depositModalElement.addEventListener('shown.bs.modal', function () {
-        // Remove any aria-hidden that might block interaction
-        depositModalElement.removeAttribute('aria-hidden');
-        
-        // Ensure selects are interactive
-        const selects = depositModalElement.querySelectorAll('select');
-        selects.forEach(select => {
-            select.style.pointerEvents = 'auto';
-            select.style.position = 'relative';
-            select.style.zIndex = '1';
+            
+            // Set the currency in the select
+            const currencySelect = document.getElementById('currencySelect');
+            if (currencySelect) {
+                currencySelect.value = selectedCurrency;
+            }
+            
+            if (depositModal) {
+                depositModal.show();
+            }
         });
     });
     
@@ -64,7 +77,6 @@ function initDepositModal() {
     if (nextToStep2) {
         nextToStep2.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             if (validateStep1()) {
                 showStep(2);
                 updateConfirmationDetails();
@@ -75,7 +87,6 @@ function initDepositModal() {
     if (backToStep1) {
         backToStep1.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             showStep(1);
         });
     }
@@ -83,7 +94,6 @@ function initDepositModal() {
     if (confirmDeposit) {
         confirmDeposit.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             if (validateStep2()) {
                 processDeposit();
             }
@@ -93,7 +103,6 @@ function initDepositModal() {
     if (depositAgain) {
         depositAgain.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             resetDepositForm();
             showStep(1);
         });
@@ -102,7 +111,6 @@ function initDepositModal() {
     if (printReceipt) {
         printReceipt.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             printReceiptFunction();
         });
     }
@@ -121,12 +129,6 @@ function initDepositModal() {
                 document.getElementById('bankError').classList.add('d-none');
             }
         });
-        
-        // Also listen for click to ensure dropdown opens
-        paymentMethod.addEventListener('click', function(e) {
-            console.log('Payment method clicked');
-            e.stopPropagation();
-        });
     }
     
     // Currency change handler
@@ -142,18 +144,50 @@ function initDepositModal() {
                 document.getElementById('bankError').classList.add('d-none');
             }
         });
-        
-        // Also listen for click to ensure dropdown opens
-        currencySelect.addEventListener('click', function(e) {
-            console.log('Currency select clicked');
-            e.stopPropagation();
-        });
     }
     
     // Amount change handler
     const depositAmount = document.getElementById('depositAmount');
     if (depositAmount) {
         depositAmount.addEventListener('input', updateConfirmationDetails);
+    }
+
+    // FIX: Add manual close button handler
+    const closeButtons = depositModalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (depositModal) {
+                depositModal.hide();
+            }
+        });
+    });
+
+    function cleanupModal() {
+        console.log('Cleaning up modal state');
+        // Reset to step 1
+        showStep(1);
+        
+        // Clear any form data
+        const forms = depositModalElement.querySelectorAll('form');
+        forms.forEach(form => {
+            form.reset();
+        });
+        
+        // Hide any error messages
+        const bankError = document.getElementById('bankError');
+        if (bankError) bankError.classList.add('d-none');
+        
+        // Remove any backdrop manually (safety check)
+        const existingBackdrops = document.querySelectorAll('.modal-backdrop');
+        existingBackdrops.forEach(backdrop => {
+            backdrop.remove();
+        });
+        
+        // Remove any modal-open classes
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
     }
     
     function showStep(step) {
@@ -318,12 +352,7 @@ function initDepositModal() {
         if (form2) form2.reset();
         if (bankError) bankError.classList.add('d-none');
         
-        const currencySelect = document.getElementById('currencySelect');
-        if (currencySelect && selectedCurrency) {
-            currencySelect.value = selectedCurrency;
-        }
-        
-        currentStep = 1;
+        // Reset to step 1
         showStep(1);
     }
     

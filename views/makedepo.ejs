@@ -949,251 +949,318 @@
     </div>
 
     <script>
-        // Wallet addresses data
-        const walletAddresses = {
-            'BTC': 'bc1qnvk84egsa6ztp7talek9ut2qafw8pkcq9vjhsp',
-            'ETH': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-            'LTC': 'ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm',
-            'XRP': 'rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3',
-            'XLM': 'GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2',
-            'DOGE': 'DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx',
-            'USDT-ERC20': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-            'USDT-TRC20': 'TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN',
-            'ALGO': '47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA',
-            'MATIC': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
-            'SOL': 'HhV3ydYWteQGxPPc3Atuj6qL1q4WWL7Ds4ogGxZZZP6n',
-            'USDC': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae'
-        };
+    // API endpoint for wallet addresses
+    const WALLET_API_URL = '/api/wallet-addresses/public';
+    
+    // Currency icons and names
+    const currencyData = {
+        'BTC': { icon: 'fab fa-bitcoin', name: 'Bitcoin' },
+        'ETH': { icon: 'fab fa-ethereum', name: 'Ethereum' },
+        'LTC': { icon: 'fab fa-litecoin', name: 'Litecoin' },
+        'XRP': { icon: 'fas fa-exchange-alt', name: 'XRP' },
+        'XLM': { icon: 'fas fa-star', name: 'Stellar' },
+        'DOGE': { icon: 'fab fa-reddit', name: 'Dogecoin' },
+        'USDT-ERC20': { icon: 'fas fa-dollar-sign', name: 'USDT (ERC20)' },
+        'USDT-TRC20': { icon: 'fas fa-dollar-sign', name: 'USDT (TRC20)' },
+        'ALGO': { icon: 'fas fa-chart-line', name: 'Algorand' },
+        'MATIC': { icon: 'fas fa-layer-group', name: 'Polygon' },
+        'SOL': { icon: 'fas fa-bolt', name: 'Solana' },
+        'USDC': { icon: 'fas fa-dollar-sign', name: 'USDC (ERC20)' }
+    };
 
-        // Currency icons and names
-        const currencyData = {
-            'BTC': { icon: 'fab fa-bitcoin', name: 'Bitcoin' },
-            'ETH': { icon: 'fab fa-ethereum', name: 'Ethereum' },
-            'LTC': { icon: 'fab fa-litecoin', name: 'Litecoin' },
-            'XRP': { icon: 'fas fa-exchange-alt', name: 'XRP' },
-            'XLM': { icon: 'fas fa-star', name: 'Stellar' },
-            'DOGE': { icon: 'fab fa-reddit', name: 'Dogecoin' },
-            'USDT-ERC20': { icon: 'fas fa-dollar-sign', name: 'USDT (ERC20)' },
-            'USDT-TRC20': { icon: 'fas fa-dollar-sign', name: 'USDT (TRC20)' },
-            'ALGO': { icon: 'fas fa-chart-line', name: 'Algorand' },
-            'MATIC': { icon: 'fas fa-layer-group', name: 'Polygon' },
-            'SOL': { icon: 'fas fa-bolt', name: 'Solana' },
-            'USDC': { icon: 'fas fa-dollar-sign', name: 'USDC (ERC20)' }
-        };
+    // Global variable to store fetched wallet addresses
+    let walletAddresses = {};
 
-        // Show wallet address when currency is selected
-        document.getElementById('currency').addEventListener('change', function() {
-            const selectedCurrency = this.value;
-            const walletAddressesDiv = document.getElementById('walletAddresses');
+    // Fetch wallet addresses from API
+    async function fetchWalletAddresses() {
+        try {
+            const response = await fetch(WALLET_API_URL);
+            const result = await response.json();
             
-            if (selectedCurrency && walletAddresses[selectedCurrency]) {
-                const address = walletAddresses[selectedCurrency];
-                const currencyInfo = currencyData[selectedCurrency];
-                
-                walletAddressesDiv.innerHTML = `
-                    <div class="wallet-card">
-                        <div class="wallet-header">
-                            <div class="wallet-title">
-                                <div class="wallet-icon">
-                                    <i class="${currencyInfo.icon}"></i>
-                                </div>
-                                ${currencyInfo.name} Wallet Address
+            if (result.success) {
+                walletAddresses = result.data;
+                console.log('Wallet addresses loaded:', walletAddresses);
+            } else {
+                throw new Error(result.message || 'Failed to load wallet addresses');
+            }
+        } catch (error) {
+            console.error('Error fetching wallet addresses:', error);
+            showTemporaryMessage('Error loading wallet addresses. Please refresh the page.', 'error');
+        }
+    }
+
+    // Show wallet address when currency is selected
+    document.getElementById('currency').addEventListener('change', function() {
+        const selectedCurrency = this.value;
+        const walletAddressesDiv = document.getElementById('walletAddresses');
+        
+        if (selectedCurrency && walletAddresses[selectedCurrency]) {
+            const address = walletAddresses[selectedCurrency];
+            const currencyInfo = currencyData[selectedCurrency];
+            
+            walletAddressesDiv.innerHTML = `
+                <div class="wallet-card">
+                    <div class="wallet-header">
+                        <div class="wallet-title">
+                            <div class="wallet-icon">
+                                <i class="${currencyInfo.icon}"></i>
                             </div>
-                        </div>
-                        <div class="wallet-address-container">
-                            <input type="text" 
-                                   value="${address}" 
-                                   readonly 
-                                   class="wallet-input"
-                                   id="walletAddress">
-                            <div class="action-buttons">
-                                <button type="button" 
-                                        class="btn btn-primary" 
-                                        onclick="copyToClipboard('walletAddress')">
-                                    <i class="fas fa-copy"></i> Copy
-                                </button>
-                                <button type="button" 
-                                        class="btn btn-secondary" 
-                                        onclick="showQRCode('${currencyInfo.name}', '${address}')">
-                                    <i class="fas fa-qrcode"></i> QR Code
-                                </button>
-                            </div>
+                            ${currencyInfo.name} Wallet Address
                         </div>
                     </div>
-                `;
-            } else {
-                walletAddressesDiv.innerHTML = '';
-            }
-        });
-
-        // Copy to clipboard function
-        async function copyToClipboard(elementId) {
-            try {
-                const element = document.getElementById(elementId);
-                await navigator.clipboard.writeText(element.value);
-                showTemporaryMessage('Wallet address copied to clipboard!');
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                alert('Failed to copy address. Please try again.');
-            }
-        }
-
-        // Show temporary message
-        function showTemporaryMessage(message) {
-            const tempMsg = document.createElement('div');
-            tempMsg.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: var(--tg-theme-primary);
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                z-index: 10001;
-                font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    <div class="wallet-address-container">
+                        <input type="text" 
+                               value="${address}" 
+                               readonly 
+                               class="wallet-input"
+                               id="walletAddress">
+                        <div class="action-buttons">
+                            <button type="button" 
+                                    class="btn btn-primary" 
+                                    onclick="copyToClipboard('walletAddress')">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button type="button" 
+                                    class="btn btn-secondary" 
+                                    onclick="showQRCode('${currencyInfo.name}', '${address}')">
+                                <i class="fas fa-qrcode"></i> QR Code
+                            </button>
+                        </div>
+                    </div>
+                    ${!address ? '<div style="color: #ff6b6b; margin-top: 10px; font-size: 14px;"><i class="fas fa-exclamation-triangle"></i> Wallet address not configured</div>' : ''}
+                </div>
             `;
-            tempMsg.textContent = message;
-            document.body.appendChild(tempMsg);
+        } else if (selectedCurrency) {
+            // Currency selected but no address found
+            const currencyInfo = currencyData[selectedCurrency];
+            walletAddressesDiv.innerHTML = `
+                <div class="wallet-card">
+                    <div class="wallet-header">
+                        <div class="wallet-title">
+                            <div class="wallet-icon">
+                                <i class="${currencyInfo.icon}"></i>
+                            </div>
+                            ${currencyInfo.name} Wallet Address
+                        </div>
+                    </div>
+                    <div style="text-align: center; padding: 40px; color: var(--tg-body-color);">
+                        <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 15px; color: #ffc107;"></i>
+                        <h3 style="color: var(--tg-heading-color); margin-bottom: 10px;">Wallet Not Available</h3>
+                        <p>This wallet address is not currently configured. Please check back later or contact support.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            walletAddressesDiv.innerHTML = '';
+        }
+    });
+
+    // Copy to clipboard function
+    async function copyToClipboard(elementId) {
+        try {
+            const element = document.getElementById(elementId);
+            const address = element.value;
             
-            setTimeout(() => {
+            if (!address) {
+                showTemporaryMessage('No wallet address available to copy', 'error');
+                return;
+            }
+            
+            await navigator.clipboard.writeText(address);
+            showTemporaryMessage('Wallet address copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            showTemporaryMessage('Failed to copy address. Please try again.', 'error');
+        }
+    }
+
+    // Enhanced temporary message function
+    function showTemporaryMessage(message, type = 'success') {
+        const tempMsg = document.createElement('div');
+        const backgroundColor = type === 'error' ? '#dc3545' : 'var(--tg-theme-primary)';
+        
+        tempMsg.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${backgroundColor};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10001;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 300px;
+        `;
+        tempMsg.textContent = message;
+        document.body.appendChild(tempMsg);
+        
+        setTimeout(() => {
+            if (document.body.contains(tempMsg)) {
                 document.body.removeChild(tempMsg);
-            }, 3000);
+            }
+        }, 3000);
+    }
+
+    // Show submit confirmation modal
+    function showSubmitModal() {
+        const amount = document.getElementById('amount').value;
+        const currency = document.getElementById('currency').value;
+        
+        if (!amount || amount < 100) {
+            showTemporaryMessage('Please enter a valid amount (minimum $100)', 'error');
+            return;
+        }
+        
+        if (!currency) {
+            showTemporaryMessage('Please select a cryptocurrency', 'error');
+            return;
         }
 
-        // Show submit confirmation modal
-        function showSubmitModal() {
-            const amount = document.getElementById('amount').value;
-            const currency = document.getElementById('currency').value;
+        if (!walletAddresses[currency]) {
+            showTemporaryMessage('Selected cryptocurrency wallet is not available. Please choose another option.', 'error');
+            return;
+        }
+
+        // Populate confirmation modal
+        document.getElementById('confirmAmount').textContent = '$' + parseFloat(amount).toLocaleString();
+        document.getElementById('confirmCurrency').textContent = currencyData[currency].name;
+        
+        // Show modal
+        document.getElementById('submitModal').style.display = 'flex';
+    }
+
+    // Close submit modal
+    function closeSubmitModal() {
+        document.getElementById('submitModal').style.display = 'none';
+    }
+
+    // Submit deposit function
+    async function submitDeposit() {
+        const amount = document.getElementById('amount').value;
+        const currency = document.getElementById('currency').value;
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Show loading state
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<div class="loading"></div> Processing...';
+        submitBtn.disabled = true;
+
+        try {
+            // Here you would typically send the deposit data to your backend
+            // For now, we'll simulate the API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
             
-            if (!amount || amount < 100) {
-                alert('Please enter a valid amount (minimum $100)');
-                return;
-            }
+            // Populate success modal
+            document.getElementById('modalAmount').textContent = '$' + parseFloat(amount).toLocaleString();
+            document.getElementById('modalCurrency').textContent = currencyData[currency].name;
+            document.getElementById('modalTransactionId').textContent = 'TX-' + Date.now().toString().slice(-8);
+            document.getElementById('modalDateTime').textContent = new Date().toLocaleString();
             
-            if (!currency) {
-                alert('Please select a cryptocurrency');
-                return;
-            }
-
-            if (!walletAddresses[currency]) {
-                alert('Selected cryptocurrency wallet is not available. Please choose another option.');
-                return;
-            }
-
-            // Populate confirmation modal
-            document.getElementById('confirmAmount').textContent = '$' + parseFloat(amount).toLocaleString();
-            document.getElementById('confirmCurrency').textContent = currencyData[currency].name;
+            // Close submit modal and show success modal
+            closeSubmitModal();
+            document.getElementById('successModal').style.display = 'flex';
             
-            // Show modal
-            document.getElementById('submitModal').style.display = 'flex';
+        } catch (error) {
+            console.error('Error submitting deposit:', error);
+            showTemporaryMessage('Error submitting deposit. Please try again.', 'error');
+        } finally {
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         }
+    }
 
-        // Close submit modal
-        function closeSubmitModal() {
-            document.getElementById('submitModal').style.display = 'none';
+    // Close success modal
+    function closeSuccessModal() {
+        document.getElementById('successModal').style.display = 'none';
+        // Reset form after successful submission
+        document.getElementById('depositForm').reset();
+        document.getElementById('walletAddresses').innerHTML = '';
+    }
+
+    // Go to dashboard
+    function goToDashboard() {
+        window.location.href = '/dashboard';
+    }
+
+    // QR Code functions
+    function showQRCode(currency, address) {
+        if (!address) {
+            showTemporaryMessage('No wallet address available for QR code', 'error');
+            return;
         }
+        
+        const qrModal = document.getElementById('qrModal');
+        const qrImage = document.getElementById('qrImage');
+        const qrAddress = document.getElementById('qrAddress');
+        const qrModalTitle = document.getElementById('qrModalTitle');
+        
+        qrModalTitle.innerHTML = `<i class="fas fa-qrcode"></i> ${currency} QR Code`;
+        qrAddress.textContent = address;
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
+        qrModal.style.display = 'flex';
+    }
 
-        // Submit deposit function
-        function submitDeposit() {
-            const amount = document.getElementById('amount').value;
-            const currency = document.getElementById('currency').value;
-            const submitBtn = document.getElementById('submitBtn');
-            
-            // Show loading state
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="loading"></div> Processing...';
-            submitBtn.disabled = true;
+    function closeQRModal() {
+        document.getElementById('qrModal').style.display = 'none';
+    }
 
-            // Simulate API call
-            setTimeout(() => {
-                // Populate success modal
-                document.getElementById('modalAmount').textContent = '$' + parseFloat(amount).toLocaleString();
-                document.getElementById('modalCurrency').textContent = currencyData[currency].name;
-                
-                // Close submit modal and show success modal
-                closeSubmitModal();
-                document.getElementById('successModal').style.display = 'flex';
-                
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                // Reset form
-                document.getElementById('depositForm').reset();
-                document.getElementById('walletAddresses').innerHTML = '';
-            }, 1500);
+    function copyQRAddress() {
+        const qrAddress = document.getElementById('qrAddress');
+        const address = qrAddress.textContent;
+        
+        if (!address) {
+            showTemporaryMessage('No address to copy', 'error');
+            return;
         }
+        
+        navigator.clipboard.writeText(address);
+        showTemporaryMessage('Address copied to clipboard!');
+    }
 
-        // Close success modal
-        function closeSuccessModal() {
-            document.getElementById('successModal').style.display = 'none';
+    // Close modals when clicking outside
+    document.getElementById('submitModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeSubmitModal();
         }
+    });
 
-        // Go to dashboard
-        function goToDashboard() {
-            window.location.href = '/dashboard';
+    document.getElementById('successModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeSuccessModal();
         }
+    });
 
-        // QR Code functions
-        function showQRCode(currency, address) {
-            const qrModal = document.getElementById('qrModal');
-            const qrImage = document.getElementById('qrImage');
-            const qrAddress = document.getElementById('qrAddress');
-            const qrModalTitle = document.getElementById('qrModalTitle');
-            
-            qrModalTitle.innerHTML = `<i class="fas fa-qrcode"></i> ${currency} QR Code`;
-            qrAddress.textContent = address;
-            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
-            qrModal.style.display = 'flex';
+    document.getElementById('qrModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeQRModal();
         }
+    });
 
-        function closeQRModal() {
-            document.getElementById('qrModal').style.display = 'none';
+    // Escape key to close modals
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeSubmitModal();
+            closeSuccessModal();
+            closeQRModal();
         }
+    });
 
-        function copyQRAddress() {
-            const qrAddress = document.getElementById('qrAddress');
-            navigator.clipboard.writeText(qrAddress.textContent);
-            showTemporaryMessage('Address copied to clipboard!');
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Fetch wallet addresses first
+        await fetchWalletAddresses();
+        
+        // Then initialize the currency selector
+        const currencySelect = document.getElementById('currency');
+        if (currencySelect.options.length > 1) {
+            currencySelect.selectedIndex = 1;
+            currencySelect.dispatchEvent(new Event('change'));
         }
-
-        // Close modals when clicking outside
-        document.getElementById('submitModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeSubmitModal();
-            }
-        });
-
-        document.getElementById('successModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeSuccessModal();
-            }
-        });
-
-        document.getElementById('qrModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeQRModal();
-            }
-        });
-
-        // Escape key to close modals
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeSubmitModal();
-                closeSuccessModal();
-                closeQRModal();
-            }
-        });
-
-        // Initialize with first currency selected
-        document.addEventListener('DOMContentLoaded', function() {
-            const currencySelect = document.getElementById('currency');
-            if (currencySelect.options.length > 1) {
-                currencySelect.selectedIndex = 1;
-                currencySelect.dispatchEvent(new Event('change'));
-            }
-        });
-    </script>
+        
+        console.log('Wallet addresses loaded:', walletAddresses);
+    });
+</script>
 </body>
 </html>

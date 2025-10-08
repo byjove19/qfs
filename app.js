@@ -115,7 +115,7 @@ const walletController = require('./controllers/walletController');
 const depositRoutes = require('./routes/deposit');
 const adminWalletRoutes = require('./routes/adminWalletRoutes');
 const userRoutes = require('./routes/userRoutes'); 
-// In your app.js file
+
 app.locals.getCurrencySymbol = function(currency) {
   const symbols = {
     'USD': '$',
@@ -238,14 +238,14 @@ app.get('/logout', (req, res) => {
 
 // ========== USE ROUTES IN CORRECT ORDER ==========
 
-// Auth routes (handles /auth/login, /auth/register, etc. - NO admin-login here)
+
 app.use('/auth', authRoutes);
 
 // Admin routes (protected by isAdmin middleware INSIDE the adminRoutes file)
 app.use('/admin', adminRoutes);
 
-// FIXED: Mount user routes at /profile base path
-app.use('/profile', userRoutes);  // This mounts all userRoutes at /profile
+// User profile routes
+app.use('/profile', userRoutes);
 
 // Other protected routes
 app.use('/', dashboardRoutes);
@@ -253,7 +253,15 @@ app.use('/transactions', transactionRoutes);
 app.use('/', recipientRoutes);
 app.use('/', investmentRoutes);
 app.use('/', depositRoutes);
+
+// FIXED: Admin wallet routes - mount ONCE with proper paths
+// This makes /admin/wallet-addresses work for the page
 app.use('/admin', adminWalletRoutes);
+
+// This makes /api/admin/wallets/* work for API calls
+app.use('/api/admin', adminWalletRoutes);
+
+// This makes /api/wallet-addresses/public work for frontend
 app.use('/api', adminWalletRoutes);
 // ========== INDIVIDUAL PROTECTED ROUTES ==========
 
