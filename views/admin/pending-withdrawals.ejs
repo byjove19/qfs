@@ -6,7 +6,7 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-     :root {
+        :root {
             --tg-body-font-family: 'Inter', sans-serif;
             --tg-heading-font-family: 'Inter', sans-serif;
             --tg-body-font-size: 16px;
@@ -330,24 +330,6 @@
             font-weight: 500;
         }
 
-        .stat-trend {
-            font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 12px;
-            margin-left: 8px;
-            font-weight: 600;
-        }
-
-        .trend-up {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .trend-down {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
         /* Card Styles */
         .card {
             background: var(--tg-color-dark-2);
@@ -415,7 +397,7 @@
         .admin-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 800px;
         }
 
         .admin-table th {
@@ -442,7 +424,6 @@
 
         .admin-table tr:hover {
             background: var(--tg-color-dark-3);
-            transform: scale(1.01);
         }
 
         .user-info {
@@ -485,16 +466,22 @@
             letter-spacing: 0.5px;
         }
 
-        .status-badge.active {
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-badge.completed {
             background: rgba(40, 167, 69, 0.1);
             color: #28a745;
             border: 1px solid rgba(40, 167, 69, 0.3);
         }
 
-        .status-badge.inactive {
-            background: rgba(108, 117, 125, 0.1);
-            color: #6c757d;
-            border: 1px solid rgba(108, 117, 125, 0.3);
+        .status-badge.rejected {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
         .action-buttons {
@@ -523,95 +510,33 @@
             transform: translateY(-2px);
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .quick-action-card {
-            background: var(--tg-color-dark-3);
-            border-radius: 12px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: var(--tg-transition);
-            border: 1px solid var(--tg-border-1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quick-action-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(75, 89, 245, 0.1), transparent);
-            opacity: 0;
-            transition: var(--tg-transition);
-        }
-
-        .quick-action-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .quick-action-card:hover::before {
-            opacity: 1;
-        }
-
-        .action-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
-        }
-
-        .action-icon i {
-            font-size: 24px;
+        .btn-success {
+            background: #28a745;
             color: white;
         }
 
-        .action-info {
-            position: relative;
-            z-index: 2;
+        .btn-success:hover {
+            background: #218838;
         }
 
-        .action-info h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--tg-heading-color);
-            margin-bottom: 8px;
-        }
-
-        .action-info p {
-            font-size: 14px;
-            color: var(--tg-body-color);
-            font-weight: 500;
-        }
-
-        .action-count {
-            background: var(--tg-theme-primary);
+        .btn-danger {
+            background: #dc3545;
             color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 8px;
         }
 
-        /* Empty State */
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -629,39 +554,27 @@
             margin-bottom: 10px;
         }
 
+        .admin-note-input {
+            background: var(--tg-color-dark-3);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--tg-heading-color);
+            font-size: 14px;
+            width: 200px;
+            margin-right: 8px;
+        }
+
+        .admin-note-input::placeholder {
+            color: var(--tg-body-color);
+        }
+
+        .admin-note-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-primary);
+        }
+
         /* Responsive Styles */
-        @media (max-width: 1200px) {
-            .admin-sidebar {
-                width: 250px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 992px) {
-            .admin-sidebar {
-                width: 220px;
-            }
-            
-            .admin-header {
-                padding: 15px 20px;
-            }
-            
-            .admin-content {
-                padding: 20px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-        }
-
         @media (max-width: 768px) {
             .admin-wrapper {
                 flex-direction: column;
@@ -694,69 +607,21 @@
                 font-size: 20px;
             }
             
-            .header-right {
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 8px;
-            }
-            
-            .admin-name {
-                font-size: 14px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .theme-toggle {
-                top: 15px;
-                right: 15px;
-                width: 45px;
-                height: 45px;
-            }
-        }
-
-        @media (max-width: 576px) {
             .admin-content {
-                padding: 15px;
+                padding: 20px;
             }
             
             .card-body {
-                padding: 20px 15px;
-            }
-            
-            .stat-card {
                 padding: 20px;
             }
             
-            .stat-icon {
-                width: 60px;
-                height: 60px;
-                margin-right: 15px;
+            .action-buttons {
+                flex-direction: column;
             }
             
-            .stat-icon i {
-                font-size: 24px;
-            }
-            
-            .stat-info h3 {
-                font-size: 28px;
-            }
-            
-            .quick-action-card {
-                padding: 20px;
-            }
-            
-            .action-icon {
-                width: 50px;
-                height: 50px;
-                margin-right: 15px;
+            .admin-note-input {
+                width: 100%;
+                margin: 8px 0;
             }
         }
 
@@ -782,10 +647,15 @@
     </style>
 </head>
 <body>
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
     <div class="admin-wrapper">
-        <!-- Same sidebar -->
-        
-      <aside class="admin-sidebar" id="adminSidebar">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
                 <a href="/admin" class="logo-text">QFS ADMIN</a>
                 <button class="sidebar-close" id="sidebarClose">
@@ -794,7 +664,7 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="/admin" class="nav-link active">
+                    <li><a href="/admin" class="nav-link">
                         <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
                     </a></li>
                     <li><a href="/admin/users" class="nav-link">
@@ -812,11 +682,11 @@
                     <li><a href="/admin/pending-deposits" class="nav-link">
                         <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
                     </a></li>
-                    <li><a href="/admin/wallet-addresses" class="nav-link">
-                        <i class="fas fa-wallet"></i> <span>Wallet Addresses</span>
-                    </a></li>
-                    <li><a href="/admin/pending-withdrawals" class="nav-link">
+                    <li><a href="/admin/pending-withdrawals" class="nav-link active">
                         <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                    <li><a href="/admin/pending-transfers" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Pending Transfers</span>
                     </a></li>
                 </ul>
             </nav>
@@ -829,8 +699,8 @@
                 </a>
             </div>
         </aside>
-   
 
+        <!-- Main Content -->
         <main class="admin-main">
             <header class="admin-header">
                 <div class="header-left">
@@ -839,76 +709,180 @@
                     </button>
                     <h1><%= title %></h1>
                 </div>
-                <div class="header-right">
-                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
-                    <span class="admin-role badge"><%= user.role %></span>
-                </div>
+              
             </header>
 
             <div class="admin-content">
                 <!-- Flash Messages -->
-                <% if (messages.error) { %>
-                    <div class="alert alert-error">
+                <% if (messages.error && messages.error.length > 0) { %>
+                    <div class="alert alert-error" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
                         <i class="fas fa-exclamation-circle"></i> <%= messages.error %>
                     </div>
                 <% } %>
-                <% if (messages.success) { %>
-                    <div class="alert alert-success">
+                <% if (messages.success && messages.success.length > 0) { %>
+                    <div class="alert alert-success" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); color: #28a745; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
                         <i class="fas fa-check-circle"></i> <%= messages.success %>
                     </div>
                 <% } %>
 
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= totalWithdrawals %></h3>
+                            <p>Total Pending Withdrawals</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= withdrawals.length %></h3>
+                            <p>Currently Displayed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawals Table -->
                 <div class="card">
                     <div class="card-header">
-                        <h2>Support Tickets (<%= totalTickets %>)</h2>
+                        <h2>Pending Withdrawals</h2>
+                        <div>
+                            <a href="/admin/transactions" class="tg-btn">
+                                <i class="fas fa-exchange-alt"></i> All Transactions
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>User</th>
-                                        <th>Subject</th>
-                                        <th>Status</th>
-                                        <th>Created</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% if (tickets && tickets.length > 0) { %>
-                                        <% tickets.forEach(ticket => { %>
+                        <% if (withdrawals && withdrawals.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Amount</th>
+                                            <th>Currency</th>
+                                            <th>Method</th>
+                                            <th>Requested</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% withdrawals.forEach(withdrawal => { %>
                                             <tr>
                                                 <td>
-                                                    <% if (ticket.userId) { %>
-                                                        <%= ticket.userId.firstName %> <%= ticket.userId.lastName %>
-                                                    <% } else { %>
-                                                        User Not Found
-                                                    <% } %>
+                                                    <div class="user-info">
+                                                        <div class="user-avatar">
+                                                            <% if (withdrawal.userId && withdrawal.userId.firstName && withdrawal.userId.lastName) { %>
+                                                                <%= withdrawal.userId.firstName.charAt(0) %><%= withdrawal.userId.lastName.charAt(0) %>
+                                                            <% } else { %>
+                                                                <i class="fas fa-user"></i>
+                                                            <% } %>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <strong>
+                                                                <% if (withdrawal.userId && withdrawal.userId.firstName && withdrawal.userId.lastName) { %>
+                                                                    <%= withdrawal.userId.firstName %> <%= withdrawal.userId.lastName %>
+                                                                <% } else { %>
+                                                                    User Not Found
+                                                                <% } %>
+                                                            </strong>
+                                                            <span>
+                                                                <% if (withdrawal.userId && withdrawal.userId.email) { %>
+                                                                    <%= withdrawal.userId.email %>
+                                                                <% } else { %>
+                                                                    N/A
+                                                                <% } %>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td><%= ticket.subject %></td>
+                                                <td style="font-weight: 600; color: var(--tg-heading-color);">
+                                                    <%= withdrawal.amount.toLocaleString() %>
+                                                </td>
                                                 <td>
-                                                    <span class="status-badge <%= ticket.status %>">
-                                                        <%= ticket.status %>
+                                                    <span class="status-badge" style="background: rgba(75, 89, 245, 0.1); color: var(--tg-theme-primary); border: 1px solid rgba(75, 89, 245, 0.3);">
+                                                        <%= withdrawal.currency %>
                                                     </span>
                                                 </td>
-                                                <td><%= new Date(ticket.createdAt).toLocaleDateString() %></td>
+                                                <td>
+                                                    <%= withdrawal.method ? withdrawal.method.charAt(0).toUpperCase() + withdrawal.method.slice(1) : 'N/A' %>
+                                                </td>
+                                                <td>
+                                                    <%= new Date(withdrawal.createdAt).toLocaleDateString() %>
+                                                    <br>
+                                                    <small style="color: var(--tg-body-color);">
+                                                        <%= new Date(withdrawal.createdAt).toLocaleTimeString() %>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <span class="status-badge pending">Pending</span>
+                                                </td>
                                                 <td>
                                                     <div class="action-buttons">
-                                                        <a href="/admin/tickets/<%= ticket._id %>" class="btn-icon" title="View Ticket">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
+                                                        <form action="/admin/pending-withdrawals/process" method="POST" style="display: flex; gap: 8px; align-items: center;">
+                                                            <input type="hidden" name="withdrawalId" value="<%= withdrawal._id %>">
+                                                            <input type="text" name="adminNote" class="admin-note-input" placeholder="Admin note..." maxlength="100">
+                                                            <button type="submit" name="action" value="approve" class="btn-icon btn-success" title="Approve Withdrawal" onclick="return confirm('Approve this withdrawal?')">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                            <button type="submit" name="action" value="reject" class="btn-icon btn-danger" title="Reject Withdrawal" onclick="return confirm('Reject this withdrawal? Funds will be returned to user wallet.')">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 </td>
                                             </tr>
                                         <% }); %>
-                                    <% } else { %>
-                                        <tr>
-                                            <td colspan="5" style="text-align: center;">No tickets found</td>
-                                        </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <% if (totalPages > 1) { %>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--tg-border-1);">
+                                    <div style="color: var(--tg-body-color); font-size: 14px;">
+                                        Showing <%= withdrawals.length %> of <%= totalWithdrawals %> withdrawals
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <% if (currentPage > 1) { %>
+                                            <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="tg-btn" style="padding: 8px 16px;">
+                                                <i class="fas fa-chevron-left"></i> Previous
+                                            </a>
+                                        <% } %>
+                                        
+                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <% if (i === currentPage) { %>
+                                                <span class="tg-btn" style="background: var(--tg-theme-primary-hover); padding: 8px 16px;">
+                                                    <%= i %>
+                                                </span>
+                                            <% } else { %>
+                                                <a href="?page=<%= i %>&limit=<%= limit %>" class="tg-btn" style="padding: 8px 16px;">
+                                                    <%= i %>
+                                                </a>
+                                            <% } %>
+                                        <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                            <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="tg-btn" style="padding: 8px 16px;">
+                                                Next <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <p>No pending withdrawals</p>
+                                <small>All withdrawals have been processed</small>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -916,9 +890,103 @@
     </div>
 
     <script>
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.admin-wrapper').classList.toggle('sidebar-collapsed');
+      // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Add click animation
+            themeToggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                themeToggle.style.transform = 'scale(1)';
+            }, 150);
         });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        // Sidebar functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const adminWrapper = document.querySelector('.admin-wrapper');
+
+        // Desktop sidebar toggle (collapse/expand)
+        sidebarToggle.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                adminWrapper.classList.toggle('sidebar-collapsed');
+            } else {
+                // Mobile sidebar open
+                adminSidebar.classList.add('sidebar-open');
+            }
+        });
+
+        // Mobile sidebar close
+        sidebarClose.addEventListener('click', function() {
+            adminSidebar.classList.remove('sidebar-open');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 && 
+                adminSidebar.classList.contains('sidebar-open') &&
+                !adminSidebar.contains(event.target) &&
+                !sidebarToggle.contains(event.target)) {
+                adminSidebar.classList.remove('sidebar-open');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                adminSidebar.classList.remove('sidebar-open');
+                adminWrapper.classList.remove('sidebar-collapsed');
+            }
+        });
+
+        // Add loading animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.stat-card, .card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
     </script>
 </body>
 </html>

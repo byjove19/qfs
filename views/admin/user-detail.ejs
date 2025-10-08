@@ -1139,9 +1139,7 @@
                     <li><a href="/admin/tickets" class="nav-link">
                         <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
                     </a></li>
-                    <li><a href="/admin/users/balances" class="nav-link">
-                        <i class="fas fa-wallet"></i> <span>User Balances</span>
-                    </a></li>
+                    
                     <li><a href="/admin/pending-deposits" class="nav-link">
                         <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
                     </a></li>
@@ -1201,10 +1199,7 @@
                                     <h2><%= user.firstName %> <%= user.lastName %></h2>
                                     <p><i class="fas fa-envelope"></i> <%= user.email %></p>
                                     <p><i class="fas fa-calendar"></i> Member since: <%= new Date(user.createdAt).toLocaleDateString() %></p>
-                                    <span class="status-badge <%= user.isActive ? 'active' : 'inactive' %>">
-                                        <i class="fas fa-<%= user.isActive ? 'check-circle' : 'times-circle' %>"></i>
-                                        <%= user.isActive ? 'Active' : 'Inactive' %>
-                                    </span>
+                                    
                                 </div>
                             </div>
 
@@ -1294,17 +1289,7 @@
                                     <div class="info-item">
                                         <span class="info-label">Member Since:</span>
                                         <span class="info-value"><%= new Date(user.createdAt).toLocaleDateString() %></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Last Login:</span>
-                                        <span class="info-value">
-                                            <% if (user.loginHistory && user.loginHistory.length > 0) { %>
-                                                <%= new Date(user.loginHistory[user.loginHistory.length - 1].timestamp).toLocaleString() %>
-                                            <% } else { %>
-                                                Never logged in
-                                            <% } %>
-                                        </span>
-                                    </div>
+                                    
                                 </div>
 
                                 <div class="info-card">

@@ -822,9 +822,7 @@
                     <li><a href="/admin/tickets" class="nav-link">
                         <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
                     </a></li>
-                    <li><a href="/admin/users/balances" class="nav-link">
-                        <i class="fas fa-wallet"></i> <span>User Balances</span>
-                    </a></li>
+
                     <li><a href="/admin/pending-deposits" class="nav-link">
                         <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
                     </a></li>
@@ -989,9 +987,211 @@
                                                 </td>
                                             </tr>
                                         <% }); %>
-                                    <% } else { %>
+                                                                       <% } else { %>
                                         <tr>
                                             <td colspan="9">
                                                 <div class="empty-state">
                                                     <i class="fas fa-chart-line"></i>
-                                                    <p>No
+                                                    <p>No investments found</p>
+                                                    <small>When users make investments, they will appear here.</small>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <% if (totalPages > 1) { %>
+                        <div class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>&status=<%= filter.status || 'all' %>" class="pagination-btn">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </a>
+                            <% } %>
+                            
+                            <span class="pagination-info">
+                                Page <%= currentPage %> of <%= totalPages %>
+                            </span>
+                            
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>&status=<%= filter.status || 'all' %>" class="pagination-btn">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <% } %>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal" id="statusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: var(--tg-color-dark-2); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; border: 1px solid var(--tg-border-1);">
+            <h3 style="color: var(--tg-heading-color); margin-bottom: 20px;">Update Investment Status</h3>
+            <form id="statusForm" method="POST" action="/admin/investments/update-status">
+                <input type="hidden" name="investmentId" id="modalInvestmentId">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: var(--tg-heading-color); margin-bottom: 8px;">Status</label>
+                    <select name="status" id="modalStatus" style="width: 100%; padding: 12px; background: var(--tg-color-dark-3); border: 1px solid var(--tg-border-1); border-radius: 8px; color: var(--tg-heading-color);">
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: var(--tg-heading-color); margin-bottom: 8px;">Admin Note (Optional)</label>
+                    <textarea name="adminNote" id="modalAdminNote" style="width: 100%; padding: 12px; background: var(--tg-color-dark-3); border: 1px solid var(--tg-border-1); border-radius: 8px; color: var(--tg-heading-color); min-height: 80px;" placeholder="Add a note about this status change..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" onclick="closeStatusModal()" class="tg-btn tg-btn-secondary">Cancel</button>
+                    <button type="submit" class="tg-btn">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Update icon
+            if (newTheme === 'light') {
+                themeIcon.innerHTML = '<path d="M17.66,7.93L12,2.27L6.34,7.93C3.22,11.05 3.22,16.12 6.34,19.24C7.9,20.8 9.95,21.58 12,21.58C14.05,21.58 16.1,20.8 17.66,19.24C20.78,16.12 20.78,11.05 17.66,7.93M7.58,13.85C7.58,11.53 9.45,9.66 11.77,9.66C12.45,9.66 13.09,9.83 13.65,10.12L7.58,16.19C7.58,15.54 7.58,14.85 7.58,13.85Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            }
+            
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'light') {
+                themeIcon.innerHTML = '<path d="M17.66,7.93L12,2.27L6.34,7.93C3.22,11.05 3.22,16.12 6.34,19.24C7.9,20.8 9.95,21.58 12,21.58C14.05,21.58 16.1,20.8 17.66,19.24C20.78,16.12 20.78,11.05 17.66,7.93M7.58,13.85C7.58,11.53 9.45,9.66 11.77,9.66C12.45,9.66 13.09,9.83 13.65,10.12L7.58,16.19C7.58,15.54 7.58,14.85 7.58,13.85Z" />';
+            }
+        }
+
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const adminSidebar = document.getElementById('adminSidebar');
+
+        sidebarToggle.addEventListener('click', () => {
+            adminSidebar.classList.add('sidebar-open');
+        });
+
+        sidebarClose.addEventListener('click', () => {
+            adminSidebar.classList.remove('sidebar-open');
+        });
+
+        // Table Search and Filter
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const investmentsTableBody = document.getElementById('investmentsTableBody');
+        const investmentsCount = document.getElementById('investmentsCount');
+
+        function filterInvestments() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const statusValue = statusFilter.value;
+            
+            let visibleCount = 0;
+            const rows = investmentsTableBody.getElementsByTagName('tr');
+            
+            for (let row of rows) {
+                const text = row.textContent.toLowerCase();
+                const statusBadge = row.querySelector('.status-badge');
+                const rowStatus = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
+                
+                const matchesSearch = text.includes(searchTerm);
+                const matchesStatus = statusValue === 'all' || rowStatus === statusValue;
+                
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+            
+            investmentsCount.textContent = visibleCount;
+        }
+
+        searchInput.addEventListener('input', filterInvestments);
+        statusFilter.addEventListener('change', filterInvestments);
+
+        // Set initial filter from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const statusParam = urlParams.get('status');
+        if (statusParam) {
+            statusFilter.value = statusParam;
+            filterInvestments();
+        }
+
+        // Status Modal Functions
+        function editInvestmentStatus(investmentId, currentStatus) {
+            document.getElementById('modalInvestmentId').value = investmentId;
+            document.getElementById('modalStatus').value = currentStatus;
+            document.getElementById('statusModal').style.display = 'flex';
+        }
+
+        function closeStatusModal() {
+            document.getElementById('statusModal').style.display = 'none';
+        }
+
+        // Export function
+        function exportInvestments() {
+            // Simple CSV export
+            const rows = [];
+            const headers = ['User', 'Email', 'Plan', 'Amount', 'Duration', 'Expected Returns', 'Status', 'Start Date', 'End Date'];
+            rows.push(headers.join(','));
+
+            document.querySelectorAll('#investmentsTable tbody tr').forEach(row => {
+                if (row.style.display !== 'none') {
+                    const cells = row.querySelectorAll('td');
+                    const rowData = [
+                        cells[0].querySelector('strong').textContent.trim(),
+                        cells[0].querySelector('span').textContent.trim(),
+                        cells[1].querySelector('strong').textContent.trim(),
+                        cells[2].textContent.replace('$', '').trim(),
+                        cells[3].textContent.replace('days', '').trim(),
+                        cells[4].querySelector('strong').textContent.replace('$', '').trim(),
+                        cells[5].textContent.trim(),
+                        cells[6].textContent.trim(),
+                        cells[7].textContent.trim()
+                    ];
+                    rows.push(rowData.join(','));
+                }
+            });
+
+            const csvContent = rows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `investments-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('statusModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeStatusModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -591,49 +591,62 @@ async getUserDetail(req, res) {
    *  =======================
    */
   async getTransactions(req, res) {
-    try {
-      if (!req.session.user) {
-        req.flash('error', 'You must be logged in as admin');
-        return res.redirect('/auth/login');
-      }
-
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
-
-      // Get transactions with pagination
-      const [transactions, totalTransactions] = await Promise.all([
-        Transaction.find()
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit)
-          .populate('userId', 'firstName lastName email')
-          .populate('recipientId', 'firstName lastName email')
-          .lean(),
-        Transaction.countDocuments()
-      ]);
-
-      res.render('admin/transactions', {
-        title: 'All Transactions - Admin',
-        user: req.session.user,
-        transactions,
-        totalTransactions,
-        currentPage: page,
-        totalPages: Math.ceil(totalTransactions / limit),
-        messages: {
-          error: req.flash('error'),
-          success: req.flash('success')
-        }
-      });
-    } catch (error) {
-      console.error('Error loading transactions page:', error);
-      res.status(500).render('500', { 
-        title: 'Server Error - QFS',
-        user: req.session.user 
-      });
+  try {
+    if (!req.session.user) {
+      req.flash('error', 'You must be logged in as admin');
+      return res.redirect('/auth/login');
     }
-  },
 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Get transactions with pagination AND transaction statistics
+    const [transactions, totalTransactions, completedTransactions, pendingTransactions, failedTransactions] = await Promise.all([
+      Transaction.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('userId', 'firstName lastName email')
+        .populate('recipientId', 'firstName lastName email')
+        .lean(),
+      Transaction.countDocuments(),
+      Transaction.countDocuments({ status: 'completed' }),
+      Transaction.countDocuments({ status: 'pending' }),
+      Transaction.countDocuments({ status: 'failed' })
+    ]);
+
+    // Calculate total transaction amount
+    const totalAmountResult = await Transaction.aggregate([
+      { $match: { status: 'completed' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]);
+    const totalAmount = totalAmountResult.length > 0 ? totalAmountResult[0].total : 0;
+
+    res.render('admin/transactions', {
+      title: 'All Transactions - Admin',
+      user: req.session.user,
+      transactions,
+      totalTransactions,
+      completedTransactions: completedTransactions || 0,
+      pendingTransactions: pendingTransactions || 0,
+      failedTransactions: failedTransactions || 0,
+      totalAmount: totalAmount || 0,
+      currentPage: page,
+      totalPages: Math.ceil(totalTransactions / limit),
+      messages: {
+        error: req.flash('error'),
+        success: req.flash('success')
+      }
+    });
+  } catch (error) {
+    console.error('Error loading transactions page:', error);
+    res.status(500).render('500', { 
+      title: 'Server Error - QFS',
+      user: req.session.user 
+    });
+  }
+},
   async updateTransactionStatus(req, res) {
     try {
       const { transactionId, status, adminNote } = req.body;
@@ -1731,7 +1744,8 @@ async getUserWallets(req, res) {
     req.flash('error', 'Failed to load user wallets');
     res.redirect('/admin/users');
   }
-}
+},
+
 };
 
 module.exports = adminController;

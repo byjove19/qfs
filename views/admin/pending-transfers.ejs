@@ -397,7 +397,7 @@
         .admin-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
+            min-width: 900px;
         }
 
         .admin-table th {
@@ -574,6 +574,18 @@
             border-color: var(--tg-theme-primary);
         }
 
+        .transfer-direction {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--tg-body-color);
+            font-size: 14px;
+        }
+
+        .transfer-arrow {
+            color: var(--tg-theme-primary);
+        }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             .admin-wrapper {
@@ -622,6 +634,12 @@
             .admin-note-input {
                 width: 100%;
                 margin: 8px 0;
+            }
+
+            .transfer-direction {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
             }
         }
 
@@ -679,16 +697,13 @@
                     <li><a href="/admin/tickets" class="nav-link">
                         <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
                     </a></li>
-                    <li><a href="/admin/users/balances" class="nav-link">
-                        <i class="fas fa-wallet"></i> <span>User Balances</span>
-                    </a></li>
                     <li><a href="/admin/pending-deposits" class="nav-link">
                         <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
                     </a></li>
-                    <li><a href="/admin/pending-withdrawals" class="nav-link active">
+                    <li><a href="/admin/pending-withdrawals" class="nav-link">
                         <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
                     </a></li>
-                    <li><a href="/admin/pending-transfers" class="nav-link">
+                    <li><a href="/admin/pending-transfers" class="nav-link active">
                         <i class="fas fa-exchange-alt"></i> <span>Pending Transfers</span>
                     </a></li>
                 </ul>
@@ -712,7 +727,22 @@
                     </button>
                     <h1><%= title %></h1>
                 </div>
-              
+                <div class="header-right">
+                    <span class="admin-name">
+                        <% if (user && user.firstName) { %>
+                            Welcome, <%= user.firstName %> <%= user.lastName %>
+                        <% } else { %>
+                            Welcome, Admin
+                        <% } %>
+                    </span>
+                    <span class="badge">
+                        <% if (user && user.role) { %>
+                            <%= user.role %>
+                        <% } else { %>
+                            admin
+                        <% } %>
+                    </span>
+                </div>
             </header>
 
             <div class="admin-content">
@@ -732,11 +762,11 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-hand-holding-usd"></i>
+                            <i class="fas fa-exchange-alt"></i>
                         </div>
                         <div class="stat-info">
-                            <h3><%= totalWithdrawals %></h3>
-                            <p>Total Pending Withdrawals</p>
+                            <h3><%= totalTransfers %></h3>
+                            <p>Total Pending Transfers</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -744,16 +774,16 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-info">
-                            <h3><%= withdrawals.length %></h3>
+                            <h3><%= transfers.length %></h3>
                             <p>Currently Displayed</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Withdrawals Table -->
+                <!-- Transfers Table -->
                 <div class="card">
                     <div class="card-header">
-                        <h2>Pending Withdrawals</h2>
+                        <h2>Pending Transfers</h2>
                         <div>
                             <a href="/admin/transactions" class="tg-btn">
                                 <i class="fas fa-exchange-alt"></i> All Transactions
@@ -761,66 +791,100 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <% if (withdrawals && withdrawals.length > 0) { %>
+                        <% if (transfers && transfers.length > 0) { %>
                             <div class="table-responsive">
                                 <table class="admin-table">
                                     <thead>
                                         <tr>
-                                            <th>User</th>
+                                            <th>Transfer Details</th>
                                             <th>Amount</th>
                                             <th>Currency</th>
-                                            <th>Method</th>
+                                            <th>Type</th>
                                             <th>Requested</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% withdrawals.forEach(withdrawal => { %>
+                                        <% transfers.forEach(transfer => { %>
                                             <tr>
                                                 <td>
-                                                    <div class="user-info">
-                                                        <div class="user-avatar">
-                                                            <% if (withdrawal.userId && withdrawal.userId.firstName && withdrawal.userId.lastName) { %>
-                                                                <%= withdrawal.userId.firstName.charAt(0) %><%= withdrawal.userId.lastName.charAt(0) %>
-                                                            <% } else { %>
-                                                                <i class="fas fa-user"></i>
-                                                            <% } %>
+                                                    <div class="transfer-direction">
+                                                        <div class="user-info">
+                                                            <div class="user-avatar">
+                                                                <% if (transfer.userId && transfer.userId.firstName && transfer.userId.lastName) { %>
+                                                                    <%= transfer.userId.firstName.charAt(0) %><%= transfer.userId.lastName.charAt(0) %>
+                                                                <% } else { %>
+                                                                    <i class="fas fa-user"></i>
+                                                                <% } %>
+                                                            </div>
+                                                            <div class="user-details">
+                                                                <strong>
+                                                                    <% if (transfer.userId && transfer.userId.firstName && transfer.userId.lastName) { %>
+                                                                        <%= transfer.userId.firstName %> <%= transfer.userId.lastName %>
+                                                                    <% } else { %>
+                                                                        Sender Not Found
+                                                                    <% } %>
+                                                                </strong>
+                                                                <span>
+                                                                    <% if (transfer.userId && transfer.userId.email) { %>
+                                                                        <%= transfer.userId.email %>
+                                                                    <% } else { %>
+                                                                        N/A
+                                                                    <% } %>
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <div class="user-details">
-                                                            <strong>
-                                                                <% if (withdrawal.userId && withdrawal.userId.firstName && withdrawal.userId.lastName) { %>
-                                                                    <%= withdrawal.userId.firstName %> <%= withdrawal.userId.lastName %>
+                                                        
+                                                        <div class="transfer-arrow">
+                                                            <i class="fas fa-arrow-right"></i>
+                                                        </div>
+                                                        
+                                                        <div class="user-info">
+                                                            <div class="user-avatar" style="background: linear-gradient(135deg, #10b981, #059669);">
+                                                                <% if (transfer.recipientId && transfer.recipientId.firstName && transfer.recipientId.lastName) { %>
+                                                                    <%= transfer.recipientId.firstName.charAt(0) %><%= transfer.recipientId.lastName.charAt(0) %>
                                                                 <% } else { %>
-                                                                    User Not Found
+                                                                    <i class="fas fa-user"></i>
                                                                 <% } %>
-                                                            </strong>
-                                                            <span>
-                                                                <% if (withdrawal.userId && withdrawal.userId.email) { %>
-                                                                    <%= withdrawal.userId.email %>
-                                                                <% } else { %>
-                                                                    N/A
-                                                                <% } %>
-                                                            </span>
+                                                            </div>
+                                                            <div class="user-details">
+                                                                <strong>
+                                                                    <% if (transfer.recipientId && transfer.recipientId.firstName && transfer.recipientId.lastName) { %>
+                                                                        <%= transfer.recipientId.firstName %> <%= transfer.recipientId.lastName %>
+                                                                    <% } else { %>
+                                                                        Recipient Not Found
+                                                                    <% } %>
+                                                                </strong>
+                                                                <span>
+                                                                    <% if (transfer.recipientId && transfer.recipientId.email) { %>
+                                                                        <%= transfer.recipientId.email %>
+                                                                    <% } else { %>
+                                                                        N/A
+                                                                    <% } %>
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td style="font-weight: 600; color: var(--tg-heading-color);">
-                                                    <%= withdrawal.amount.toLocaleString() %>
+                                                    <%= transfer.amount.toLocaleString() %>
                                                 </td>
                                                 <td>
                                                     <span class="status-badge" style="background: rgba(75, 89, 245, 0.1); color: var(--tg-theme-primary); border: 1px solid rgba(75, 89, 245, 0.3);">
-                                                        <%= withdrawal.currency %>
+                                                        <%= transfer.currency || 'USD' %>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <%= withdrawal.method ? withdrawal.method.charAt(0).toUpperCase() + withdrawal.method.slice(1) : 'N/A' %>
+                                                    <span class="status-badge" style="background: rgba(13, 110, 253, 0.1); color: #0d6efd; border: 1px solid rgba(13, 110, 253, 0.3);">
+                                                        <%= transfer.type ? transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1) : 'Transfer' %>
+                                                    </span>
                                                 </td>
                                                 <td>
-                                                    <%= new Date(withdrawal.createdAt).toLocaleDateString() %>
+                                                    <%= new Date(transfer.createdAt).toLocaleDateString() %>
                                                     <br>
                                                     <small style="color: var(--tg-body-color);">
-                                                        <%= new Date(withdrawal.createdAt).toLocaleTimeString() %>
+                                                        <%= new Date(transfer.createdAt).toLocaleTimeString() %>
                                                     </small>
                                                 </td>
                                                 <td>
@@ -828,13 +892,13 @@
                                                 </td>
                                                 <td>
                                                     <div class="action-buttons">
-                                                        <form action="/admin/pending-withdrawals/process" method="POST" style="display: flex; gap: 8px; align-items: center;">
-                                                            <input type="hidden" name="withdrawalId" value="<%= withdrawal._id %>">
+                                                        <form action="/admin/pending-transfers/process" method="POST" style="display: flex; gap: 8px; align-items: center;">
+                                                            <input type="hidden" name="transferId" value="<%= transfer._id %>">
                                                             <input type="text" name="adminNote" class="admin-note-input" placeholder="Admin note..." maxlength="100">
-                                                            <button type="submit" name="action" value="approve" class="btn-icon btn-success" title="Approve Withdrawal" onclick="return confirm('Approve this withdrawal?')">
+                                                            <button type="submit" name="action" value="approve" class="btn-icon btn-success" title="Approve Transfer" onclick="return confirm('Approve this transfer? Funds will be moved from sender to recipient.')">
                                                                 <i class="fas fa-check"></i>
                                                             </button>
-                                                            <button type="submit" name="action" value="reject" class="btn-icon btn-danger" title="Reject Withdrawal" onclick="return confirm('Reject this withdrawal? Funds will be returned to user wallet.')">
+                                                            <button type="submit" name="action" value="reject" class="btn-icon btn-danger" title="Reject Transfer" onclick="return confirm('Reject this transfer? No funds will be moved.')">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                         </form>
@@ -850,7 +914,7 @@
                             <% if (totalPages > 1) { %>
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--tg-border-1);">
                                     <div style="color: var(--tg-body-color); font-size: 14px;">
-                                        Showing <%= withdrawals.length %> of <%= totalWithdrawals %> withdrawals
+                                        Showing <%= transfers.length %> of <%= totalTransfers %> transfers
                                     </div>
                                     <div style="display: flex; gap: 8px;">
                                         <% if (currentPage > 1) { %>
@@ -881,9 +945,9 @@
                             <% } %>
                         <% } else { %>
                             <div class="empty-state">
-                                <i class="fas fa-hand-holding-usd"></i>
-                                <p>No pending withdrawals</p>
-                                <small>All withdrawals have been processed</small>
+                                <i class="fas fa-exchange-alt"></i>
+                                <p>No pending transfers</p>
+                                <small>All transfers have been processed</small>
                             </div>
                         <% } %>
                     </div>
@@ -893,7 +957,7 @@
     </div>
 
     <script>
-      // Theme toggle functionality
+        // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         
