@@ -567,6 +567,82 @@
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
+        /* Currency Balances Section */
+        .currency-balances {
+            margin-bottom: 30px;
+        }
+
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .currency-balance-item {
+            background: var(--tg-color-dark-3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--tg-border-1);
+            transition: var(--tg-transition);
+        }
+
+        .currency-balance-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .currency-balance-item .currency-symbol {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .currency-balance-item .currency-code {
+            font-size: 14px;
+            color: var(--tg-body-color);
+            margin-bottom: 10px;
+        }
+
+        .currency-balance-item .balance-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+            margin-bottom: 5px;
+        }
+
+        .currency-balance-item .usd-value {
+            font-size: 12px;
+            color: var(--tg-body-color);
+        }
+
+        .total-balance-card {
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .total-balance-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .total-balance-card .total-amount {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .total-balance-card .total-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -746,7 +822,7 @@
             transform: translateY(-2px);
         }
 
-        .currency-grid {
+        .currency-grid-modal {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
@@ -888,6 +964,10 @@
             .info-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .currency-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
@@ -956,7 +1036,7 @@
                 height: 45px;
             }
 
-            .currency-grid {
+            .currency-grid-modal {
                 grid-template-columns: repeat(2, 1fr);
             }
 
@@ -996,8 +1076,12 @@
                 font-size: 24px;
             }
 
-            .currency-grid {
+            .currency-grid-modal {
                 grid-template-columns: 1fr;
+            }
+            
+            .currency-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -1127,8 +1211,8 @@
                             <!-- Quick Stats -->
                             <div class="stats-grid">
                                 <div class="stat-card">
-                                    <h3>$<%= (user.balance || 0).toFixed(2) %></h3>
-                                    <p>Current Balance</p>
+                                    <h3>$<%= (user.totalBalanceUSD || 0).toFixed(2) %></h3>
+                                    <p>Total Balance (USD)</p>
                                 </div>
                                 <div class="stat-card">
                                     <h3><%= user.loginHistory ? user.loginHistory.length : 0 %></h3>
@@ -1139,8 +1223,51 @@
                                     <p>Recent Transactions</p>
                                 </div>
                                 <div class="stat-card">
-                                    <h3><%= user.wallets ? user.wallets.length : 0 %></h3>
-                                    <p>Wallet Accounts</p>
+                                    <h3><%= currencyBalances ? Object.keys(currencyBalances).length : 0 %></h3>
+                                    <p>Currency Wallets</p>
+                                </div>
+                            </div>
+
+                            <!-- Currency Balances Section -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2><i class="fas fa-coins"></i> Currency Balances</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="currency-balances">
+                                        <div class="currency-grid">
+                                            <% if (currencyBalances && Object.keys(currencyBalances).length > 0) { %>
+                                                <% Object.keys(currencyBalances).forEach(currency => { 
+                                                    const balance = currencyBalances[currency];
+                                                    const usdValue = balance.usdValue || 0;
+                                                %>
+                                                    <div class="currency-balance-item">
+                                                        <div class="currency-symbol">
+                                                            <%= getCurrencySymbol(currency) %>
+                                                        </div>
+                                                        <div class="currency-code"><%= currency %></div>
+                                                        <div class="balance-amount">
+                                                            <%= formatCurrencyAmount(balance.amount, currency) %>
+                                                        </div>
+                                                        <div class="usd-value">$<%= usdValue.toFixed(2) %> USD</div>
+                                                    </div>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <div class="empty-state">
+                                                    <i class="fas fa-wallet"></i>
+                                                    <p>No currency balances found</p>
+                                                    <small>This user doesn't have any currency wallets yet</small>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        
+                                        <!-- Total Balance Card -->
+                                        <div class="total-balance-card">
+                                            <h3>TOTAL BALANCE</h3>
+                                            <div class="total-amount">$<%= (user.totalBalanceUSD || 0).toFixed(2) %></div>
+                                            <div class="total-label">Equivalent in US Dollars</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1183,16 +1310,16 @@
                                 <div class="info-card">
                                     <h3><i class="fas fa-wallet"></i> Financial Information</h3>
                                     <div class="info-item">
-                                        <span class="info-label">Current Balance:</span>
-                                        <span class="info-value">$<%= (user.balance || 0).toFixed(2) %></span>
+                                        <span class="info-label">Total Balance (USD):</span>
+                                        <span class="info-value">$<%= (user.totalBalanceUSD || 0).toFixed(2) %></span>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">Total Deposits:</span>
-                                        <span class="info-value">$0.00</span>
+                                        <span class="info-value">$<%= (user.totalDepositsUSD || 0).toFixed(2) %></span>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">Total Withdrawals:</span>
-                                        <span class="info-value">$0.00</span>
+                                        <span class="info-value">$<%= (user.totalWithdrawalsUSD || 0).toFixed(2) %></span>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">Account ID:</span>
@@ -1224,6 +1351,7 @@
                                                         <th>Type</th>
                                                         <th>Amount</th>
                                                         <th>Currency</th>
+                                                        <th>USD Value</th>
                                                         <th>Status</th>
                                                         <th>Date</th>
                                                         <th>Description</th>
@@ -1237,8 +1365,9 @@
                                                                     <%= transaction.type %>
                                                                 </span>
                                                             </td>
-                                                            <td>$<%= transaction.amount.toFixed(2) %></td>
+                                                            <td><%= formatCurrencyAmount(transaction.amount, transaction.currency || 'USD') %></td>
                                                             <td><%= transaction.currency || 'USD' %></td>
+                                                            <td>$<%= (transaction.usdValue || transaction.amount).toFixed(2) %></td>
                                                             <td>
                                                                 <span class="status-badge <%= transaction.status %>">
                                                                     <%= transaction.status %>
@@ -1263,13 +1392,13 @@
 
                             <!-- Action Buttons -->
                             <div class="action-buttons">
-                                <button class="tg-btn" id="manageBalanceBtn" data-user-id="<%= user._id %>" data-balance="<%= user.balance %>" data-user-name="<%= user.firstName %> <%= user.lastName %>">
+                                <button class="tg-btn" id="manageBalanceBtn" data-user-id="<%= user._id %>" data-balance="<%= user.totalBalanceUSD %>" data-user-name="<%= user.firstName %> <%= user.lastName %>">
                                     <i class="fas fa-wallet"></i> Manage Balance
                                 </button>
                                 <button class="tg-btn tg-btn-secondary" id="manageCurrencyBtn" data-user-id="<%= user._id %>" data-currency="<%= user.currency || 'USD' %>">
                                     <i class="fas fa-money-bill-wave"></i> Manage Currency
                                 </button>
-                                <button class="tg-btn tg-btn-secondary" id="walletDetailsBtn" data-user-id="<%= user._id %>" data-balance="<%= user.balance %>">
+                                <button class="tg-btn tg-btn-secondary" id="walletDetailsBtn" data-user-id="<%= user._id %>" data-balance="<%= user.totalBalanceUSD %>">
                                     <i class="fas fa-chart-line"></i> Wallet Details
                                 </button>
                                 <a href="/admin/users/<%= user._id %>/login-history" class="tg-btn tg-btn-secondary">
@@ -1300,134 +1429,136 @@
                     </div>
                 <% } %>
             </div>
-<!-- Balance Management Modal -->
-<div id="balanceModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-wallet"></i> Manage Balance</h2>
-            <button class="close-modal" id="closeBalanceModal">&times;</button>
-        </div>
-        
-        <div class="balance-card">
-            <h3>Current Balance</h3>
-            <div class="amount" id="currentBalance">$0.00</div>
-            <div class="currency-display" id="currentCurrency">USD</div>
-        </div>
 
-        <form id="balanceForm" action="/admin/users/update-balance" method="POST">
-            <input type="hidden" name="userId" id="balanceUserId">
-            <input type="hidden" name="type" id="balanceType" value="add">
+            <!-- Balance Management Modal -->
+            <div id="balanceModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-wallet"></i> Manage Balance</h2>
+                        <button class="close-modal" id="closeBalanceModal">&times;</button>
+                    </div>
+                    
+                    <div class="balance-card">
+                        <h3>Current Total Balance (USD)</h3>
+                        <div class="amount" id="currentBalance">$0.00</div>
+                        <div class="currency-display" id="currentCurrency">USD</div>
+                    </div>
 
-            <div class="form-group">
-                <label for="balanceCurrency">Select Currency</label>
-                <div class="currency-grid">
-                    <div class="currency-option" data-currency="USD">
-                        <div style="font-size: 24px;">$</div>
-                        <div style="font-size: 12px; margin-top: 5px;">USD</div>
-                    </div>
-                    <div class="currency-option" data-currency="EUR">
-                        <div style="font-size: 24px;">€</div>
-                        <div style="font-size: 12px; margin-top: 5px;">EUR</div>
-                    </div>
-                    <div class="currency-option" data-currency="GBP">
-                        <div style="font-size: 24px;">£</div>
-                        <div style="font-size: 12px; margin-top: 5px;">GBP</div>
-                    </div>
-                    <div class="currency-option" data-currency="CAD">
-                        <div style="font-size: 24px;">C$</div>
-                        <div style="font-size: 12px; margin-top: 5px;">CAD</div>
-                    </div>
-                    <div class="currency-option" data-currency="AUD">
-                        <div style="font-size: 24px;">A$</div>
-                        <div style="font-size: 12px; margin-top: 5px;">AUD</div>
-                    </div>
-                    <div class="currency-option" data-currency="JPY">
-                        <div style="font-size: 24px;">¥</div>
-                        <div style="font-size: 12px; margin-top: 5px;">JPY</div>
-                    </div>
-                    <div class="currency-option" data-currency="BTC">
-                        <div style="font-size: 24px;">₿</div>
-                        <div style="font-size: 12px; margin-top: 5px;">BTC</div>
-                    </div>
-                    <div class="currency-option" data-currency="ETH">
-                        <div style="font-size: 24px;">Ξ</div>
-                        <div style="font-size: 12px; margin-top: 5px;">ETH</div>
-                    </div>
-                    <div class="currency-option" data-currency="XRP">
-                        <div style="font-size: 24px;">✕</div>
-                        <div style="font-size: 12px; margin-top: 5px;">XRP</div>
-                    </div>
-                    <div class="currency-option" data-currency="DOGE">
-                        <div style="font-size: 24px;">Ð</div>
-                        <div style="font-size: 12px; margin-top: 5px;">DOGE</div>
-                    </div>
-                    <div class="currency-option" data-currency="LTC">
-                        <div style="font-size: 24px;">Ł</div>
-                        <div style="font-size: 12px; margin-top: 5px;">LTC</div>
-                    </div>
-                    <div class="currency-option" data-currency="ALGO">
-                        <div style="font-size: 24px;">Α</div>
-                        <div style="font-size: 12px; margin-top: 5px;">ALGO</div>
-                    </div>
-                    <div class="currency-option" data-currency="XDC">
-                        <div style="font-size: 24px;">XDC</div>
-                        <div style="font-size: 12px; margin-top: 5px;">XDC</div>
-                    </div>
-                    <div class="currency-option" data-currency="XLM">
-                        <div style="font-size: 24px;">XLM</div>
-                        <div style="font-size: 12px; margin-top: 5px;">XLM</div>
-                    </div>
-                    <div class="currency-option" data-currency="MATIC">
-                        <div style="font-size: 24px;">MATIC</div>
-                        <div style="font-size: 12px; margin-top: 5px;">MATIC</div>
-                    </div>
+                    <form id="balanceForm" action="/admin/users/update-balance" method="POST">
+                        <input type="hidden" name="userId" id="balanceUserId">
+                        <input type="hidden" name="type" id="balanceType" value="add">
+
+                        <div class="form-group">
+                            <label for="balanceCurrency">Select Currency</label>
+                            <div class="currency-grid-modal">
+                                <div class="currency-option" data-currency="USD">
+                                    <div style="font-size: 24px;">$</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">USD</div>
+                                </div>
+                                <div class="currency-option" data-currency="EUR">
+                                    <div style="font-size: 24px;">€</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">EUR</div>
+                                </div>
+                                <div class="currency-option" data-currency="GBP">
+                                    <div style="font-size: 24px;">£</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">GBP</div>
+                                </div>
+                                <div class="currency-option" data-currency="CAD">
+                                    <div style="font-size: 24px;">C$</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">CAD</div>
+                                </div>
+                                <div class="currency-option" data-currency="AUD">
+                                    <div style="font-size: 24px;">A$</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">AUD</div>
+                                </div>
+                                <div class="currency-option" data-currency="JPY">
+                                    <div style="font-size: 24px;">¥</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">JPY</div>
+                                </div>
+                                <div class="currency-option" data-currency="BTC">
+                                    <div style="font-size: 24px;">₿</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">BTC</div>
+                                </div>
+                                <div class="currency-option" data-currency="ETH">
+                                    <div style="font-size: 24px;">Ξ</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">ETH</div>
+                                </div>
+                                <div class="currency-option" data-currency="XRP">
+                                    <div style="font-size: 24px;">✕</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">XRP</div>
+                                </div>
+                                <div class="currency-option" data-currency="DOGE">
+                                    <div style="font-size: 24px;">Ð</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">DOGE</div>
+                                </div>
+                                <div class="currency-option" data-currency="LTC">
+                                    <div style="font-size: 24px;">Ł</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">LTC</div>
+                                </div>
+                                <div class="currency-option" data-currency="ALGO">
+                                    <div style="font-size: 24px;">Α</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">ALGO</div>
+                                </div>
+                                <div class="currency-option" data-currency="XDC">
+                                    <div style="font-size: 24px;">XDC</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">XDC</div>
+                                </div>
+                                <div class="currency-option" data-currency="XLM">
+                                    <div style="font-size: 24px;">XLM</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">XLM</div>
+                                </div>
+                                <div class="currency-option" data-currency="MATIC">
+                                    <div style="font-size: 24px;">MATIC</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">MATIC</div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="currency" id="selectedBalanceCurrency" value="USD">
+                        </div>
+
+                        <div class="transaction-type">
+                            <button type="button" class="type-btn active" id="addFundsBtn">
+                                <i class="fas fa-plus-circle"></i> Add Funds
+                            </button>
+                            <button type="button" class="type-btn" id="deductFundsBtn">
+                                <i class="fas fa-minus-circle"></i> Deduct Funds
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   placeholder="Enter amount" step="0.00000001" min="0.00000001" required>
+                            <small class="form-text">Use up to 8 decimal places for cryptocurrencies</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reason">Reason/Description</label>
+                            <textarea class="form-control" id="reason" name="reason" 
+                                      rows="3" placeholder="Enter reason for this transaction" required></textarea>
+                        </div>
+
+                        <div class="form-preview">
+                            <div class="preview-item">
+                                <span>Operation:</span>
+                                <span id="previewOperation">Adding funds to</span>
+                            </div>
+                            <div class="preview-item">
+                                <span>Currency:</span>
+                                <span id="previewCurrency">USD</span>
+                            </div>
+                            <div class="preview-item">
+                                <span>Amount:</span>
+                                <span id="previewAmount">0.00</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check-circle"></i> Update Balance
+                        </button>
+                    </form>
                 </div>
-                <input type="hidden" name="currency" id="selectedBalanceCurrency" value="USD">
             </div>
 
-            <div class="transaction-type">
-                <button type="button" class="type-btn active" id="addFundsBtn">
-                    <i class="fas fa-plus-circle"></i> Add Funds
-                </button>
-                <button type="button" class="type-btn" id="deductFundsBtn">
-                    <i class="fas fa-minus-circle"></i> Deduct Funds
-                </button>
-            </div>
-
-            <div class="form-group">
-                <label for="amount">Amount</label>
-                <input type="number" class="form-control" id="amount" name="amount" 
-                       placeholder="Enter amount" step="0.00000001" min="0.00000001" required>
-                <small class="form-text">Use up to 8 decimal places for cryptocurrencies</small>
-            </div>
-
-            <div class="form-group">
-                <label for="reason">Reason/Description</label>
-                <textarea class="form-control" id="reason" name="reason" 
-                          rows="3" placeholder="Enter reason for this transaction" required></textarea>
-            </div>
-
-            <div class="form-preview">
-                <div class="preview-item">
-                    <span>Operation:</span>
-                    <span id="previewOperation">Adding funds to</span>
-                </div>
-                <div class="preview-item">
-                    <span>Currency:</span>
-                    <span id="previewCurrency">USD</span>
-                </div>
-                <div class="preview-item">
-                    <span>Amount:</span>
-                    <span id="previewAmount">0.00</span>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <i class="fas fa-check-circle"></i> Update Balance
-            </button>
-        </form>
-    </div>
-</div>
             <!-- Currency Management Modal -->
             <div id="currencyModal" class="modal">
                 <div class="modal-content">
@@ -1441,7 +1572,7 @@
 
                         <div class="form-group">
                             <label>Select Primary Currency</label>
-                            <div class="currency-grid">
+                            <div class="currency-grid-modal">
                                 <div class="currency-option selected" data-currency="USD">
                                     <div style="font-size: 24px;">$</div>
                                     <div style="font-size: 12px; margin-top: 5px;">USD</div>
@@ -1529,529 +1660,568 @@
     </div>
 
     <script>
+        // Currency symbols mapping
+        const currencySymbols = {
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'CAD': 'C$',
+            'AUD': 'A$',
+            'JPY': '¥',
+            'BTC': '₿',
+            'ETH': 'Ξ',
+            'XRP': '✕',
+            'DOGE': 'Ð',
+            'LTC': 'Ł',
+            'ALGO': 'Α',
+            'XDC': 'XDC',
+            'XLM': 'XLM',
+            'MATIC': 'MATIC'
+        };
+
+        // Exchange rates (example rates - in production, fetch from API)
+        const exchangeRates = {
+            'USD': 1.00,
+            'EUR': 0.92,
+            'GBP': 0.79,
+            'CAD': 1.36,
+            'AUD': 1.52,
+            'JPY': 149.50,
+            'BTC': 0.000025, // Example: 1 BTC = 40,000 USD
+            'ETH': 0.00045,  // Example: 1 ETH = 2,222 USD
+            'XRP': 1.85,     // Example: 1 XRP = 0.54 USD
+            'DOGE': 140,     // Example: 1 DOGE = 0.007 USD
+            'LTC': 0.012,    // Example: 1 LTC = 83 USD
+            'ALGO': 6.25,    // Example: 1 ALGO = 0.16 USD
+            'XDC': 45,       // Example: 1 XDC = 0.022 USD
+            'XLM': 25,       // Example: 1 XLM = 0.04 USD
+            'MATIC': 1.2     // Example: 1 MATIC = 0.83 USD
+        };
+
+        // Helper functions
+        function getCurrencySymbol(currency) {
+            return currencySymbols[currency] || currency;
+        }
+
+        function formatCurrencyAmount(amount, currency) {
+            const symbol = getCurrencySymbol(currency);
+            const decimals = ['BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'].includes(currency) ? 8 : 2;
+            
+            return `${symbol}${parseFloat(amount).toFixed(decimals)}`;
+        }
+
+        function convertToUSD(amount, currency) {
+            const rate = exchangeRates[currency] || 1;
+            return currency === 'USD' ? amount : amount / rate;
+        }
+
         // Modal Functions
-function openModal(modalId) {
-    document.getElementById(modalId).classList.add('active');
-}
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
-}
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
 
-// Balance Modal Functions
-function openBalanceModal(userId, currentBalance, userName, userCurrency = 'USD') {
-    document.getElementById('balanceUserId').value = userId;
-    document.getElementById('currentBalance').textContent = formatCurrency(currentBalance || 0, userCurrency);
-    document.getElementById('currentCurrency').textContent = userCurrency;
-    
-    // Set default currency selection
-    setSelectedCurrency(userCurrency);
-    
-    // Update modal title with user name
-    document.querySelector('#balanceModal .modal-header h2').innerHTML = 
-        `<i class="fas fa-wallet"></i> Manage Balance - ${userName}`;
-    
-    // Reset form
-    document.getElementById('amount').value = '';
-    document.getElementById('reason').value = '';
-    setTransactionType('add');
-    
-    openModal('balanceModal');
-}
+        // Balance Modal Functions
+        function openBalanceModal(userId, currentBalance, userName, userCurrency = 'USD') {
+            document.getElementById('balanceUserId').value = userId;
+            document.getElementById('currentBalance').textContent = `$${parseFloat(currentBalance || 0).toFixed(2)}`;
+            document.getElementById('currentCurrency').textContent = 'USD';
+            
+            // Set default currency selection
+            setSelectedCurrency(userCurrency);
+            
+            // Update modal title with user name
+            document.querySelector('#balanceModal .modal-header h2').innerHTML = 
+                `<i class="fas fa-wallet"></i> Manage Balance - ${userName}`;
+            
+            // Reset form
+            document.getElementById('amount').value = '';
+            document.getElementById('reason').value = '';
+            setTransactionType('add');
+            
+            openModal('balanceModal');
+        }
 
-function setSelectedCurrency(currency) {
-    // Remove selected class from all options
-    document.querySelectorAll('#balanceModal .currency-option').forEach(opt => {
-        opt.classList.remove('selected');
-    });
-    
-    // Add selected class to clicked option
-    const selectedOption = document.querySelector(`#balanceModal .currency-option[data-currency="${currency}"]`);
-    if (selectedOption) {
-        selectedOption.classList.add('selected');
-    } else {
-        // Fallback to USD if currency not found
-        document.querySelector('#balanceModal .currency-option[data-currency="USD"]').classList.add('selected');
-        currency = 'USD';
-    }
-    
-    document.getElementById('selectedBalanceCurrency').value = currency;
-    updatePreview();
-}
-
-function setTransactionType(type) {
-    document.getElementById('balanceType').value = type;
-    document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
-    
-    if (type === 'add') {
-        document.getElementById('addFundsBtn').classList.add('active');
-    } else {
-        document.getElementById('deductFundsBtn').classList.add('active');
-    }
-    updatePreview();
-}
-
-function formatCurrency(amount, currency) {
-    const formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 8
-    });
-    
-    const symbols = {
-        'USD': '$', 'EUR': '€', 'GBP': '£', 'CAD': 'C$', 'AUD': 'A$', 'JPY': '¥',
-        'BTC': '₿', 'ETH': 'Ξ', 'XRP': '✕', 'DOGE': 'Ð', 'LTC': 'Ł', 'ALGO': 'Α'
-    };
-    
-    const symbol = symbols[currency] || currency;
-    return `${symbol}${formatter.format(amount)}`;
-}
-
-function updatePreview() {
-    const amount = document.getElementById('amount').value || '0';
-    const currency = document.getElementById('selectedBalanceCurrency').value;
-    const type = document.getElementById('balanceType').value;
-    
-    document.getElementById('previewOperation').textContent = 
-        type === 'add' ? 'Adding funds to' : 'Deducting funds from';
-    document.getElementById('previewCurrency').textContent = currency;
-    document.getElementById('previewAmount').textContent = formatCurrency(parseFloat(amount) || 0, currency);
-}
-
-function openCurrencyModal(userId, currency) {
-    document.getElementById('currencyUserId').value = userId;
-    document.getElementById('userCurrency').textContent = currency || 'USD';
-    document.querySelectorAll('.currency-option').forEach(opt => {
-        opt.classList.remove('selected');
-        if (opt.dataset.currency === currency) opt.classList.add('selected');
-    });
-    openModal('currencyModal');
-}
-
-function openWalletModal(userId, balance) {
-    document.getElementById('walletBalance').textContent = '$' + parseFloat(balance || 0).toFixed(2);
-    openModal('walletModal');
-}
-
-// User status toggle function
-function toggleUserStatus(userId, isCurrentlyActive) {
-    if (confirm(`Are you sure you want to ${isCurrentlyActive ? 'deactivate' : 'activate'} this user?`)) {
-        fetch(`/admin/users/${userId}/status`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                isActive: !isCurrentlyActive
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(`User ${!isCurrentlyActive ? 'activated' : 'deactivated'} successfully!`);
-                window.location.reload();
+        function setSelectedCurrency(currency) {
+            // Remove selected class from all options
+            document.querySelectorAll('#balanceModal .currency-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            const selectedOption = document.querySelector(`#balanceModal .currency-option[data-currency="${currency}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
             } else {
-                alert('Error updating user status: ' + data.message);
+                // Fallback to USD if currency not found
+                document.querySelector('#balanceModal .currency-option[data-currency="USD"]').classList.add('selected');
+                currency = 'USD';
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error updating user status. Please try again.');
-        });
-    }
-}
-
-// Theme toggle functionality
-function updateThemeIcon(theme) {
-    const themeIcon = document.getElementById('themeIcon');
-    if (theme === 'dark') {
-        themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
-    } else {
-        themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
-    }
-}
-
-// Event Listeners for Modal Controls
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize theme
-    const currentTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    updateThemeIcon(currentTheme);
-
-    // Modal close buttons
-    document.getElementById('closeBalanceModal').addEventListener('click', function() {
-        closeModal('balanceModal');
-    });
-    
-    // Close modal when clicking outside
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeModal(this.id);
-            }
-        });
-    });
-
-    // Currency selection in balance modal
-    document.querySelectorAll('#balanceModal .currency-option').forEach(option => {
-        option.addEventListener('click', function() {
-            const currency = this.getAttribute('data-currency');
-            setSelectedCurrency(currency);
-        });
-    });
-
-    // Transaction type buttons
-    document.getElementById('addFundsBtn').addEventListener('click', function() {
-        setTransactionType('add');
-    });
-
-    document.getElementById('deductFundsBtn').addEventListener('click', function() {
-        setTransactionType('subtract');
-    });
-
-    // Real-time preview updates
-    document.getElementById('amount').addEventListener('input', updatePreview);
-
-    // Balance form validation
-    document.getElementById('balanceForm').addEventListener('submit', function(e) {
-        const amount = parseFloat(document.getElementById('amount').value);
-        const type = document.getElementById('balanceType').value;
-        const currency = document.getElementById('selectedBalanceCurrency').value;
-        
-        if (!amount || amount <= 0) {
-            e.preventDefault();
-            alert('Please enter a valid amount');
-            document.getElementById('amount').focus();
-            return false;
-        }
-        
-        if (!type) {
-            e.preventDefault();
-            alert('Please select transaction type');
-            return false;
-        }
-        
-        // Additional validation for deduction
-        if (type === 'subtract') {
-            const currentBalance = parseFloat(document.getElementById('balanceUserId').getAttribute('data-current-balance') || 0);
-            if (amount > currentBalance) {
-                e.preventDefault();
-                alert(`Insufficient balance. Available: ${formatCurrency(currentBalance, currency)}`);
-                return false;
-            }
-        }
-        
-        // Confirm action
-        const action = type === 'add' ? 'ADD' : 'DEDUCT';
-        const confirmation = confirm(
-            `CONFIRM BALANCE ${action}\n\n` +
-            `Amount: ${formatCurrency(amount, currency)}\n` +
-            `Currency: ${currency}\n` +
-            `Operation: ${type === 'add' ? 'Adding funds' : 'Deducting funds'}\n\n` +
-            `This action cannot be undone.`
-        );
-        
-        if (!confirmation) {
-            e.preventDefault();
-            return false;
-        }
-        
-        // Show loading state
-        const submitBtn = this.querySelector('.btn-submit');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        submitBtn.disabled = true;
-        
-        // Re-enable button if form submission fails
-        setTimeout(() => {
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 5000);
-    });
-
-    // Manage Balance buttons throughout the page
-    document.querySelectorAll('.manage-balance-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const userId = this.getAttribute('data-user-id');
-            const balance = this.getAttribute('data-balance');
-            const userName = this.getAttribute('data-user-name');
-            const currency = this.getAttribute('data-currency') || 'USD';
             
-            // Store current balance for validation
-            document.getElementById('balanceUserId').setAttribute('data-current-balance', balance);
+            document.getElementById('selectedBalanceCurrency').value = currency;
+            updatePreview();
+        }
+
+        function setTransactionType(type) {
+            document.getElementById('balanceType').value = type;
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
             
-            openBalanceModal(userId, balance, userName, currency);
+            if (type === 'add') {
+                document.getElementById('addFundsBtn').classList.add('active');
+            } else {
+                document.getElementById('deductFundsBtn').classList.add('active');
+            }
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const amount = document.getElementById('amount').value || '0';
+            const currency = document.getElementById('selectedBalanceCurrency').value;
+            const type = document.getElementById('balanceType').value;
+            
+            document.getElementById('previewOperation').textContent = 
+                type === 'add' ? 'Adding funds to' : 'Deducting funds from';
+            document.getElementById('previewCurrency').textContent = currency;
+            document.getElementById('previewAmount').textContent = formatCurrencyAmount(parseFloat(amount) || 0, currency);
+        }
+
+        function openCurrencyModal(userId, currency) {
+            document.getElementById('currencyUserId').value = userId;
+            document.getElementById('userCurrency').textContent = currency || 'USD';
+            document.querySelectorAll('#currencyModal .currency-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.dataset.currency === currency) opt.classList.add('selected');
+            });
+            
+            // Set exchange rate
+            const rate = exchangeRates[currency] || 1;
+            document.getElementById('exchangeRate').textContent = rate.toFixed(2);
+            
+            openModal('currencyModal');
+        }
+
+        function openWalletModal(userId, balance) {
+            document.getElementById('walletBalance').textContent = '$' + parseFloat(balance || 0).toFixed(2);
+            openModal('walletModal');
+        }
+
+        // User status toggle function
+        function toggleUserStatus(userId, isCurrentlyActive) {
+            if (confirm(`Are you sure you want to ${isCurrentlyActive ? 'deactivate' : 'activate'} this user?`)) {
+                fetch(`/admin/users/${userId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        isActive: !isCurrentlyActive
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`User ${!isCurrentlyActive ? 'activated' : 'deactivated'} successfully!`);
+                        window.location.reload();
+                    } else {
+                        alert('Error updating user status: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating user status. Please try again.');
+                });
+            }
+        }
+
+        // Theme toggle functionality
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (theme === 'dark') {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        // Event Listeners for Modal Controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize theme
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
+
+            // Modal close buttons
+            document.getElementById('closeBalanceModal').addEventListener('click', function() {
+                closeModal('balanceModal');
+            });
+            
+            document.getElementById('closeCurrencyModal').addEventListener('click', function() {
+                closeModal('currencyModal');
+            });
+            
+            document.getElementById('closeWalletModal').addEventListener('click', function() {
+                closeModal('walletModal');
+            });
+            
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+
+            // Currency selection in balance modal
+            document.querySelectorAll('#balanceModal .currency-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const currency = this.getAttribute('data-currency');
+                    setSelectedCurrency(currency);
+                });
+            });
+
+            // Transaction type buttons
+            document.getElementById('addFundsBtn').addEventListener('click', function() {
+                setTransactionType('add');
+            });
+
+            document.getElementById('deductFundsBtn').addEventListener('click', function() {
+                setTransactionType('subtract');
+            });
+
+            // Real-time preview updates
+            document.getElementById('amount').addEventListener('input', updatePreview);
+
+            // Balance form validation
+            document.getElementById('balanceForm').addEventListener('submit', function(e) {
+                const amount = parseFloat(document.getElementById('amount').value);
+                const type = document.getElementById('balanceType').value;
+                const currency = document.getElementById('selectedBalanceCurrency').value;
+                
+                if (!amount || amount <= 0) {
+                    e.preventDefault();
+                    alert('Please enter a valid amount');
+                    document.getElementById('amount').focus();
+                    return false;
+                }
+                
+                if (!type) {
+                    e.preventDefault();
+                    alert('Please select transaction type');
+                    return false;
+                }
+                
+                // Additional validation for deduction
+                if (type === 'subtract') {
+                    const currentBalance = parseFloat(document.getElementById('balanceUserId').getAttribute('data-current-balance') || 0);
+                    if (amount > currentBalance) {
+                        e.preventDefault();
+                        alert(`Insufficient balance. Available: $${currentBalance.toFixed(2)} USD`);
+                        return false;
+                    }
+                }
+                
+                // Confirm action
+                const action = type === 'add' ? 'ADD' : 'DEDUCT';
+                const confirmation = confirm(
+                    `CONFIRM BALANCE ${action}\n\n` +
+                    `Amount: ${formatCurrencyAmount(amount, currency)}\n` +
+                    `Currency: ${currency}\n` +
+                    `Operation: ${type === 'add' ? 'Adding funds' : 'Deducting funds'}\n\n` +
+                    `This action cannot be undone.`
+                );
+                
+                if (!confirmation) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Show loading state
+                const submitBtn = this.querySelector('.btn-submit');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+                
+                // Re-enable button if form submission fails
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 5000);
+            });
+
+            // Action buttons
+            document.getElementById('manageBalanceBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const balance = this.getAttribute('data-balance');
+                const userName = this.getAttribute('data-user-name');
+                const currency = this.getAttribute('data-currency') || 'USD';
+                
+                document.getElementById('balanceUserId').setAttribute('data-current-balance', balance);
+                openBalanceModal(userId, balance, userName, currency);
+            });
+
+            document.getElementById('manageCurrencyBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const currency = this.getAttribute('data-currency');
+                openCurrencyModal(userId, currency);
+            });
+
+            document.getElementById('walletDetailsBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const balance = this.getAttribute('data-balance');
+                openWalletModal(userId, balance);
+            });
+
+            document.getElementById('toggleUserStatusBtn').addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const isActive = this.getAttribute('data-is-active') === 'true';
+                toggleUserStatus(userId, isActive);
+            });
+
+            // Adjust balance button in wallet modal
+            document.getElementById('adjustBalanceBtn').addEventListener('click', function() {
+                closeModal('walletModal');
+                const manageBalanceBtn = document.getElementById('manageBalanceBtn');
+                const userId = manageBalanceBtn.getAttribute('data-user-id');
+                const balance = manageBalanceBtn.getAttribute('data-balance');
+                const userName = manageBalanceBtn.getAttribute('data-user-name');
+                const currency = manageBalanceBtn.getAttribute('data-currency') || 'USD';
+                
+                document.getElementById('balanceUserId').setAttribute('data-current-balance', balance);
+                openBalanceModal(userId, balance, userName, currency);
+            });
+
+            // Currency options in currency modal
+            document.querySelectorAll('#currencyModal .currency-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('#currencyModal .currency-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const selectedCurrency = this.dataset.currency;
+                    document.getElementById('selectedCurrency').value = selectedCurrency;
+                    const rate = exchangeRates[selectedCurrency] || 1;
+                    document.getElementById('exchangeRate').textContent = rate.toFixed(2);
+                });
+            });
+
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+                
+                // Add click animation
+                themeToggle.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    themeToggle.style.transform = 'scale(1)';
+                }, 150);
+            });
+
+            // Sidebar functionality
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const adminSidebar = document.getElementById('adminSidebar');
+            const adminWrapper = document.querySelector('.admin-wrapper');
+
+            // Desktop sidebar toggle (collapse/expand)
+            sidebarToggle.addEventListener('click', function() {
+                if (window.innerWidth > 768) {
+                    adminWrapper.classList.toggle('sidebar-collapsed');
+                } else {
+                    // Mobile sidebar open
+                    adminSidebar.classList.add('sidebar-open');
+                }
+            });
+
+            // Mobile sidebar close
+            sidebarClose.addEventListener('click', function() {
+                adminSidebar.classList.remove('sidebar-open');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768 && 
+                    adminSidebar.classList.contains('sidebar-open') &&
+                    !adminSidebar.contains(event.target) &&
+                    !sidebarToggle.contains(event.target)) {
+                    adminSidebar.classList.remove('sidebar-open');
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    adminSidebar.classList.remove('sidebar-open');
+                    adminWrapper.classList.remove('sidebar-collapsed');
+                }
+            });
+
+            // Add loading animation for cards
+            const cards = document.querySelectorAll('.card, .stat-card, .info-card, .currency-balance-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
         });
-    });
 
-    // Action buttons
-    document.getElementById('manageBalanceBtn').addEventListener('click', function() {
-        const userId = this.getAttribute('data-user-id');
-        const balance = this.getAttribute('data-balance');
-        const userName = this.getAttribute('data-user-name');
-        const currency = this.getAttribute('data-currency') || 'USD';
-        
-        document.getElementById('balanceUserId').setAttribute('data-current-balance', balance);
-        openBalanceModal(userId, balance, userName, currency);
-    });
-
-    document.getElementById('manageCurrencyBtn').addEventListener('click', function() {
-        const userId = this.getAttribute('data-user-id');
-        const currency = this.getAttribute('data-currency');
-        openCurrencyModal(userId, currency);
-    });
-
-    document.getElementById('walletDetailsBtn').addEventListener('click', function() {
-        const userId = this.getAttribute('data-user-id');
-        const balance = this.getAttribute('data-balance');
-        openWalletModal(userId, balance);
-    });
-
-    document.getElementById('toggleUserStatusBtn').addEventListener('click', function() {
-        const userId = this.getAttribute('data-user-id');
-        const isActive = this.getAttribute('data-is-active') === 'true';
-        toggleUserStatus(userId, isActive);
-    });
-
-    // Adjust balance button in wallet modal
-    document.getElementById('adjustBalanceBtn').addEventListener('click', function() {
-        closeModal('walletModal');
-        const manageBalanceBtn = document.getElementById('manageBalanceBtn');
-        const userId = manageBalanceBtn.getAttribute('data-user-id');
-        const balance = manageBalanceBtn.getAttribute('data-balance');
-        const userName = manageBalanceBtn.getAttribute('data-user-name');
-        const currency = manageBalanceBtn.getAttribute('data-currency') || 'USD';
-        
-        document.getElementById('balanceUserId').setAttribute('data-current-balance', balance);
-        openBalanceModal(userId, balance, userName, currency);
-    });
-
-    // Currency options in currency modal
-    document.querySelectorAll('#currencyModal .currency-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('#currencyModal .currency-option').forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            document.getElementById('selectedCurrency').value = this.dataset.currency;
-            const rates = { USD: 1.00, EUR: 0.92, GBP: 0.79, CAD: 1.36, AUD: 1.52, JPY: 149.50 };
-            document.getElementById('exchangeRate').textContent = rates[this.dataset.currency].toFixed(2);
-        });
-    });
-
-    // Theme toggle functionality
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', function() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme);
-        
-        // Add click animation
-        themeToggle.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            themeToggle.style.transform = 'scale(1)';
-        }, 150);
-    });
-
-    // Sidebar functionality
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebarClose = document.getElementById('sidebarClose');
-    const adminSidebar = document.getElementById('adminSidebar');
-    const adminWrapper = document.querySelector('.admin-wrapper');
-
-    // Desktop sidebar toggle (collapse/expand)
-    sidebarToggle.addEventListener('click', function() {
-        if (window.innerWidth > 768) {
-            adminWrapper.classList.toggle('sidebar-collapsed');
-        } else {
-            // Mobile sidebar open
-            adminSidebar.classList.add('sidebar-open');
+        // Add CSS for the new elements
+        const balanceModalStyles = `
+        .balance-card {
+            background: var(--tg-color-dark-3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--tg-border-1);
         }
-    });
 
-    // Mobile sidebar close
-    sidebarClose.addEventListener('click', function() {
-        adminSidebar.classList.remove('sidebar-open');
-    });
-
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(event) {
-        if (window.innerWidth <= 768 && 
-            adminSidebar.classList.contains('sidebar-open') &&
-            !adminSidebar.contains(event.target) &&
-            !sidebarToggle.contains(event.target)) {
-            adminSidebar.classList.remove('sidebar-open');
+        .balance-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--tg-body-color);
+            font-size: 14px;
+            font-weight: 500;
         }
-    });
 
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            adminSidebar.classList.remove('sidebar-open');
-            adminWrapper.classList.remove('sidebar-collapsed');
+        .balance-card .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+            margin: 0;
         }
-    });
 
-    // Add loading animation for cards
-    const cards = document.querySelectorAll('.card, .stat-card, .info-card');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-});
+        .balance-card .currency-display {
+            font-size: 14px;
+            color: var(--tg-body-color);
+            margin-top: 5px;
+        }
 
-// Add CSS for the new elements
-const balanceModalStyles = `
-.balance-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-    border: 1px solid var(--border-color);
-}
+        .transaction-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-.balance-card h3 {
-    margin: 0 0 10px 0;
-    color: var(--text-muted);
-    font-size: 14px;
-    font-weight: 500;
-}
+        .type-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--tg-border-1);
+            background: var(--tg-color-dark-3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            font-weight: 500;
+        }
 
-.balance-card .amount {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin: 0;
-}
+        .type-btn.active {
+            border-color: var(--tg-theme-primary);
+            background: var(--tg-theme-primary);
+            color: white;
+        }
 
-.balance-card .currency-display {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-top: 5px;
-}
+        .type-btn:hover:not(.active) {
+            border-color: var(--tg-theme-primary);
+        }
 
-.transaction-type {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+        .currency-grid-modal {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-.type-btn {
-    flex: 1;
-    padding: 12px;
-    border: 2px solid var(--border-color);
-    background: var(--card-bg);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
+        .currency-option {
+            padding: 15px 10px;
+            border: 2px solid var(--tg-border-1);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            background: var(--tg-color-dark-3);
+        }
 
-.type-btn.active {
-    border-color: var(--primary-color);
-    background: var(--primary-color);
-    color: white;
-}
+        .currency-option.selected {
+            border-color: var(--tg-theme-primary);
+            background: var(--tg-theme-primary);
+            color: white;
+        }
 
-.type-btn:hover:not(.active) {
-    border-color: var(--primary-color);
-}
+        .currency-option:hover {
+            border-color: var(--tg-theme-primary);
+            transform: translateY(-2px);
+        }
 
-.currency-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-}
+        .form-preview {
+            background: var(--tg-color-dark-3);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
 
-.currency-option {
-    padding: 15px 10px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: var(--card-bg);
-}
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
 
-.currency-option.selected {
-    border-color: var(--primary-color);
-    background: var(--primary-color);
-    color: white;
-}
+        .preview-item:last-child {
+            margin-bottom: 0;
+        }
 
-.currency-option:hover {
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-}
+        .preview-item span:first-child {
+            font-weight: 600;
+            color: var(--tg-body-color);
+        }
 
-.form-preview {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    margin: 20px 0;
-}
+        .preview-item span:last-child {
+            font-weight: 500;
+        }
 
-.preview-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
+        .form-text {
+            font-size: 12px;
+            color: var(--tg-body-color);
+            margin-top: 5px;
+        }
 
-.preview-item:last-child {
-    margin-bottom: 0;
-}
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: var(--tg-theme-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--tg-transition);
+        }
 
-.preview-item span:first-child {
-    font-weight: 600;
-    color: var(--text-muted);
-}
+        .btn-submit:hover:not(:disabled) {
+            background: var(--tg-theme-primary-hover);
+        }
 
-.preview-item span:last-child {
-    font-weight: 500;
-}
+        .btn-submit:disabled {
+            background: var(--tg-body-color);
+            cursor: not-allowed;
+        }
+        `;
 
-.form-text {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 5px;
-}
-
-.btn-submit {
-    width: 100%;
-    padding: 15px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.btn-submit:hover:not(:disabled) {
-    background: var(--primary-dark);
-}
-
-.btn-submit:disabled {
-    background: var(--text-muted);
-    cursor: not-allowed;
-}
-`;
-
-// Inject styles
-const styleSheet = document.createElement('style');
-styleSheet.textContent = balanceModalStyles;
-document.head.appendChild(styleSheet);
+        // Inject styles
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = balanceModalStyles;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>

@@ -2,38 +2,21 @@ const Transaction = require('../models/Transaction');
 const Wallet = require('../models/Wallet');
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
-
+const mongoose = require('mongoose');
 const transactionController = {
-  getTransactions: async (req, res) => {
+   getTransactions: async (req, res) => {
     try {
-      console.log('=== TRANSACTIONS PAGE REQUEST ===');
-      console.log('Full session:', JSON.stringify(req.session, null, 2));
-      console.log('Session user:', req.session.user);
-      console.log('Session ID:', req.sessionID);
-      
-      // FIX: Get userId with multiple fallbacks
-      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
-      const userRole = req.session.user?.role;
-      
-      console.log('Extracted userId:', userId);
-      console.log('User role:', userRole);
-      
+      // Get user info from session
+      const userId = req.session.user?._id || req.session.user?.id;
+      const userRole = req.session.user?.role || 'user';
+      const userEmail = req.session.user?.email || '';
+
       if (!userId) {
-        console.log('❌ CRITICAL: No user ID found in session');
-        console.log('Session keys:', Object.keys(req.session));
-        console.log('User object:', req.session.user);
-        
-        // This shouldn't happen if isAuthenticated passed, but handle it
-        req.session.destroy((err) => {
-          if (err) console.error('Session destroy error:', err);
-          req.flash('error', 'Session error. Please login again.');
-          return res.redirect('/auth/login');
-        });
-        return;
+        req.flash('error', 'Please login to view transactions');
+        return res.redirect('/auth/login');
       }
 
-      console.log('✅ User authenticated, fetching transactions for:', userId);
-
+      // Pagination
       const page = parseInt(req.query.page) || 1;
       const limit = 10;
       const skip = (page - 1) * limit;
@@ -42,67 +25,50 @@ const transactionController = {
       let query = {};
       
       if (['admin', 'superadmin'].includes(userRole)) {
-        // Admins can see all transactions
-        console.log('👑 Admin user - showing ALL transactions');
-        query = {}; // No filter for admins
+        // Admins see all transactions
+        query = {};
       } else {
-        // Regular users see their own transactions + admin-approved ones
-        console.log('👤 Regular user - showing user transactions');
+        // Regular users see only their transactions
         query = {
           $or: [
             { userId }, 
-            { recipientId: userId },
-            // Include transactions where user is involved AND status is approved/completed by admin
-            { 
-              $and: [
-                { $or: [{ userId }, { recipientId: userId }] },
-                { status: { $in: ['completed', 'approved'] } }
-              ]
-            },
-            // Include admin-initiated transactions for this user
-            {
-              $and: [
-                { $or: [{ userId }, { recipientId: userId }] },
-                { type: { $in: ['admin_credit', 'admin_debit', 'system'] } }
-              ]
-            }
+            { recipientId: userId }
           ]
         };
       }
 
+      // Execute queries
       const [transactions, total] = await Promise.all([
         Transaction.find(query)
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit)
-          .populate('userId', 'firstName lastName email role')
-          .populate('recipientId', 'firstName lastName email role')
-          .populate('senderId', 'firstName lastName email role')
+          .populate('userId', 'firstName lastName email')
+          .populate('recipientId', 'firstName lastName email')
           .lean(),
         Transaction.countDocuments(query)
       ]);
 
-      console.log(`✅ Found ${transactions.length} transactions out of ${total} total`);
-
+      // Render page with all required data
       res.render('transactions', {
         title: 'Transactions - QFS',
-        transactions,
+        transactions: transactions || [],
         currentPage: page,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
         user: req.session.user,
-        isAdmin: ['admin', 'superadmin'].includes(userRole)
+        userEmail: userEmail, // This fixes the template error
+        isAdmin: ['admin', 'superadmin'].includes(userRole),
+        hasTransactions: transactions && transactions.length > 0
       });
 
     } catch (error) {
-      console.error('❌ Transactions error:', error);
-      res.status(500).render('error/500', { 
+      console.error('Transactions error:', error);
+      res.status(500).render('error/500', {
         title: 'Server Error',
-        error: req.app.get('env') === 'development' ? error : {},
         user: req.session.user
       });
     }
   },
-
   // SEND MONEY FUNCTIONS
   getSendMoney: async (req, res) => {
     try {

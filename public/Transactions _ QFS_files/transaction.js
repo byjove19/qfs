@@ -9,8 +9,7 @@ class TransactionManager {
     init() {
         console.log('TransactionManager initialized');
         this.setupEventListeners();
-        
-        // Only load via AJAX if no transactions were rendered server-side
+
         const existingTransactions = document.querySelectorAll('.transaction-card');
         if (existingTransactions.length === 0) {
             this.loadTransactions(1);
@@ -21,7 +20,7 @@ class TransactionManager {
 
     async loadTransactions(page = 1, append = false) {
         if (this.isLoading) return;
-        
+
         this.isLoading = true;
         this.currentPage = page;
 
@@ -40,12 +39,9 @@ class TransactionManager {
                 `;
             }
 
-            const queryParams = new URLSearchParams({
-                page: page.toString(),
-                limit: '10'
-            });
+            const queryParams = new URLSearchParams({ page: page.toString(), limit: '10' });
 
-            const response = await fetch(`/api/transactions?${queryParams}`, {
+            const response = await fetch(`/transactions/api/transactions?${queryParams}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,12 +50,9 @@ class TransactionManager {
                 credentials: 'include'
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             const data = await response.json();
-            
             if (data.success && data.data && data.data.transactions) {
                 this.renderTransactions(data.data.transactions, append);
                 this.hasMore = data.data.pagination?.hasMore || false;
@@ -80,18 +73,12 @@ class TransactionManager {
         const container = document.getElementById('transactionsContainer');
         if (!container) return;
 
-        if (!append) {
-            container.innerHTML = '';
-        }
-
-        if (!transactions || transactions.length === 0) {
-            this.renderNoTransactions();
-            return;
-        }
+        if (!append) container.innerHTML = '';
+        if (!transactions || transactions.length === 0) return this.renderNoTransactions();
 
         transactions.forEach(transaction => {
-            const transactionEl = this.createTransactionElement(transaction);
-            container.appendChild(transactionEl);
+            const el = this.createTransactionElement(transaction);
+            container.appendChild(el);
         });
     }
 
@@ -100,16 +87,17 @@ class TransactionManager {
         div.className = 'transaction-card border rounded p-3 mb-3 cursor-pointer';
         div.setAttribute('data-bs-toggle', 'modal');
         div.setAttribute('data-bs-target', `#transactionModal${transaction._id}`);
-        
-        // Determine status class and text
-        const statusClass = transaction.status === 'completed' ? 'text-success' : 
-                           transaction.status === 'pending' ? 'text-warning' : 'text-danger';
+
+        const statusClass = transaction.status === 'completed'
+            ? 'text-success'
+            : transaction.status === 'pending'
+            ? 'text-warning'
+            : 'text-danger';
         const statusText = transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1);
-        
-        // Determine amount display
+
         const isPositive = transaction.type === 'receive' || transaction.type === 'deposit';
-        const amountDisplay = `₦${transaction.amount?.toLocaleString() || '0'}`;
-        
+        const amountDisplay = `$${transaction.amount?.toLocaleString() || '0'}`;
+
         div.innerHTML = `
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -127,81 +115,76 @@ class TransactionManager {
                 </p>
             </div>
         `;
-        
         return div;
     }
 
-// Print functionality
- printTransaction(transactionId) {
-    const modal = document.getElementById(`transactionModal${transactionId}`);
-    if (!modal) return;
-    
-    // Clone the modal content for printing
-    const printContent = modal.querySelector('.modal-content').cloneNode(true);
-    
-    // Remove unnecessary elements
-    const closeBtn = printContent.querySelector('.close-btn');
-    if (closeBtn) closeBtn.remove();
-    
-    // Create print window
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Transaction Receipt</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .print-header { text-align: center; margin-bottom: 30px; }
-                .print-header h3 { color: #007bff; }
-                @media print {
-                    body { margin: 0; }
-                    .no-print { display: none; }
-                }
-            </style>
-        </head>
-        <body>
-            <div class="print-header">
-                <h3>TRANSACTION RECEIPT</h3>
-                <p>Generated on: ${new Date().toLocaleString()}</p>
-            </div>
-            <div class="container">
-                ${printContent.innerHTML}
-            </div>
-            <div class="text-center mt-4 no-print">
-                <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
-                <button onclick="window.close()" class="btn btn-secondary">Close</button>
-            </div>
-        </body>
-        </html>
-    `)
-    
-    printWindow.document.close();
-    
-    // Auto-print after content loads
-    printWindow.onload = function() {
-        printWindow.focus();
-        // printWindow.print(); // Uncomment to auto-print
-    };
-}
+    // ✅ FIXED print function (no stray slash)
+    printTransaction(transactionId) {
+        const modal = document.getElementById(`transactionModal${transactionId}`);
+        if (!modal) {
+            alert("Transaction details not found!");
+            return;
+        }
+
+        const printContent = modal.querySelector('.modal-content').cloneNode(true);
+        if (!printContent) return;
+
+        const modalFooter = printContent.querySelector('.modal-footer');
+        if (modalFooter) modalFooter.remove();
+
+        const printWindow = window.open('', '_blank', 'width=800,height=700');
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Transaction Receipt</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+                    .receipt-container { max-width: 600px; margin: auto; border: 1px solid #ccc;
+                        border-radius: 10px; padding: 20px; background: #fff; }
+                    .receipt-header { text-align: center; border-bottom: 2px solid #007bff;
+                        padding-bottom: 10px; margin-bottom: 20px; }
+                    .receipt-header h3 { color: #007bff; }
+                    .print-buttons { text-align: center; margin-top: 30px; }
+                    @media print { .print-buttons { display: none; } body { margin: 0; background: #fff; } }
+                </style>
+            </head>
+            <body>
+                <div class="receipt-container">
+                    <div class="receipt-header">
+                        <h3>Transaction Receipt</h3>
+                        <small>Generated on: ${new Date().toLocaleString()}</small>
+                    </div>
+                    ${printContent.innerHTML}
+                </div>
+                <div class="print-buttons">
+                    <button class="btn btn-primary me-2" onclick="window.print()">Print Receipt</button>
+                    <button class="btn btn-outline-secondary" onclick="window.close()">Close</button>
+                </div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+    }
+
     renderNoTransactions() {
         const container = document.getElementById('transactionsContainer');
         if (!container) return;
-
         container.innerHTML = `
             <div class="text-center py-5">
                 <p class="mt-2 text-gray-100">No transactions found.</p>
             </div>
         `;
-        
         this.hasMore = false;
         this.updateLoadMoreButton();
     }
 
     escapeHtml(text) {
-        if (text === null || text === undefined) return '';
+        if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
@@ -210,16 +193,15 @@ class TransactionManager {
     updateLoadMoreButton() {
         const loadMoreBtn = document.getElementById('loadMoreBtn');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
-        
+
         if (loadMoreContainer) {
             loadMoreContainer.classList.toggle('d-none', !this.hasMore);
         }
-        
         if (loadMoreBtn) {
             loadMoreBtn.disabled = this.isLoading;
-            loadMoreBtn.innerHTML = this.isLoading ? 
-                '<i class="fas fa-spinner fa-spin me-2"></i>Loading...' : 
-                'Load More Transactions';
+            loadMoreBtn.innerHTML = this.isLoading
+                ? '<i class="fas fa-spinner fa-spin me-2"></i>Loading...'
+                : 'Load More Transactions';
         }
     }
 
@@ -248,8 +230,7 @@ class TransactionManager {
     }
 }
 
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+// ✅ Initialize once DOM loads
+document.addEventListener('DOMContentLoaded', () => {
     window.transactionManager = new TransactionManager();
 });

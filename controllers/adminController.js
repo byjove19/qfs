@@ -161,45 +161,122 @@ const adminController = {
     }
   },
 
-  async getUserDetail(req, res) {
-    try {
-      const user = await User.findById(req.params.id)
-        .select('firstName lastName email createdAt isActive currency loginHistory');
+async getUserDetail(req, res) {
+  try {
+    const user = await User.findById(req.params.id)
+      .select('firstName lastName email createdAt isActive currency loginHistory');
 
-      if (!user) {
-        req.flash('error', 'User not found');
-        return res.redirect('/admin/users');
-      }
-
-      // Get user's wallet balance
-      const wallet = await Wallet.findOne({ userId: req.params.id, currency: 'USD' });
-      const userBalance = wallet ? wallet.balance : 0;
-
-      const recentTransactions = await Transaction.find({ userId: req.params.id })
-        .sort({ createdAt: -1 }).limit(10);
-
-      // Add balance to user object for the template
-      const userWithBalance = {
-        ...user.toObject(),
-        balance: userBalance
-      };
-
-      res.render('admin/user-detail', {
-        title: `User Details - ${user.firstName} ${user.lastName}`,
-        user: userWithBalance,
-        recentTransactions,
-        currentUser: req.session.user,
-        messages: {
-          success: req.flash('success'),
-          error: req.flash('error')
-        }
-      });
-    } catch (error) {
-      console.error('Get User Detail Error:', error);
-      req.flash('error', 'Failed to load user details');
-      res.redirect('/admin/users');
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
     }
-  },
+
+    // Get ALL wallet balances for this user across all currencies
+    const wallets = await Wallet.find({ userId: req.params.id });
+    
+    // Calculate currency balances and total USD value
+    const currencyBalances = {};
+    let totalBalanceUSD = 0;
+    let totalDepositsUSD = 0;
+    let totalWithdrawalsUSD = 0;
+
+    // Process each wallet to get balances
+    wallets.forEach(wallet => {
+      currencyBalances[wallet.currency] = {
+        amount: wallet.balance,
+        usdValue: 0 // Will be calculated below
+      };
+    });
+
+    // Calculate USD values using exchange rates
+    const exchangeRates = {
+      'USD': 1.00,
+      'EUR': 0.92,
+      'GBP': 0.79,
+      'CAD': 1.36,
+      'AUD': 1.52,
+      'JPY': 149.50,
+      'BTC': 50000,    // Example: 1 BTC = 50,000 USD
+      'ETH': 3000,     // Example: 1 ETH = 3,000 USD
+      'XRP': 0.5,      // Example: 1 XRP = 0.5 USD
+      'DOGE': 0.1,     // Example: 1 DOGE = 0.1 USD
+      'LTC': 70,       // Example: 1 LTC = 70 USD
+      'ALGO': 0.2,     // Example: 1 ALGO = 0.2 USD
+      'XDC': 0.05,     // Example: 1 XDC = 0.05 USD
+      'XLM': 0.1,      // Example: 1 XLM = 0.1 USD
+      'MATIC': 0.8     // Example: 1 MATIC = 0.8 USD
+    };
+
+    // Calculate USD values for each currency
+    Object.keys(currencyBalances).forEach(currency => {
+      const rate = exchangeRates[currency] || 1;
+      currencyBalances[currency].usdValue = currencyBalances[currency].amount * rate;
+      totalBalanceUSD += currencyBalances[currency].usdValue;
+    });
+
+    // Get recent transactions
+    const recentTransactions = await Transaction.find({ userId: req.params.id })
+      .sort({ createdAt: -1 }).limit(10);
+
+    // Calculate total deposits and withdrawals in USD
+    const depositTransactions = await Transaction.find({ 
+      userId: req.params.id, 
+      type: 'deposit', 
+      status: 'completed' 
+    });
+    
+    const withdrawalTransactions = await Transaction.find({ 
+      userId: req.params.id, 
+      type: 'withdrawal', 
+      status: 'completed' 
+    });
+
+    // Calculate total deposits in USD
+    depositTransactions.forEach(transaction => {
+      const rate = exchangeRates[transaction.currency] || 1;
+      totalDepositsUSD += transaction.amount * rate;
+    });
+
+    // Calculate total withdrawals in USD
+    withdrawalTransactions.forEach(transaction => {
+      const rate = exchangeRates[transaction.currency] || 1;
+      totalWithdrawalsUSD += transaction.amount * rate;
+    });
+
+    // Add USD values to recent transactions for display
+    const recentTransactionsWithUSD = recentTransactions.map(transaction => {
+      const rate = exchangeRates[transaction.currency] || 1;
+      return {
+        ...transaction.toObject(),
+        usdValue: transaction.amount * rate
+      };
+    });
+
+    // Create user object with all calculated data
+    const userWithFinancialData = {
+      ...user.toObject(),
+      totalBalanceUSD: totalBalanceUSD,
+      totalDepositsUSD: totalDepositsUSD,
+      totalWithdrawalsUSD: totalWithdrawalsUSD
+    };
+
+    res.render('admin/user-detail', {
+      title: `User Details - ${user.firstName} ${user.lastName}`,
+      user: userWithFinancialData,
+      currencyBalances: currencyBalances,
+      recentTransactions: recentTransactionsWithUSD,
+      currentUser: req.session.user,
+      messages: {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    });
+  } catch (error) {
+    console.error('Get User Detail Error:', error);
+    req.flash('error', 'Failed to load user details');
+    res.redirect('/admin/users');
+  }
+},
 
   async getUserLoginHistory(req, res) {
     try {

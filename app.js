@@ -114,7 +114,34 @@ const investmentRoutes = require('./routes/investment');
 const walletController = require('./controllers/walletController');
 const depositRoutes = require('./routes/deposit');
 const adminWalletRoutes = require('./routes/adminWalletRoutes');
-const userRoutes = require('./routes/userRoutes'); // Make sure this file exists
+const userRoutes = require('./routes/userRoutes'); 
+// In your app.js file
+app.locals.getCurrencySymbol = function(currency) {
+  const symbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'JPY': '¥',
+    'BTC': '₿',
+    'ETH': 'Ξ',
+    'XRP': '✕',
+    'DOGE': 'Ð',
+    'LTC': 'Ł',
+    'ALGO': 'Α',
+    'XDC': 'XDC',
+    'XLM': 'XLM',
+    'MATIC': 'MATIC'
+  };
+  return symbols[currency] || currency;
+};
+
+app.locals.formatCurrencyAmount = function(amount, currency) {
+  const symbol = app.locals.getCurrencySymbol(currency);
+  const decimals = ['BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'].includes(currency) ? 8 : 2;
+  return `${symbol}${parseFloat(amount).toFixed(decimals)}`;
+};
 
 // ========== PUBLIC ROUTES (No authentication required) ==========
 
