@@ -1746,6 +1746,250 @@ async getUserWallets(req, res) {
   }
 },
 
+ // Get all card requests for admin
+  getCardRequests: async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 15;
+      const skip = (page - 1) * limit;
+      const { status } = req.query;
+
+      const filter = {};
+      if (status && status !== 'all') filter.status = status;
+
+      const [cardRequests, totalRequests] = await Promise.all([
+        CardRequest.find(filter)
+          .populate('userId', 'firstName lastName email')
+          .populate('processedBy', 'firstName lastName')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        CardRequest.countDocuments(filter)
+      ]);
+
+      // Stats
+      const pendingRequests = await CardRequest.countDocuments({ status: 'pending' });
+      const approvedRequests = await CardRequest.countDocuments({ status: 'approved' });
+      const totalRevenue = await CardRequest.aggregate([
+        { $match: { paymentStatus: 'completed' } },
+        { $group: { _id: null, total: { $sum: '$issuanceFee' } } }
+      ]);
+
+      res.render('admin/card-requests', {
+        title: 'Card Requests Management',
+        cardRequests,
+        totalRequests,
+        pendingRequests,
+        approvedRequests,
+        totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
+        currentPage: page,
+        totalPages: Math.ceil(totalRequests / limit),
+        filter: { status },
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
+      });
+    } catch (error) {
+      console.error('Get card requests error:', error);
+      req.flash('error', 'Failed to load card requests');
+      res.redirect('/admin/dashboard');
+    }
+  },
+
+  // Get single card request details
+  getCardRequestDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const cardRequest = await CardRequest.findById(id)
+        .populate('userId', 'firstName lastName email phone country')
+        .populate('processedBy', 'firstName lastName');
+
+      if (!cardRequest) {
+        req.flash('error', 'Card request not found');
+        return res.redirect('/admin/card-requests');
+      }
+
+      res.render('admin/card-request-detail', {
+        title: `Card Request - ${cardRequest.cardType.toUpperCase()}`,
+        cardRequest,
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
+      });
+    } catch (error) {
+      console.error('Get card request detail error:', error);
+      req.flash('error', 'Failed to load card request details');
+      res.redirect('/admin/card-requests');
+    }
+  },
+
+  // Approve card request
+  approveCardRequest: async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
+    try {
+      const { id } = req.params;
+      const { adminNote, cardNumber, expiryDate, cvv, cardHolderName } = req.body;
+
+      if (!cardNumber || !expiryDate || !cvv || !cardHolderName) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'All card details are required');
+        return res.redirect(`/admin/card-requests/${id}`);
+      }
+
+      const cardRequest = await CardRequest.findById(id).session(session);
+      if (!cardRequest) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Card request not found');
+        return res.redirect('/admin/card-requests');
+      }
+
+      if (cardRequest.status !== 'pending') {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Card request is not pending');
+        return res.redirect(`/admin/card-requests/${id}`);
+      }
+
+      // Update card request
+      cardRequest.status = 'issued';
+      cardRequest.cardNumber = cardNumber;
+      cardRequest.expiryDate = expiryDate;
+      cardRequest.cvv = cvv;
+      cardRequest.cardHolderName = cardHolderName;
+      cardRequest.processedBy = req.session.user._id;
+      cardRequest.processedAt = new Date();
+      cardRequest.adminNote = adminNote;
+      cardRequest.issuedAt = new Date();
+
+      await cardRequest.save({ session });
+
+      // Create system transaction for card issuance
+      await Transaction.create([{
+        userId: cardRequest.userId,
+        type: 'system',
+        amount: 0,
+        currency: cardRequest.currency,
+        status: 'completed',
+        description: `Virtual ${cardRequest.cardType.toUpperCase()} card issued`,
+        adminNote: `Issued by ${req.session.user.firstName} ${req.session.user.lastName}`,
+        metadata: {
+          cardRequestId: cardRequest._id,
+          cardType: cardRequest.cardType,
+          action: 'card_issued',
+          adminId: req.session.user._id
+        }
+      }], { session });
+
+      await session.commitTransaction();
+      session.endSession();
+
+      req.flash('success', 'Card request approved and card details added successfully');
+      res.redirect('/admin/card-requests');
+      
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error('Approve card request error:', error);
+      req.flash('error', 'Failed to approve card request');
+      res.redirect(`/admin/card-requests/${req.params.id}`);
+    }
+  },
+
+  // Reject card request
+  rejectCardRequest: async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
+    try {
+      const { id } = req.params;
+      const { rejectionReason } = req.body;
+
+      if (!rejectionReason) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Rejection reason is required');
+        return res.redirect(`/admin/card-requests/${id}`);
+      }
+
+      const cardRequest = await CardRequest.findById(id).session(session);
+      if (!cardRequest) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Card request not found');
+        return res.redirect('/admin/card-requests');
+      }
+
+      if (cardRequest.status !== 'pending') {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash('error', 'Card request is not pending');
+        return res.redirect(`/admin/card-requests/${id}`);
+      }
+
+      // Refund the amount
+      const wallet = await Wallet.findOne({ 
+        userId: cardRequest.userId, 
+        currency: cardRequest.currency 
+      }).session(session);
+
+      if (wallet) {
+        wallet.balance += cardRequest.totalAmount;
+        wallet.lastAction = new Date();
+        await wallet.save({ session });
+      }
+
+      // Update card request
+      cardRequest.status = 'rejected';
+      cardRequest.rejectionReason = rejectionReason;
+      cardRequest.processedBy = req.session.user._id;
+      cardRequest.processedAt = new Date();
+      cardRequest.rejectedAt = new Date();
+      cardRequest.paymentStatus = 'refunded';
+
+      await cardRequest.save({ session });
+
+      // Create refund transaction
+      await Transaction.create([{
+        userId: cardRequest.userId,
+        type: 'refund',
+        amount: cardRequest.totalAmount,
+        currency: cardRequest.currency,
+        status: 'completed',
+        description: `Refund for rejected ${cardRequest.cardType.toUpperCase()} card request`,
+        adminNote: `Request rejected by ${req.session.user.firstName}. Reason: ${rejectionReason}`,
+        metadata: {
+          cardRequestId: cardRequest._id,
+          originalTransaction: 'card_request',
+          refundReason: rejectionReason,
+          adminId: req.session.user._id
+        }
+      }], { session });
+
+      await session.commitTransaction();
+      session.endSession();
+
+      req.flash('success', 'Card request rejected and amount refunded');
+      res.redirect('/admin/card-requests');
+      
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error('Reject card request error:', error);
+      req.flash('error', 'Failed to reject card request');
+      res.redirect(`/admin/card-requests/${req.params.id}`);
+    }
+  },
+
 };
 
 module.exports = adminController;
