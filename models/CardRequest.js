@@ -20,11 +20,11 @@ const cardRequestSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
-    min: 0
+    min: 10
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected', 'completed'],
+    enum: ['pending', 'approved', 'rejected', 'issued', 'active'],
     default: 'pending'
   },
   paymentStatus: {
@@ -35,7 +35,13 @@ const cardRequestSchema = new mongoose.Schema({
   userEmail: String,
   userName: String,
   
-  // Admin processing fields
+  // Card details
+  cardNumber: String,
+  expiryDate: String,
+  cvv: String,
+  cardHolderName: String,
+  
+  // Admin processing
   processedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -44,36 +50,24 @@ const cardRequestSchema = new mongoose.Schema({
   adminNote: String,
   rejectionReason: String,
   
-  // Card details (filled by admin when card is issued)
-  cardDetails: {
-    cardNumber: String, // Masked for display
-    encryptedCardNumber: String, // Encrypted actual card number
-    expiryDate: String,
-    cvv: String,
-    cardHolderName: String,
-    issuedAt: Date,
-    activatedAt: Date,
-    status: {
-      type: String,
-      enum: ['active', 'inactive', 'blocked'],
-      default: 'active'
-    }
+  // Fees
+  issuanceFee: {
+    type: Number,
+    default: 10.00
   },
+  totalAmount: Number,
   
   // Timestamps
   approvedAt: Date,
   rejectedAt: Date,
-  completedAt: Date,
-  paidAt: Date,
-  
-  // Additional data
-  requestData: mongoose.Schema.Types.Mixed // Store original request data
+  issuedAt: Date,
+  activatedAt: Date,
   
 }, {
   timestamps: true
 });
 
-// Index for better query performance
+// Indexes
 cardRequestSchema.index({ userId: 1, status: 1 });
 cardRequestSchema.index({ status: 1 });
 cardRequestSchema.index({ createdAt: -1 });
