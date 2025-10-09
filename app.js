@@ -115,6 +115,7 @@ const walletController = require('./controllers/walletController');
 const depositRoutes = require('./routes/deposit');
 const adminWalletRoutes = require('./routes/adminWalletRoutes');
 const userRoutes = require('./routes/userRoutes'); 
+const ticketRoutes = require('./routes/tickets');
 
 app.locals.getCurrencySymbol = function(currency) {
   const symbols = {
@@ -253,6 +254,7 @@ app.use('/transactions', transactionRoutes);
 app.use('/', recipientRoutes);
 app.use('/', investmentRoutes);
 app.use('/', depositRoutes);
+app.use('/', ticketRoutes);
 
 // FIXED: Admin wallet routes - mount ONCE with proper paths
 // This makes /admin/wallet-addresses work for the page

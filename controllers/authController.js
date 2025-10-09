@@ -131,7 +131,17 @@ const authController = {
       const { email, password } = req.body;
       const user = await User.findOne({ email: String(email).toLowerCase().trim() });
       
-      if (!user || !(await user.comparePassword(password))) {
+      // Check if user exists FIRST
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password',
+          errors: sanitizeErrors([{ path: 'general', msg: 'Invalid credentials' }])
+        });
+      }
+
+      // Then check password
+      if (!(await user.comparePassword(password))) {
         return res.status(401).json({
           success: false,
           message: 'Invalid email or password',
@@ -188,7 +198,17 @@ const authController = {
       const { email, password } = req.body;
       const user = await User.findOne({ email: String(email).toLowerCase().trim() });
       
-      if (!user || !(await user.comparePassword(password))) {
+      // Check if user exists FIRST
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password',
+          errors: sanitizeErrors([{ path: 'general', msg: 'Invalid credentials' }])
+        });
+      }
+
+      // Then check password
+      if (!(await user.comparePassword(password))) {
         return res.status(401).json({
           success: false,
           message: 'Invalid email or password',
