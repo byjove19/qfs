@@ -719,6 +719,13 @@ async getUserDetail(req, res) {
    *  SUPPORT TICKETS MANAGEMENT
    *  =======================
    */
+
+  /** =======================
+   *  TICKET MANAGEMENT
+   *  =======================
+   */
+
+  // Get all tickets with pagination and filtering
   async getTickets(req, res) {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -744,7 +751,7 @@ async getUserDetail(req, res) {
         totalTickets,
         currentPage: page,
         totalPages: Math.ceil(totalTickets / limit),
-        filter: { status },
+        filter: { status: status || 'all' },
         user: req.session.user,
         messages: {
           success: req.flash('success'),
@@ -758,6 +765,242 @@ async getUserDetail(req, res) {
     }
   },
 
+  // Get ticket details for modal
+  async getTicketDetails(req, res) {
+    try {
+      console.log('🔍 [DEBUG] getTicketDetails called with ID:', req.params.id);
+      console.log('🔍 [DEBUG] Session user:', req.session.user);
+      
+      const ticketId = req.params.id;
+
+      // Validate ticket ID
+      if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+        console.log('❌ [DEBUG] Invalid ticket ID format');
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid ticket ID format'
+        });
+      }
+
+      const ticket = await Ticket.findById(ticketId)
+        .populate('userId', 'firstName lastName email')
+        .populate('assignedTo', 'firstName lastName email')
+        .populate('messages.senderId', 'firstName lastName email role')
+        .populate('closedBy', 'firstName lastName');
+
+      console.log('🔍 [DEBUG] Found ticket:', ticket ? 'Yes' : 'No');
+
+      if (!ticket) {
+        return res.status(404).json({
+          success: false,
+          message: 'Ticket not found'
+        });
+      }
+
+      // Filter out internal messages if user is not admin
+      const ticketData = ticket.toObject();
+      const userRole = req.session.user?.role;
+      console.log('🔍 [DEBUG] User role:', userRole);
+      
+      if (userRole !== 'admin') {
+        ticketData.messages = ticketData.messages.filter(msg => !msg.isInternal);
+      }
+
+      res.json({
+        success: true,
+        ticket: ticketData
+      });
+    } catch (error) {
+      console.error('❌ [ERROR] getTicketDetails error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error while fetching ticket details: ' + error.message
+      });
+    }
+  },
+
+  // Respond to ticket
+  async respondToTicket(req, res) {
+    try {
+      console.log('🔍 [DEBUG] respondToTicket called with body:', req.body);
+      console.log('🔍 [DEBUG] Session user:', req.session.user);
+      
+      const { ticketId, status, response } = req.body;
+
+      if (!ticketId || !response) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ticket ID and response are required'
+        });
+      }
+
+      const ticket = await Ticket.findById(ticketId);
+      if (!ticket) {
+        return res.status(404).json({
+          success: false,
+          message: 'Ticket not found'
+        });
+      }
+
+      // Add admin response to messages array
+      ticket.messages.push({
+        senderId: req.session.user._id, // Use session user
+        message: response,
+        timestamp: new Date(),
+        isInternal: false // Admin responses are visible to users
+      });
+
+      // Update ticket status if provided
+      if (status && status !== ticket.status) {
+        ticket.status = status;
+        
+        // If resolving or closing ticket, set closed info
+        if ((status === 'resolved' || status === 'closed') && !ticket.closedAt) {
+          ticket.closedAt = new Date();
+          ticket.closedBy = req.session.user._id; // Use session user
+        }
+      }
+
+      ticket.updatedAt = new Date();
+      await ticket.save();
+
+      // Populate the response for the frontend
+      await ticket.populate('messages.senderId', 'firstName lastName email role');
+
+      res.json({
+        success: true,
+        message: 'Response sent successfully',
+        newMessage: ticket.messages[ticket.messages.length - 1]
+      });
+    } catch (error) {
+      console.error('Error responding to ticket:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error while sending response'
+      });
+    }
+  },
+
+  // Resolve ticket
+  async resolveTicket(req, res) {
+    try {
+      console.log('🔍 [DEBUG] resolveTicket called with body:', req.body);
+      console.log('🔍 [DEBUG] Session user:', req.session.user);
+      
+      const { ticketId } = req.body;
+
+      if (!ticketId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ticket ID is required'
+        });
+      }
+
+      // Validate ticket ID
+      if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+        console.log('❌ [DEBUG] Invalid ticket ID format');
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid ticket ID format'
+        });
+      }
+
+      const ticket = await Ticket.findById(ticketId);
+      console.log('🔍 [DEBUG] Found ticket to resolve:', ticket ? 'Yes' : 'No');
+
+      if (!ticket) {
+        return res.status(404).json({
+          success: false,
+          message: 'Ticket not found'
+        });
+      }
+
+      // Use session user
+      const adminUser = req.session.user;
+      if (!adminUser) {
+        return res.status(401).json({
+          success: false,
+          message: 'Admin authentication required'
+        });
+      }
+
+      // Update ticket status to resolved
+      ticket.status = 'resolved';
+      ticket.closedAt = new Date();
+      ticket.closedBy = adminUser._id;
+      ticket.updatedAt = new Date();
+      
+      await ticket.save();
+      console.log('✅ [DEBUG] Ticket resolved successfully');
+
+      res.json({
+        success: true,
+        message: 'Ticket resolved successfully'
+      });
+    } catch (error) {
+      console.error('❌ [ERROR] resolveTicket error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error while resolving ticket: ' + error.message
+      });
+    }
+  },
+
+  // Update ticket status
+  async updateTicketStatus(req, res) {
+    try {
+      const { ticketId, status } = req.body;
+
+      if (!ticketId || !status) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ticket ID and status are required'
+        });
+      }
+
+      const validStatuses = ['open', 'in-progress', 'on-hold', 'resolved', 'closed'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid status'
+        });
+      }
+
+      const ticket = await Ticket.findById(ticketId);
+      if (!ticket) {
+        return res.status(404).json({
+          success: false,
+          message: 'Ticket not found'
+        });
+      }
+
+      ticket.status = status;
+      
+      // Handle closed/resolved status
+      if ((status === 'resolved' || status === 'closed') && !ticket.closedAt) {
+        ticket.closedAt = new Date();
+        ticket.closedBy = req.session.user._id; // Use session user
+      } else if (status === 'open' || status === 'in-progress' || status === 'on-hold') {
+        // Reopening ticket
+        ticket.closedAt = null;
+        ticket.closedBy = null;
+      }
+      
+      ticket.updatedAt = new Date();
+      await ticket.save();
+
+      res.json({
+        success: true,
+        message: `Ticket status updated to ${status}`
+      });
+    } catch (error) {
+      console.error('Error updating ticket status:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error while updating ticket status'
+      });
+    }
+  },
   /** =======================
    *  INVESTMENTS MANAGEMENT
    *  =======================

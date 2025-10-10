@@ -49,8 +49,13 @@ router.post('/request-money', adminController.requestMoneyFromUser);
 router.post('/exchange-money', adminController.exchangeMoney);
 router.post('/admin-withdrawal', adminController.adminWithdrawal);
 
-// Ticket management routes
+// TICKET MANAGEMENT ROUTES
+// TICKET MANAGEMENT ROUTES
 router.get('/tickets', adminController.getTickets);
+router.get('/tickets/:id/details', adminController.getTicketDetails);
+router.post('/tickets/respond', adminController.respondToTicket);
+router.post('/tickets/resolve', adminController.resolveTicket);
+router.put('/tickets/status', adminController.updateTicketStatus);
 
 // Investment management routes
 router.get('/investments', adminController.getInvestments);
