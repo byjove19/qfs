@@ -3,47 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 - Server Error | QFS</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>Server Error | QFS</title>
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f8f9fa;
-            color: #333;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: #f4f6fb;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             flex-direction: column;
+            color: #333;
+            padding: 20px;
         }
+
+        .card {
+            background: #fff;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 0.8s ease-in-out;
+            margin-bottom: 25px;
+        }
+
+        .circle {
+            height: 160px;
+            width: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #000000, #434343);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .circle i {
+            font-size: 80px;
+            color: #ff6b6b;
+        }
+
         h1 {
-            font-size: 3rem;
-            color: #d9204c;
-            margin-bottom: 1rem;
+            font-size: 28px;
+            font-weight: 900;
+            margin: 10px 0 15px;
+            color: #222;
         }
+
+        .error-code {
+            font-size: 100px;
+            font-weight: 900;
+            color: #222;
+            line-height: 1;
+            margin: 20px 0;
+        }
+
         p {
-            font-size: 1.1rem;
+            font-size: 16px;
             color: #555;
+            line-height: 1.6;
+            margin-bottom: 25px;
         }
-        a.btn {
-            display: inline-block;
-            margin-top: 1.5rem;
-            background: #635bfe;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 28px;
+            font-size: 16px;
+            text-transform: uppercase;
+            font-weight: 600;
+            border-radius: 8px;
             color: #fff;
-            padding: 0.7rem 1.5rem;
-            border-radius: 6px;
+            background: linear-gradient(to right, #000000, #333333);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             text-decoration: none;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            min-width: 180px;
         }
-        a.btn:hover {
-            background: #4e45d8;
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #333333, #000000);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #333;
+            border: 2px solid #333;
+        }
+
+        .btn-outline:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .support-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: center;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .support-info h3 {
+            margin-top: 0;
+            color: #222;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .support-info p {
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 40px 25px;
+            }
+            
+            .circle {
+                height: 140px;
+                width: 140px;
+            }
+            
+            .circle i {
+                font-size: 70px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>500 - Server Error</h1>
-    <p>Something went wrong on our end. Please try again later.</p>
-    <a href="/dashboard" class="btn">Go to Dashboard</a>
+    <div class="card">
+        <div class="circle">
+            <i class="fa fa-server"></i>
+        </div>
+        <div class="error-code">500</div>
+        <h1>Server Error</h1>
+        <p>
+            Something went wrong on our end. Our technical team has been notified 
+            and is working to resolve the issue. Please try again shortly.
+        </p>
+        
+        <div class="support-info">
+            <h3>Need Immediate Assistance?</h3>
+            <p>If this problem persists, please contact our support team for help.</p>
+        </div>
+        
+        <div class="button-group">
+            <a class="btn" href="/">
+                <i class="fa fa-home"></i> Go Home
+            </a>
+            <a class="btn" href="/dashboard">
+                <i class="fa fa-dashboard"></i> Dashboard
+            </a>
+            <a class="btn btn-outline" href="/support">
+                <i class="fa fa-life-ring"></i> Contact Support
+            </a>
+        </div>
+    </div>
 </body>
 </html>

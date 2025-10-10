@@ -51,6 +51,7 @@
   <script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/sqrx-email-notifier.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-email-notifier/" data-stencil-namespace="sqrx-email-notifier" id="sqrx-email-notifier"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/sqrx-notification-bar.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-notification-bar/" data-stencil-namespace="sqrx-notification-bar" id="sqrx-notification-bar"></script><script src="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/sqrx-dialog.esm.js" type="module" data-resources-url="chrome-extension://kapjaoifikajdcdehfdlmojlepfpkpoe/sqrx-dialog/" data-stencil-namespace="sqrx-dialog" id="sqrx-dialog"></script><link rel="stylesheet" href="/Dashboard/widget.css" class="jv-css"></head>
   <body>
 
+   
     <!-- sidebar section -->
     <!-- Sidebar Start -->
 <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
@@ -104,7 +105,7 @@
 
                 <!-- Deposit Money -->
                                 <li>
-                    <a href="/deposit" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
+                    <a href="/makedepo" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
                         <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M7.40483 5H18.5952C19.0265 4.99999 19.3986 4.99997 19.705 5.02548C20.0285 5.05239 20.3502 5.11182 20.6598 5.27249C21.1216 5.51217 21.4971 5.89462 21.7325 6.36503C21.8902 6.68034 21.9486 7.00802 21.975 7.33748C22 7.64962 22 8.02858 22 8.46786V11.6667C22 12.1269 21.6337 12.5 21.1818 12.5C20.7299 12.5 20.3636 12.1269 20.3636 11.6667V10.8333H5.63637V14.8333C5.63637 15.3138 5.637 15.624 5.65594 15.8601C5.6741 16.0865 5.70493 16.1705 5.72554 16.2117C5.80398 16.3685 5.92915 16.4959 6.0831 16.5758C6.12355 16.5968 6.20596 16.6282 6.42823 16.6467C6.66005 16.666 6.96464 16.6667 7.43636 16.6667H13C13.4519 16.6667 13.8182 17.0398 13.8182 17.5C13.8182 17.9602 13.4519 18.3333 13 18.3333H7.40485C6.97354 18.3333 6.60145 18.3334 6.29498 18.3079C5.97151 18.2809 5.64979 18.2215 5.34021 18.0608C4.87835 17.8212 4.50286 17.4387 4.26753 16.9683C4.10979 16.653 4.05144 16.3253 4.02501 15.9959C3.99997 15.6837 3.99999 15.3047 4 14.8655V8.46788C3.99999 8.02859 3.99997 7.64962 4.02501 7.33748C4.05144 7.00802 4.10979 6.68034 4.26753 6.36503C4.50286 5.89462 4.87835 5.51217 5.34021 5.27249C5.64979 5.11182 5.97151 5.05239 6.29498 5.02548C6.60145 4.99997 6.97353 4.99999 7.40483 5ZM5.63637 9.16667H20.3636V8.5C20.3636 8.01954 20.363 7.70931 20.3441 7.4732C20.3259 7.24681 20.2951 7.16288 20.2745 7.12168C20.196 6.96488 20.0709 6.83739 19.9169 6.7575C19.8764 6.7365 19.794 6.7051 19.5718 6.68661C19.3399 6.66732 19.0354 6.66667 18.5636 6.66667H7.43637C6.96464 6.66667 6.66005 6.66732 6.42823 6.68661C6.20596 6.7051 6.12355 6.7365 6.0831 6.7575C5.92915 6.83739 5.80398 6.96487 5.72554 7.12168C5.70493 7.16288 5.6741 7.24681 5.65594 7.4732C5.637 7.70931 5.63637 8.01954 5.63637 8.5V9.16667ZM18.7273 13.3333C19.1791 13.3333 19.5455 13.7064 19.5455 14.1667V17.1548L20.6033 16.0774C20.9228 15.752 21.4408 15.752 21.7604 16.0774C22.0799 16.4028 22.0799 16.9305 21.7604 17.2559L19.3058 19.7559C18.9863 20.0814 18.4683 20.0814 18.1487 19.7559L15.6942 17.2559C15.3747 16.9305 15.3747 16.4028 15.6942 16.0774C16.0137 15.752 16.5317 15.752 16.8513 16.0774L17.9091 17.1548V14.1667C17.9091 13.7064 18.2754 13.3333 18.7273 13.3333Z" fill="#C1BFDF"></path>
                         </svg></span>
@@ -112,27 +113,7 @@
                     </a>
                 </li>
                 
-                <li class="accordion-item bg-secondary border-0">
-                    <div class="accordion-header " id="flush-headtwo">
-                        <button class="mb-1 shadow-none bg-transparent p-0 d-flex align-items-center list-option h-46 accordion-button accordion-icon collapsed text-info-100" type="button" data-bs-toggle="collapse" data-bs-target="#flush-investment" aria-expanded="false" aria-controls="flush-investment">
-                            <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.40483 6H18.5952C19.0265 5.99999 19.3986 5.99997 19.705 6.02548C20.0285 6.05239 20.3502 6.11182 20.6598 6.27249C21.1216 6.51217 21.4971 6.89462 21.7325 7.36503C21.8902 7.68034 21.9486 8.00802 21.975 8.33748C22 8.64962 22 9.02858 22 9.46786V12.6667C22 13.1269 21.6337 13.5 21.1818 13.5C20.7299 13.5 20.3636 13.1269 20.3636 12.6667V11.8333H5.63637V15.8333C5.63637 16.3138 5.637 16.624 5.65594 16.8601C5.6741 17.0865 5.70493 17.1705 5.72554 17.2117C5.80398 17.3685 5.92915 17.4959 6.0831 17.5758C6.12355 17.5968 6.20596 17.6282 6.42823 17.6467C6.66005 17.666 6.96464 17.6667 7.43636 17.6667H13C13.4519 17.6667 13.8182 18.0398 13.8182 18.5C13.8182 18.9602 13.4519 19.3333 13 19.3333H7.40485C6.97354 19.3333 6.60145 19.3334 6.29498 19.3079C5.97151 19.2809 5.64979 19.2215 5.34021 19.0608C4.87835 18.8212 4.50286 18.4387 4.26753 17.9683C4.10979 17.653 4.05144 17.3253 4.02501 16.9959C3.99997 16.6837 3.99999 16.3047 4 15.8655V9.46788C3.99999 9.02859 3.99997 8.64962 4.02501 8.33748C4.05144 8.00802 4.10979 7.68034 4.26753 7.36503C4.50286 6.89462 4.87835 6.51217 5.34021 6.27249C5.64979 6.11182 5.97151 6.05239 6.29498 6.02548C6.60145 5.99997 6.97353 5.99999 7.40483 6ZM5.63637 10.1667H20.3636V9.5C20.3636 9.01954 20.363 8.70931 20.3441 8.4732C20.3259 8.24681 20.2951 8.16288 20.2745 8.12168C20.196 7.96488 20.0709 7.83739 19.9169 7.7575C19.8764 7.7365 19.794 7.7051 19.5718 7.68661C19.3399 7.66732 19.0354 7.66667 18.5636 7.66667H7.43637C6.96464 7.66667 6.66005 7.66732 6.42823 7.68661C6.20596 7.7051 6.12355 7.7365 6.0831 7.7575C5.92915 7.83739 5.80398 7.96487 5.72554 8.12168C5.70493 8.16288 5.6741 8.24681 5.65594 8.4732C5.637 8.70931 5.63637 9.01954 5.63637 9.5V10.1667ZM18.1487 14.5774C18.4683 14.252 18.9863 14.252 19.3058 14.5774L21.7604 17.0774C22.0799 17.4028 22.0799 17.9305 21.7604 18.2559C21.4408 18.5814 20.9228 18.5814 20.6033 18.2559L19.5455 17.1785V20.1667C19.5455 20.6269 19.1791 21 18.7273 21C18.2754 21 17.9091 20.6269 17.9091 20.1667V17.1785L16.8513 18.2559C16.5317 18.5814 16.0137 18.5814 15.6942 18.2559C15.3747 17.9305 15.3747 17.4028 15.6942 17.0774L18.1487 14.5774Z" fill="#C1BFDF"></path>
-                            </svg></span>
-                            <span class="child-currency">Investment</span>
-                        </button>
-                    </div>
-                    <div id="flush-investment" class="accordion-collapse collapse " aria-labelledby="flush-headtwo" data-bs-parent="#accordion-menu">
-                        <ul class="accordion-body collapse-child ml-28 p-0 pl-16 mr-20">
-
-                            <!-- investment Money -->
-                            <li><a href="/investment" class="mb-2 ml-34 pl-14 f-14 d-flex align-items-center list-option h-46 text-info-100">Invest New</a></li>
-                            
-                            <!-- investment List -->
-                            <li><a href="/investment-list" class="mb-2 ml-34 pl-14 f-14 d-flex align-items-center list-option h-46 text-info-100">Investement Log</a></li>
-                        </ul>
-                    </div>
-                </li>
-
+              
                  
                 <!-- Send Money -->
                                 <li>
@@ -163,46 +144,16 @@
                         <span>Exchange Money</span>
                     </a>
                 </li>
-                
-                <!-- Withdraw Money -->
-                                <li class="accordion-item bg-secondary border-0">
-                    <div class="accordion-header " id="flush-headtwo">
-                        <button class="mb-1 shadow-none bg-transparent p-0 d-flex align-items-center list-option h-46 accordion-button accordion-icon collapsed text-info-100" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                            <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.40483 6H18.5952C19.0265 5.99999 19.3986 5.99997 19.705 6.02548C20.0285 6.05239 20.3502 6.11182 20.6598 6.27249C21.1216 6.51217 21.4971 6.89462 21.7325 7.36503C21.8902 7.68034 21.9486 8.00802 21.975 8.33748C22 8.64962 22 9.02858 22 9.46786V12.6667C22 13.1269 21.6337 13.5 21.1818 13.5C20.7299 13.5 20.3636 13.1269 20.3636 12.6667V11.8333H5.63637V15.8333C5.63637 16.3138 5.637 16.624 5.65594 16.8601C5.6741 17.0865 5.70493 17.1705 5.72554 17.2117C5.80398 17.3685 5.92915 17.4959 6.0831 17.5758C6.12355 17.5968 6.20596 17.6282 6.42823 17.6467C6.66005 17.666 6.96464 17.6667 7.43636 17.6667H13C13.4519 17.6667 13.8182 18.0398 13.8182 18.5C13.8182 18.9602 13.4519 19.3333 13 19.3333H7.40485C6.97354 19.3333 6.60145 19.3334 6.29498 19.3079C5.97151 19.2809 5.64979 19.2215 5.34021 19.0608C4.87835 18.8212 4.50286 18.4387 4.26753 17.9683C4.10979 17.653 4.05144 17.3253 4.02501 16.9959C3.99997 16.6837 3.99999 16.3047 4 15.8655V9.46788C3.99999 9.02859 3.99997 8.64962 4.02501 8.33748C4.05144 8.00802 4.10979 7.68034 4.26753 7.36503C4.50286 6.89462 4.87835 6.51217 5.34021 6.27249C5.64979 6.11182 5.97151 6.05239 6.29498 6.02548C6.60145 5.99997 6.97353 5.99999 7.40483 6ZM5.63637 10.1667H20.3636V9.5C20.3636 9.01954 20.363 8.70931 20.3441 8.4732C20.3259 8.24681 20.2951 8.16288 20.2745 8.12168C20.196 7.96488 20.0709 7.83739 19.9169 7.7575C19.8764 7.7365 19.794 7.7051 19.5718 7.68661C19.3399 7.66732 19.0354 7.66667 18.5636 7.66667H7.43637C6.96464 7.66667 6.66005 7.66732 6.42823 7.68661C6.20596 7.7051 6.12355 7.7365 6.0831 7.7575C5.92915 7.83739 5.80398 7.96487 5.72554 8.12168C5.70493 8.16288 5.6741 8.24681 5.65594 8.4732C5.637 8.70931 5.63637 9.01954 5.63637 9.5V10.1667ZM18.1487 14.5774C18.4683 14.252 18.9863 14.252 19.3058 14.5774L21.7604 17.0774C22.0799 17.4028 22.0799 17.9305 21.7604 18.2559C21.4408 18.5814 20.9228 18.5814 20.6033 18.2559L19.5455 17.1785V20.1667C19.5455 20.6269 19.1791 21 18.7273 21C18.2754 21 17.9091 20.6269 17.9091 20.1667V17.1785L16.8513 18.2559C16.5317 18.5814 16.0137 18.5814 15.6942 18.2559C15.3747 17.9305 15.3747 17.4028 15.6942 17.0774L18.1487 14.5774Z" fill="#C1BFDF"></path>
-                            </svg></span>
-                            <span class="child-currency">Withdrawals</span>
-                        </button>
-                    </div>
-                    <div id="flush-collapseTwo" class="accordion-collapse collapse " aria-labelledby="flush-headtwo" data-bs-parent="#accordion-menu">
-                        <ul class="accordion-body collapse-child ml-28 p-0 pl-16 mr-20">
-
-                            <!-- Withdraw Money -->
-                            <li><a href="/transactions/withdraw" class="mb-2 ml-34 pl-14 f-14 d-flex align-items-center list-option h-46 text-info-100">Withdraw Money</a></li>
-                            
-                            <!-- Withdraw List -->
-                            <li><a href="/transactions/withdrawal-list" class="mb-2 ml-34 pl-14 f-14 d-flex align-items-center list-option h-46 text-info-100">Withdrawal List</a></li>
-
-                            <!-- Withdraw Settings -->
-                            <li><a href="/transactions/Withdraw-setting" class="mb-2 ml-34 pl-14 f-14 d-flex align-items-center list-option h-46 text-info-100">Withdrawal Settings</a></li>
-                        </ul>
-                    </div>
-                </li>
-                
-                <!-- Merchant Payments -->
-                
-                <li class="mb-20 d-flex align-items-center text-warning f-13 ml-20 mt-38 gilroy-Semibold res-other text-uppercase">Others</li>
-
-                <!-- Dispute -->
-                <li>
-                    <a href="/disputes" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
+                <!-- Withdrawal-->
+                                <li>
+                    <a href="/transactions/withdraw" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
                         <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16.375 5C16.806 5 17.2193 5.1712 17.524 5.47595C17.8288 5.7807 18 6.19402 18 6.625H6.625V15.7063C6.19402 15.7063 5.7807 15.5351 5.47595 15.2304C5.1712 14.9256 5 14.5123 5 14.0813V6.625C5 6.19402 5.1712 5.7807 5.47595 5.47595C5.7807 5.1712 6.19402 5 6.625 5H16.375Z" fill="#C1BFDF"></path>
-                            <path d="M14.75 21.25L12.5831 18.9563H9.875C9.44402 18.9563 9.0307 18.7851 8.72595 18.4804C8.4212 18.1756 8.25 17.7623 8.25 17.3313V9.875C8.25 9.44402 8.4212 9.0307 8.72595 8.72595C9.0307 8.4212 9.44402 8.25 9.875 8.25H19.625C20.056 8.25 20.4693 8.4212 20.774 8.72595C21.0788 9.0307 21.25 9.44402 21.25 9.875V17.3313C21.25 17.7623 21.0788 18.1756 20.774 18.4804C20.4693 18.7851 20.056 18.9563 19.625 18.9563H16.9169L14.75 21.25ZM16.2166 17.3313H19.625V9.875H9.875V17.3313H13.2834L14.75 18.8832L16.2166 17.3313Z" fill="#C1BFDF"></path>
-                        </svg></span>
-                        <span>Disputes</span>
+                                    <path d="M13.7231 12.2688C12.2769 11.7894 11.5781 11.4887 11.5781 10.725C11.5781 9.89625 12.48 9.59562 13.0488 9.59562C14.1131 9.59562 14.5031 10.4 14.5925 10.6844L15.8762 10.14C15.7544 9.77437 15.21 8.58 13.8125 8.32V7.3125H12.1875V8.33625C10.1725 8.79125 10.1644 10.66 10.1644 10.7413C10.1644 12.5856 11.9925 13.1056 12.8862 13.4306C14.17 13.8856 14.7388 14.3 14.7388 15.08C14.7388 15.9981 13.8856 16.3881 13.13 16.3881C11.6512 16.3881 11.2288 14.8687 11.18 14.69L9.83125 15.2344C10.3431 17.0138 11.6837 17.4931 12.1875 17.6394V18.6875H13.8125V17.68C14.1375 17.6069 16.1687 17.2006 16.1687 15.0637C16.1687 13.9344 15.6731 12.9431 13.7231 12.2688V12.2688ZM5.6875 20.3125H4.0625V15.4375H8.9375V17.0625H6.9225C8.23062 19.0206 10.465 20.3125 13 20.3125C14.9394 20.3125 16.7994 19.5421 18.1707 18.1707C19.5421 16.7994 20.3125 14.9394 20.3125 13H21.9375C21.9375 17.94 17.94 21.9375 13 21.9375C9.9775 21.9375 7.30438 20.4344 5.6875 18.1431V20.3125ZM4.0625 13C4.0625 8.06 8.06 4.0625 13 4.0625C16.0225 4.0625 18.6956 5.56563 20.3125 7.85688V5.6875H21.9375V10.5625H17.0625V8.9375H19.0775C17.7694 6.97937 15.535 5.6875 13 5.6875C11.0606 5.6875 9.20064 6.45792 7.82928 7.82928C6.45792 9.20064 5.6875 11.0606 5.6875 13H4.0625Z" fill="#C1BFDF"></path>
+                                </svg></span>
+                        <span>Withdrawal</span>
                     </a>
                 </li>
+              
 
                 <!-- Tickets -->
                 <li>
@@ -224,17 +175,7 @@
                     </a>
                 </li>
 
-                <!-- Verifications -->
-                <li>
-                    <a href="/verification" class="mb-1 d-flex align-items-center list-option h-46 mt-7 text-info-100">
-                        <span class="ms-3 mr-20"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14.9276 4.016C14.8495 4.05071 14.5067 4.40221 14.1248 4.84049L13.4565 5.59989L12.9097 5.60423H12.363L11.699 4.88388C11.3345 4.489 10.9744 4.1375 10.9006 4.09845C10.8268 4.05939 10.688 4.02902 10.5925 4.02902C10.2453 4.02902 9.02596 4.51069 8.40108 4.88822C8.21015 5.00539 8.12336 5.09218 8.05393 5.23104C7.9628 5.42197 7.9628 5.42197 8.03223 6.43306L8.10166 7.44415L7.71979 7.83036L7.33792 8.21223L6.31381 8.18619C5.18122 8.15147 5.13783 8.15581 4.91218 8.4292C4.74294 8.62881 4.39579 9.37519 4.18749 9.99139C3.9792 10.6033 3.94883 10.933 4.07467 11.1283C4.11372 11.1934 4.48258 11.5406 4.88614 11.9007L5.62385 12.556V13.0897V13.6278L4.88614 14.3091C4.47824 14.691 4.12674 15.0512 4.09637 15.1249C4.06599 15.1987 4.04429 15.3376 4.04863 15.433C4.05731 15.7108 4.30032 16.379 4.65181 17.0907C4.99463 17.7893 5.12047 17.9456 5.38952 17.9976C5.47197 18.0107 5.971 17.9976 6.49607 17.9629L7.45075 17.8978L7.84129 18.284L8.23184 18.6703L8.21882 19.7421C8.20581 20.8096 8.20581 20.8139 8.30995 20.9571C8.49221 21.2132 9.85479 21.812 10.6055 21.9682C11.0481 22.0593 11.1349 22.0029 11.89 21.1394L12.5366 20.4017H12.8924C13.0877 20.4017 13.335 20.3887 13.4392 20.3756L13.6301 20.3496L14.3027 21.0743C14.6716 21.4735 15.0317 21.8294 15.1055 21.8684C15.4136 22.0333 16.0949 21.8511 17.158 21.326C17.7699 21.0222 17.9652 20.8573 18.0173 20.5883C18.0303 20.5145 18.0173 20.0242 17.9825 19.5034L17.9218 18.5574L18.2906 18.1539L18.6638 17.746L19.2063 17.772C19.5057 17.7893 19.9787 17.8024 20.2564 17.8067C20.7424 17.811 20.7685 17.8067 20.942 17.6939C21.0983 17.5941 21.1633 17.4943 21.3977 17.0083C21.9184 15.9408 22.118 15.1249 21.9271 14.8342C21.888 14.7734 21.5235 14.4263 21.1156 14.0661L20.3779 13.4109V12.8815V12.352L20.9464 11.8313C21.9835 10.881 22.0529 10.7682 21.9184 10.2735C21.8056 9.86555 21.5756 9.29708 21.3282 8.80673C21.0375 8.22091 20.9637 8.12544 20.7381 8.02563C20.5558 7.94752 20.5211 7.94318 19.5447 8.01261L18.538 8.0777L18.1561 7.69584L17.7742 7.31396L17.809 6.36363C17.848 5.3699 17.8307 5.19632 17.6788 4.98369C17.5009 4.732 15.8215 4.02902 15.2661 3.9726C15.1402 3.95959 15.01 3.97694 14.9276 4.016ZM16.173 5.71705L16.4334 5.83422L16.403 6.81927C16.3813 7.57867 16.3856 7.82168 16.429 7.90413C16.4941 8.02997 17.835 9.36218 17.9608 9.43161C18.0259 9.46632 18.2646 9.46632 18.7897 9.44029C19.1976 9.42293 19.6576 9.40557 19.8138 9.40123H20.0915L20.2781 9.81348C20.3779 10.0391 20.4604 10.2648 20.4604 10.3125C20.4604 10.3689 20.2955 10.5468 19.996 10.8202C19.1802 11.5579 19.037 11.7185 18.998 11.9441C18.9763 12.057 18.9763 12.339 18.9936 12.5734C19.0153 12.812 19.0197 13.1896 19.0023 13.4152C18.9676 13.9967 18.998 14.0488 19.8572 14.8082C20.239 15.1466 20.5515 15.4374 20.5515 15.4504C20.5515 15.4634 20.469 15.6804 20.3649 15.9321L20.1826 16.3877L19.2019 16.3747C18.0086 16.353 18.0433 16.3443 17.5616 16.9041C17.375 17.1211 17.093 17.4031 16.9367 17.5333C16.5028 17.8892 16.4898 17.9369 16.5505 18.9176C16.633 20.176 16.6677 20.0285 16.2294 20.2324C15.6132 20.5145 15.7087 20.5492 15.0014 19.7855C14.6585 19.421 14.3244 19.0868 14.255 19.0391C14.1769 18.9914 14.051 18.961 13.9425 18.961C12.3152 18.9827 12.0636 18.9957 11.9377 19.0651C11.8336 19.1216 10.7357 20.3062 10.6055 20.5015C10.5795 20.5449 10.2106 20.4234 9.77234 20.2281L9.55971 20.1326L9.59008 19.7334C9.63348 19.0955 9.62914 18.1756 9.58141 18.0541C9.55537 17.9933 9.36443 17.7893 9.15614 17.6028C8.94785 17.4162 8.64409 17.1124 8.47485 16.9258C8.27524 16.7002 8.12336 16.57 8.02355 16.5353C7.90639 16.4962 7.65036 16.5005 6.94737 16.5396C6.43966 16.57 5.9927 16.583 5.96232 16.57C5.90591 16.5526 5.53706 15.7368 5.53706 15.637C5.53706 15.6153 5.85384 15.3072 6.24004 14.9514C6.62191 14.5955 6.96039 14.2484 6.99077 14.1789C7.06888 13.9967 7.02548 12.096 6.93869 11.9268C6.90832 11.8617 6.56116 11.5232 6.16627 11.1761L5.45461 10.5468L5.51102 10.3863C5.54574 10.2952 5.63252 10.0695 5.71063 9.88291L5.85384 9.54443L6.27042 9.57047C6.50041 9.58349 6.95171 9.60084 7.27717 9.60518C7.96714 9.61386 8.03223 9.58783 8.34033 9.19728C8.44881 9.05842 8.7222 8.77635 8.94785 8.56806C9.1735 8.35543 9.39047 8.13412 9.42519 8.06903C9.49896 7.92582 9.5033 7.60037 9.4382 6.65437C9.39481 6.05987 9.39481 5.93403 9.44688 5.88629C9.50764 5.82988 10.2627 5.51744 10.3451 5.51744C10.3712 5.51744 10.6793 5.82988 11.0351 6.21175C11.3866 6.59362 11.7381 6.9321 11.8075 6.96681C11.9898 7.04926 13.8688 7.01454 14.064 6.92342C14.1378 6.8887 14.4763 6.54155 14.8148 6.151L15.4396 5.43933L15.674 5.51744C15.8041 5.56518 16.0298 5.65196 16.173 5.71705Z" fill="#C1BFDF"></path>
-                            <path d="M12.3806 9.57485C9.98525 10.0305 8.78323 12.76 10.0677 14.8256C10.736 15.8887 11.9163 16.5049 13.1747 16.4398C13.7432 16.4095 14.0426 16.3313 14.5417 16.084C15.2533 15.7368 15.7567 15.2335 16.1038 14.5218C16.3512 14.0228 16.4293 13.7233 16.4597 13.1549C16.5248 11.9442 15.952 10.7942 14.9409 10.1086C14.2249 9.62258 13.2268 9.41429 12.3806 9.57485ZM13.4698 10.9635C14.5937 11.2282 15.3141 12.3998 15.019 13.4977C14.8237 14.2397 14.2032 14.8516 13.4785 15.0165C12.0769 15.342 10.736 14.1052 10.9529 12.6906C11.1439 11.4799 12.2982 10.6857 13.4698 10.9635Z" fill="#C1BFDF"></path>
-                        </svg></span>
-                        <span>Verifications</span>
-                    </a>
-                </li>
-
+               
                 <!-- Custom Addons Header Menu -->
                         
                                                                                                                                             <!-- Custom Addons Header Menu End-->
@@ -242,7 +183,6 @@
         </div>
     </div>
 </div>
-
 <!-- Sidebar End -->
     <!-- end sidebar section -->
 
@@ -322,7 +262,7 @@
                 </a>
             </li>
             <li class="d-flex align-items-center">
-                <a href="/profile/personal-id" class="f-13 gilroy-medium">
+                <a href="/profile" class="f-13 gilroy-medium">
                     <svg width="17" height="15" viewBox="0 0 17 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M3.03788 0H1.82273V6.25H3.03788V0ZM10.4503 6.25H6.56183L6.07577 5.5625V4.3125L6.56183 3.75H10.4503L10.9364 4.375V5.625L10.4503 6.25ZM4.37455 10H0.486061L0 9.375V8.125L0.486061 7.5H4.37455L4.86061 8.125V9.375L4.37455 10ZM9.11365 0H7.8985V2.5H9.11365V0ZM7.8985 7.5H9.11365V15H7.8985V7.5ZM3.03788 11.25H1.82273V15H3.03788V11.25ZM12.6376 11.25H16.5139L17 10.625V9.4375L16.5139 8.8125H12.6376L12.1515 9.4375V10.625L12.6376 11.25ZM15.1894 0H13.9743V7.5H15.1894V0ZM13.9743 12.5H15.1894V15H13.9743V12.5Z" fill="currentColor"></path>
                     </svg>
@@ -347,161 +287,133 @@
   <div class="containt-parent">
     <div class="main-containt">
       <!-- main-containt -->
-      <div class="pb-34">
-        <div class="px-61 pb-20 helper-size">
-          <p class="mb-0 f-26 gilroy-Semibold text-uppercase text-center text-dark">Wallet List</p>
-          <p class="mb-0 text-center f-16 leading-26 gilroy-medium text-gray-100 dark-c dark-p mt-8">Here you will get all of your Fiat and Crypto wallets including default one. You can also perform crypto send/receive of your crypto coins.</p>
-        </div>
+<!-- main-containt -->
+<div class="pb-34">
+  <div class="px-61 pb-20 helper-size">
+    <p class="mb-0 f-26 gilroy-Semibold text-uppercase text-center text-dark">Wallet List</p>
+    <p class="mb-0 text-center f-16 leading-26 gilroy-medium text-gray-100 dark-c dark-p mt-8">Here you will get all of your Fiat and Crypto wallets including default one. You can also perform crypto send/receive of your crypto coins.</p>
+  </div>
 
-        <% 
-        // Define conversion rates and calculate total USD at the top
-        const conversionRates = {
-          'USD': 1.00,
-          'Doge': 140,      // 1 DOGE = 0.007 USD
-          'XDC': 45,        // 1 XDC = 0.022 USD  
-          'XLM': 25,        // 1 XLM = 0.04 USD
-          'Matic': 1.2,     // 1 MATIC = 0.83 USD
-          'XRP': 1.85,      // 1 XRP = 0.54 USD
-          'ETH': 0.00045,   // 1 ETH = 2222 USD
-          'LTC': 0.012,     // 1 LTC = 83 USD
-          'BTC': 0.000025,  // 1 BTC = 40000 USD
-          'ALGO': 6.25      // 1 ALGO = 0.16 USD
-        };
+  <% 
+  // Calculate total balance
+  let totalBalance = 0;
+  if (wallets && wallets.length > 0) {
+    wallets.forEach(wallet => {
+      totalBalance += wallet.balance;
+    });
+  }
+  %>
 
-        // Calculate total USD value
-        let totalUSD = 0;
-        if (wallets && wallets.length > 0) {
-          wallets.forEach(wallet => {
-            const rate = conversionRates[wallet.currency] || 1;
-            const usdValue = wallet.currency === 'USD' ? wallet.balance : wallet.balance / rate;
-            totalUSD += usdValue;
-          });
-        }
-        %>
-
-       <!-- Total Balance Card - Matching Individual Wallet Style -->
-<div class="px-28 helper-div">
-  <div class="row r-mt-n">
-    <div class="col-12 col-xl-6 mt-19">
-      <div class="balance-box">
-        <div class="d-flex justify-content-between">
-          <div class="wallet-left-box d-flex gap-18">
-            <div class="curency-box d-flex align-items-center justify-content-center bg-white-200">
-              <i class="fas fa-dollar-sign fa-lg text-primary"></i>             
+  <!-- Total Balance Card - Matching Individual Wallet Style -->
+  <div class="px-28 helper-div">
+    <div class="row r-mt-n">
+      <div class="col-12 col-xl-6 mt-19">
+        <div class="balance-box">
+          <div class="d-flex justify-content-between">
+            <div class="wallet-left-box d-flex gap-18">
+              <div class="curency-box d-flex align-items-center justify-content-center bg-white-200">
+                <i class="fas fa-dollar-sign fa-lg text-primary"></i>             
+              </div>
+              <div class="mt-n3p span-currency">
+                <span class="f-15 gilroy-medium text-gray">TOTAL BALANCE</span>
+                <p class="mb-0 mt-6">
+                  <span class="f-28 gilroy-Semibold text-dark">WALLETS</span>
+                </p>
+              </div>
             </div>
-            <div class="mt-n3p span-currency">
-              <span class="f-15 gilroy-medium text-gray">TOTAL BALANCE</span>
-              <p class="mb-0 mt-6">
-                <span class="f-28 gilroy-Semibold text-dark">WALLETS</span>
+            <div class="wallet-right-box mt-n3p span-currency text-end">
+              <span class="f-15 gilroy-medium text-gray">Total Balance</span>
+              <p class="mb-0 mt-6 f-28 gilroy-Semibold text-dark l-s2">
+                $<%= totalBalance.toFixed(2) %>
               </p>
             </div>
           </div>
-          <div class="wallet-right-box mt-n3p span-currency text-end">
-            <span class="f-15 gilroy-medium text-gray">Total USD Value</span>
-            <p class="mb-0 mt-6 f-28 gilroy-Semibold text-dark l-s2">
-              $<%= totalUSD.toFixed(2) %>
-            </p>
-          </div>
         </div>
-      </div>
-    </div>               
+      </div>               
+    </div>
   </div>
-</div>
 
-        <!-- Individual Wallet Balances -->
-        <div class="px-28 helper-div">
-          <div class="row r-mt-n">
-            <% if (wallets && wallets.length > 0) { %>
-              <% wallets.forEach(wallet => { 
-                // Calculate USD value for each wallet
-                const rate = conversionRates[wallet.currency] || 1;
-                const usdValue = wallet.currency === 'USD' ? wallet.balance : wallet.balance / rate;
-              %>
-                <div class="col-12 col-xl-6 mt-19">
-                  <div class="balance-box">
-                    <div class="d-flex justify-content-between">
-                      <div class="wallet-left-box d-flex gap-18">
-                        <div class="curency-box d-flex align-items-center justify-content-center">
-                          <img src="<%= wallet.image %>" alt="Currency">             
-                        </div>
-                        <div class="mt-n3p span-currency">
-                          <span class="f-15 gilroy-medium text-gray"><%= wallet.type %></span>
-                          <p class="mb-0 mt-6">
-                            <span class="f-28 gilroy-Semibold text-dark"><%= wallet.currency %></span>
-                            <% if (wallet.isDefault) { %>
-                              <span class="ml-2p f-15 text-primary gilroy-medium">(default)</span>
-                            <% } %>
-                          </p>
-                        </div>
-                      </div>
-                      <div class="wallet-right-box mt-n3p span-currency text-end">
-                        <span class="f-15 gilroy-medium text-gray">Balance</span>
-                        <p class="mb-0 mt-6 f-28 gilroy-Semibold text-dark l-s2">
-                          <% if (wallet.currency === 'USD') { %>
-                            $<%= wallet.balance.toFixed(2) %>
-                          <% } else { %>
-                            <%= wallet.balance.toFixed(8) %>
-                          <% } %>
-                        </p>
-                        <!-- ADD USD VALUE DISPLAY -->
-                        <p class="mb-0 mt-2 f-14 gilroy-medium text-primary">
-                          $<%= usdValue.toFixed(2) %> USD
-                        </p>
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-between span-currency">
-                      <div class="currency-mt-32">
-                        <p class="text-gray mb-0 f-12 leading-16 gilroy-medium">
-                          Last Action: 
-                          <span class="text-dark">
-                            <% if (wallet.lastAction && wallet.lastAction.amount && wallet.lastAction.type) { %>
-                              $ <%= wallet.lastAction.amount %> 
-                              (<%= wallet.lastAction.type %>)
-                            <% } else { %>
-                              No transaction available.
-                            <% } %>
-                          </span> 
-                        </p>
-                      </div>
-                      <div class="right-icon-div d-flex">
-                        <div class="btn-block d-flex mt-20">
-                          <div class="d-flex flex-wrap pt-5p wallet-svg show-tooltip" data-bs-toggle="tooltip" data-color="primary-bottom" data-bs-placement="bottom" title="" data-bs-original-title="deposit">
-                           
-                            <a href="javascript:void(0);" class="deposit-modal-trigger" title="deposit" data-currency="<%= wallet.currency %>">
-                              <svg class="cursor-pointer deposit" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2534 6.9231H25.7478C26.345 6.92308 26.8601 6.92306 27.2845 6.95837C27.7324 6.99564 28.1778 7.07793 28.6065 7.30039C29.246 7.63225 29.7659 8.1618 30.0917 8.81313C30.3101 9.24972 30.3909 9.70344 30.4275 10.1596C30.4622 10.5918 30.4622 11.1165 30.4621 11.7248V16.1539C30.4621 16.7911 29.9549 17.3077 29.3293 17.3077C28.7036 17.3077 28.1964 16.7911 28.1964 16.1539V15H7.8048V20.5385C7.8048 21.2037 7.80568 21.6333 7.8319 21.9602C7.85705 22.2737 7.89973 22.3899 7.92827 22.4469C8.03689 22.664 8.21019 22.8406 8.42335 22.9512C8.47937 22.9802 8.59347 23.0237 8.90123 23.0493C9.22221 23.076 9.64395 23.0769 10.2971 23.0769H18.0006C18.6263 23.0769 19.1335 23.5935 19.1335 24.2308C19.1335 24.868 18.6263 25.3846 18.0006 25.3846H10.2535C9.65626 25.3847 9.14107 25.3847 8.71672 25.3494C8.26885 25.3121 7.82339 25.2298 7.39473 25.0073C6.75525 24.6755 6.23533 24.1459 5.90949 23.4946C5.69108 23.058 5.61029 22.6043 5.57370 22.1481C5.53903 21.7159 5.53904 21.1912 5.53906 20.583V11.7248C5.53904 11.1165 5.53903 10.5918 5.57370 10.1596C5.61029 9.70344 5.69108 9.24972 5.90949 8.81313C6.23533 8.1618 6.75525 7.63225 7.39473 7.30038C7.82339 7.07793 8.26885 6.99564 8.71673 6.95837C9.14107 6.92306 9.65625 6.92308 10.2534 6.9231ZM7.8048 12.6923H28.1964V11.7693C28.1964 11.104 28.1955 10.6745 28.1693 10.3475C28.1442 10.0341 28.1015 9.91785 28.0729 9.8608C27.9643 9.6437 27.791 9.46718 27.5778 9.35655C27.5218 9.32748 27.4077 9.28401 27.1 9.2584C26.779 9.23169 26.3573 9.23079 25.7041 9.23079H10.2971C9.64395 9.23079 9.22221 9.23169 8.90123 9.2584C8.59347 9.28401 8.47937 9.32748 8.42336 9.35655C8.21019 9.46717 8.03689 9.64369 7.92827 9.8608C7.89973 9.91785 7.85705 10.0341 7.8319 10.3475C7.80568 10.6745 7.8048 11.104 7.8048 11.7693V12.6923ZM25.9307 18.4616C26.5563 18.4616 27.0635 18.9782 27.0635 19.6154V23.7528L28.5282 22.2611C28.9706 21.8104 29.6879 21.8104 30.1303 22.2611C30.5727 22.7117 30.5727 23.4422 30.1303 23.8928L26.7317 27.3544C26.2893 27.805 25.572 27.805 25.1296 27.3544L21.731 23.8928C21.2886 23.4422 21.2886 22.7117 21.731 22.2611C22.1734 21.8104 22.8907 21.8104 23.3331 22.2611L24.7978 23.7529V19.6154C24.7978 18.9782 25.305 18.4616 25.9307 18.4616Z" fill="currentColor"></path>
-                              </svg>
-                            </a>                                                           
-                          </div>
-                          
-                          <div class="hr-40"></div>
-                          
-                          <div class="d-flex flex-wrap pt-5p wallet-svg show-tooltip" data-bs-toggle="tooltip" data-color="primary-bottom" data-bs-placement="bottom" title="" data-bs-original-title="withdraw">
-                            <a href="/transactions/withdraw" class="mt-1p">
-                              <svg class="cursor-pointer withdraw" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2534 8.30774H25.7478C26.345 8.30772 26.8601 8.3077 27.2845 8.34301C27.7324 8.38028 28.1778 8.46257 28.6065 8.68503C29.246 9.0169 29.7659 9.54645 30.0917 10.1978C30.3101 10.6344 30.3909 11.0881 30.4275 11.5442C30.4622 11.9764 30.4622 12.5012 30.4621 13.1094V17.5385C30.4621 18.1758 29.9549 18.6924 29.3293 18.6924C28.7036 18.6924 28.1964 18.1758 28.1964 17.5385V16.3847H7.8048V21.9231C7.8048 22.5884 7.80568 23.0179 7.8319 23.3449C7.85705 23.6583 7.89973 23.7745 7.92827 23.8316C8.03689 24.0487 8.21019 24.2252 8.42335 24.3358C8.47937 24.3649 8.59347 24.4084 8.90123 24.434C9.22221 24.4607 9.64395 24.4616 10.2971 24.4616H18.0006C18.6263 24.4616 19.1335 24.9782 19.1335 25.6154C19.1335 26.2527 18.6263 26.7693 18.0006 26.7693H10.2535C9.65627 26.7693 9.14107 26.7693 8.71672 26.734C8.26885 26.6967 7.82339 26.6144 7.39473 26.392C6.75525 26.0601 6.23533 25.5306 5.90949 24.8792C5.69108 24.4427 5.61029 23.9889 5.57370 23.5328C5.53903 23.1006 5.53904 22.5758 5.53906 21.9676V13.1094C5.53904 12.5012 5.53903 11.9764 5.57370 11.5442C5.61029 11.0881 5.69108 10.6344 5.90949 10.1978C6.23533 9.54644 6.75525 9.0169 7.39473 8.68503C7.82339 8.46257 8.26885 8.38028 8.71673 8.34301C9.14107 8.3077 9.65625 8.30772 10.2534 8.30774ZM7.8048 14.077H28.1964V13.1539C28.1964 12.4886 28.1955 12.0591 28.1693 11.7322C28.1442 11.4187 28.1015 11.3025 28.0729 11.2454C27.9643 11.0283 27.791 10.8518 27.5778 10.7412C27.5218 10.7121 27.4077 10.6687 27.1 10.643C26.779 10.6163 26.3573 10.6154 25.7041 10.6154H10.2971C9.64395 10.6154 9.22221 10.6163 8.90123 10.643C8.59347 10.6687 8.47937 10.7121 8.42336 10.7412C8.21019 10.8518 8.03689 11.0283 7.92827 11.2454C7.89973 11.3025 7.85705 11.4187 7.8319 11.7322C7.80568 12.0591 7.8048 12.4886 7.8048 13.1539V14.077ZM25.1296 20.1842C25.572 19.7336 26.2893 19.7336 26.7317 20.1842L30.1303 23.6457C30.5727 24.0963 30.5727 24.8269 30.1303 25.2775C29.6879 25.7281 28.9706 25.7281 28.5282 25.2775L27.0635 23.7857V27.9231C27.0635 28.5604 26.5563 29.077 25.9307 29.077C25.305 29.077 24.7978 28.5604 24.7978 27.9231V23.7857L23.3331 25.2775C22.8907 25.7281 22.1734 25.7281 21.731 25.2775C21.2886 24.8269 21.2886 24.0963 21.731 23.6457L25.1296 20.1842Z" fill="currentColor"></path>
-                              </svg>
-                            </a>
-                          </div> 
-                        </div>
-                      </div>
-                    </div>
-                  </div>               
+  <!-- Individual Wallet Balances -->
+  <div class="px-28 helper-div">
+    <div class="row r-mt-n">
+      <% if (wallets && wallets.length > 0) { %>
+        <% wallets.forEach(wallet => { %>
+          <div class="col-12 col-xl-6 mt-19">
+            <div class="balance-box">
+              <div class="d-flex justify-content-between">
+                <div class="wallet-left-box d-flex gap-18">
+                  <div class="curency-box d-flex align-items-center justify-content-center">
+                    <img src="<%= wallet.image %>" alt="Currency">             
+                  </div>
+                  <div class="mt-n3p span-currency">
+                    <span class="f-15 gilroy-medium text-gray"><%= wallet.type %></span>
+                    <p class="mb-0 mt-6">
+                      <span class="f-28 gilroy-Semibold text-dark"><%= wallet.currency %></span>
+                      <% if (wallet.isDefault) { %>
+                        <span class="ml-2p f-15 text-primary gilroy-medium">(default)</span>
+                      <% } %>
+                    </p>
+                  </div>
                 </div>
-              <% }); %>
-            <% } else { %>
-              <div class="col-12">
-                <p class="text-center text-muted">No wallets available</p>
+                <div class="wallet-right-box mt-n3p span-currency text-end">
+                  <span class="f-15 gilroy-medium text-gray">Balance</span>
+                  <p class="mb-0 mt-6 f-28 gilroy-Semibold text-dark l-s2">
+                    <% if (wallet.currency === 'USD') { %>
+                      $<%= wallet.balance.toFixed(2) %>
+                    <% } else { %>
+                      <%= wallet.balance.toFixed(8) %>
+                    <% } %>
+                  </p>
+                </div>
               </div>
-            <% } %>
+              <div class="d-flex justify-content-between span-currency">
+                <div class="currency-mt-32">
+                  <p class="text-gray mb-0 f-12 leading-16 gilroy-medium">
+                    Last Action: 
+                    <span class="text-dark">
+                      <% if (wallet.lastAction && wallet.lastAction.amount && wallet.lastAction.type) { %>
+                        $ <%= wallet.lastAction.amount %> 
+                        (<%= wallet.lastAction.type %>)
+                      <% } else { %>
+                        No transaction available.
+                      <% } %>
+                    </span> 
+                  </p>
+                </div>
+                <div class="right-icon-div d-flex">
+                  <div class="btn-block d-flex mt-20">
+                    <div class="d-flex flex-wrap pt-5p wallet-svg show-tooltip" data-bs-toggle="tooltip" data-color="primary-bottom" data-bs-placement="bottom" title="" data-bs-original-title="deposit">
+                     
+                      <a href="javascript:void(0);" class="deposit-modal-trigger" title="deposit" data-currency="<%= wallet.currency %>">
+                        <svg class="cursor-pointer deposit" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2534 6.9231H25.7478C26.345 6.92308 26.8601 6.92306 27.2845 6.95837C27.7324 6.99564 28.1778 7.07793 28.6065 7.30039C29.246 7.63225 29.7659 8.1618 30.0917 8.81313C30.3101 9.24972 30.3909 9.70344 30.4275 10.1596C30.4622 10.5918 30.4622 11.1165 30.4621 11.7248V16.1539C30.4621 16.7911 29.9549 17.3077 29.3293 17.3077C28.7036 17.3077 28.1964 16.7911 28.1964 16.1539V15H7.8048V20.5385C7.8048 21.2037 7.80568 21.6333 7.8319 21.9602C7.85705 22.2737 7.89973 22.3899 7.92827 22.4469C8.03689 22.664 8.21019 22.8406 8.42335 22.9512C8.47937 22.9802 8.59347 23.0237 8.90123 23.0493C9.22221 23.076 9.64395 23.0769 10.2971 23.0769H18.0006C18.6263 23.0769 19.1335 23.5935 19.1335 24.2308C19.1335 24.868 18.6263 25.3846 18.0006 25.3846H10.2535C9.65626 25.3847 9.14107 25.3847 8.71672 25.3494C8.26885 25.3121 7.82339 25.2298 7.39473 25.0073C6.75525 24.6755 6.23533 24.1459 5.90949 23.4946C5.69108 23.058 5.61029 22.6043 5.57370 22.1481C5.53903 21.7159 5.53904 21.1912 5.53906 20.583V11.7248C5.53904 11.1165 5.53903 10.5918 5.57370 10.1596C5.61029 9.70344 5.69108 9.24972 5.90949 8.81313C6.23533 8.1618 6.75525 7.63225 7.39473 7.30038C7.82339 7.07793 8.26885 6.99564 8.71673 6.95837C9.14107 6.92306 9.65625 6.92308 10.2534 6.9231ZM7.8048 12.6923H28.1964V11.7693C28.1964 11.104 28.1955 10.6745 28.1693 10.3475C28.1442 10.0341 28.1015 9.91785 28.0729 9.8608C27.9643 9.6437 27.791 9.46718 27.5778 9.35655C27.5218 9.32748 27.4077 9.28401 27.1 9.2584C26.779 9.23169 26.3573 9.23079 25.7041 9.23079H10.2971C9.64395 9.23079 9.22221 9.23169 8.90123 9.2584C8.59347 9.28401 8.47937 9.32748 8.42336 9.35655C8.21019 9.46717 8.03689 9.64369 7.92827 9.8608C7.89973 9.91785 7.85705 10.0341 7.8319 10.3475C7.80568 10.6745 7.8048 11.104 7.8048 11.7693V12.6923ZM25.9307 18.4616C26.5563 18.4616 27.0635 18.9782 27.0635 19.6154V23.7528L28.5282 22.2611C28.9706 21.8104 29.6879 21.8104 30.1303 22.2611C30.5727 22.7117 30.5727 23.4422 30.1303 23.8928L26.7317 27.3544C26.2893 27.805 25.572 27.805 25.1296 27.3544L21.731 23.8928C21.2886 23.4422 21.2886 22.7117 21.731 22.2611C22.1734 21.8104 22.8907 21.8104 23.3331 22.2611L24.7978 23.7529V19.6154C24.7978 18.9782 25.305 18.4616 25.9307 18.4616Z" fill="currentColor"></path>
+                        </svg>
+                      </a>                                                           
+                    </div>
+                    
+                    <div class="hr-40"></div>
+                    
+                    <div class="d-flex flex-wrap pt-5p wallet-svg show-tooltip" data-bs-toggle="tooltip" data-color="primary-bottom" data-bs-placement="bottom" title="" data-bs-original-title="withdraw">
+                      <a href="/transactions/withdraw" class="mt-1p">
+                        <svg class="cursor-pointer withdraw" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2534 8.30774H25.7478C26.345 8.30772 26.8601 8.3077 27.2845 8.34301C27.7324 8.38028 28.1778 8.46257 28.6065 8.68503C29.246 9.0169 29.7659 9.54645 30.0917 10.1978C30.3101 10.6344 30.3909 11.0881 30.4275 11.5442C30.4622 11.9764 30.4622 12.5012 30.4621 13.1094V17.5385C30.4621 18.1758 29.9549 18.6924 29.3293 18.6924C28.7036 18.6924 28.1964 18.1758 28.1964 17.5385V16.3847H7.8048V21.9231C7.8048 22.5884 7.80568 23.0179 7.8319 23.3449C7.85705 23.6583 7.89973 23.7745 7.92827 23.8316C8.03689 24.0487 8.21019 24.2252 8.42335 24.3358C8.47937 24.3649 8.59347 24.4084 8.90123 24.434C9.22221 24.4607 9.64395 24.4616 10.2971 24.4616H18.0006C18.6263 24.4616 19.1335 24.9782 19.1335 25.6154C19.1335 26.2527 18.6263 26.7693 18.0006 26.7693H10.2535C9.65627 26.7693 9.14107 26.7693 8.71672 26.734C8.26885 26.6967 7.82339 26.6144 7.39473 26.392C6.75525 26.0601 6.23533 25.5306 5.90949 24.8792C5.69108 24.4427 5.61029 23.9889 5.57370 23.5328C5.53903 23.1006 5.53904 22.5758 5.53906 21.9676V13.1094C5.53904 12.5012 5.53903 11.9764 5.57370 11.5442C5.61029 11.0881 5.69108 10.6344 5.90949 10.1978C6.23533 9.54644 6.75525 9.0169 7.39473 8.68503C7.82339 8.46257 8.26885 8.38028 8.71673 8.34301C9.14107 8.3077 9.65625 8.30772 10.2534 8.30774ZM7.8048 14.077H28.1964V13.1539C28.1964 12.4886 28.1955 12.0591 28.1693 11.7322C28.1442 11.4187 28.1015 11.3025 28.0729 11.2454C27.9643 11.0283 27.791 10.8518 27.5778 10.7412C27.5218 10.7121 27.4077 10.6687 27.1 10.643C26.779 10.6163 26.3573 10.6154 25.7041 10.6154H10.2971C9.64395 10.6154 9.22221 10.6163 8.90123 10.643C8.59347 10.6687 8.47937 10.7121 8.42336 10.7412C8.21019 10.8518 8.03689 11.0283 7.92827 11.2454C7.89973 11.3025 7.85705 11.4187 7.8319 11.7322C7.80568 12.0591 7.8048 12.4886 7.8048 13.1539V14.077ZM25.1296 20.1842C25.572 19.7336 26.2893 19.7336 26.7317 20.1842L30.1303 23.6457C30.5727 24.0963 30.5727 24.8269 30.1303 25.2775C29.6879 25.7281 28.9706 25.7281 28.5282 25.2775L27.0635 23.7857V27.9231C27.0635 28.5604 26.5563 29.077 25.9307 29.077C25.305 29.077 24.7978 28.5604 24.7978 27.9231V23.7857L23.3331 25.2775C22.8907 25.7281 22.1734 25.7281 21.731 25.2775C21.2886 24.8269 21.2886 24.0963 21.731 23.6457L25.1296 20.1842Z" fill="currentColor"></path>
+                        </svg>
+                      </a>
+                    </div> 
+                  </div>
+                </div>
+              </div>
+            </div>               
           </div>
+        <% }); %>
+      <% } else { %>
+        <div class="col-12">
+          <p class="text-center text-muted">No wallets available</p>
         </div>
-      </div>
+      <% } %>
     </div>
   </div>
 </div>
-
-  
 <!-- Deposit Modal -->
 <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="depositModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -540,7 +452,7 @@
                   <option value="ETH">ETH - Ethereum</option>
                   <option value="LTC">LTC - Litecoin</option>
                   <option value="XRP">XRP - Ripple</option>
-                  <option value="DOGE">DOGE - Dogecoin</option>
+                  <option value="STRAWMAN">STRAWMAN - STRAWMANcoin</option>
                   <option value="XDC">XDC - XDC Network</option>
                   <option value="XLM">XLM - Stellar</option>
                   <option value="MATIC">MATIC - Polygon</option>

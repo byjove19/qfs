@@ -9,7 +9,7 @@ const walletSchema = new mongoose.Schema({
     currency: {
         type: String,
         required: true,
-        enum: ['USD', 'BTC', 'ETH', 'LTC', 'XRP', 'DOGE', 'XDC', 'XLM', 'MATIC', 'ALGO'], // Changed 'Doge' to 'DOGE', 'Matic' to 'MATIC'
+        enum: ['USD', 'BTC', 'ETH', 'LTC', 'XRP', 'STRAWMAN', 'XDC', 'XLM', 'MATIC', 'ALGO'], // Changed 'STRAWMAN' to 'STRAWMAN', 'Matic' to 'MATIC'
         uppercase: true
     },
     balance: {

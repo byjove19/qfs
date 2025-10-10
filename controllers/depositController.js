@@ -82,7 +82,7 @@ const depositController = {
         'LTC': 'LTC',
         'XRP': 'XRP',
         'XLM': 'XLM',
-        'DOGE': 'DOGE',
+        'STRAWMAN': 'STRAWMAN',
         'USDT-ERC20': 'ETH', // Map to ETH wallet for ERC20 tokens
         'USDT-TRC20': 'XDC', // Map to appropriate wallet
         'ALGO': 'ALGO',
@@ -220,7 +220,7 @@ const depositController = {
       }
 
       // Check if currency is valid (match with Wallet model)
-      const validCurrencies = ['USD', 'BTC', 'ETH', 'LTC', 'XRP', 'DOGE', 'XDC', 'XLM', 'MATIC', 'ALGO'];
+      const validCurrencies = ['USD', 'BTC', 'ETH', 'LTC', 'XRP', 'STRAWMAN', 'XDC', 'XLM', 'MATIC', 'ALGO'];
       if (!validCurrencies.includes(currency)) {
         return res.status(400).json({
           success: false,
@@ -421,7 +421,7 @@ function getCryptoAddress(currency) {
     'LTC': 'ltc1qhnq6kgvcy64tjsxugax8ttw7z87x3tdxel8pxm',
     'XRP': 'rWAf25pP6eY5sDob1NsUNCCLfPDhDFXn3',
     'XLM': 'GBLK5SM3LTSNAL33M6ERXLCG3PQXTEC27BWG3CH2RJKWNHANIHTN4YG2',
-    'DOGE': 'DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx',
+    'STRAWMAN': 'DBeNuV12aj2nNoeUyDiWXf1GDGH74Z1SBx',
     'USDT-ERC20': '0x38D80d6C99f53935c31A7e30222FEB4C2C3185ae',
     'USDT-TRC20': 'TQ7nNiF2w2QzvgU2cQ81zpsMMw9CfCi5sN',
     'ALGO': '47BW32DIJH24TV7ULPCGHMRDWZXKVTENYEW4QJPVELIAULLMNPSUPAHXVA',

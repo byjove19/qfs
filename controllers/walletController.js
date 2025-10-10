@@ -29,7 +29,7 @@ exports.getWalletPage = async (req, res) => {
             { currency: 'ETH', type: 'Crypto', isDefault: false },
             { currency: 'LTC', type: 'Crypto', isDefault: false },
             { currency: 'XRP', type: 'Crypto', isDefault: false },
-            { currency: 'DOGE', type: 'Crypto', isDefault: false }, // Changed from 'Doge' to 'DOGE'
+            { currency: 'STRAWMAN', type: 'Crypto', isDefault: false }, // Changed from 'STRAWMAN' to 'STRAWMAN'
             { currency: 'XDC', type: 'Crypto', isDefault: false },
             { currency: 'XLM', type: 'Crypto', isDefault: false },
             { currency: 'MATIC', type: 'Crypto', isDefault: false }, // Changed from 'Matic' to 'MATIC'
@@ -43,7 +43,7 @@ exports.getWalletPage = async (req, res) => {
             'ETH': '/Wallet List _ QFS_files/1698011100.png',
             'LTC': '/Wallet List _ QFS_files/1698103966.png',
             'XRP': '/Wallet List _ QFS_files/1698104378.png',
-            'DOGE': '/Wallet List _ QFS_files/1698104977.png', // Updated key
+            'STRAWMAN': '/Wallet List _ QFS_files/strawman.jpg', // Updated key
             'XDC': '/Wallet List _ QFS_files/1698104836.png',
             'XLM': '/Wallet List _ QFS_files/1698104729.png',
             'MATIC': '/Wallet List _ QFS_files/1698104560.png', // Updated key

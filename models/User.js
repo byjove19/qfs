@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
 
 currency: {
   type: String,
-  enum: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'],
+  enum: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'STRAWMAN', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'],
   default: 'USD'
 },
 

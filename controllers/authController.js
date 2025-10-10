@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs'); // ADD THIS IMPORT
 
 // Helper function to sanitize user data
 const sanitizeUser = (user) => {
@@ -60,6 +61,83 @@ const authController = {
       info: req.flash('info')
     });
   },
+
+  // ADD PASSWORD VERIFICATION METHOD HERE
+// UPDATE YOUR verifyPassword METHOD - FIXED VERSION
+verifyPassword: async (req, res) => {
+  try {
+    console.log('=== PASSWORD VERIFICATION DEBUG ===');
+    console.log('Session ID:', req.sessionID);
+    console.log('Session user:', req.session.user);
+    
+    const { password } = req.body;
+    const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+
+    console.log('User ID from session:', userId);
+    console.log('Password received:', password ? '***' : 'MISSING');
+
+    if (!userId) {
+      console.log('❌ No user ID in session - user not authenticated');
+      return res.status(401).json({
+        success: false,
+        message: 'Please login first'
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required'
+      });
+    }
+
+    console.log('Looking for user with ID:', userId);
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      console.log('❌ User not found in database');
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    console.log('User found:', user.email);
+    console.log('Stored password hash present:', !!user.password);
+
+    // FIX: Use the same method as your login functions
+    console.log('Comparing passwords using user.comparePassword...');
+    const isPasswordValid = await user.comparePassword(password);
+    console.log('Password valid:', isPasswordValid);
+    
+    if (!isPasswordValid) {
+      console.log('❌ Password comparison failed');
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid password'
+      });
+    }
+
+    // Store verification in session for subsequent requests
+    req.session.passwordVerified = true;
+    req.session.passwordVerifiedAt = new Date();
+    
+    console.log('✅ Password verified successfully');
+    console.log('==============================');
+
+    res.json({
+      success: true,
+      message: 'Password verified successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Password verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Password verification failed'
+    });
+  }
+},
 
   register: async (req, res) => {
     try {

@@ -5,7 +5,7 @@ const adminWalletSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    enum: ['BTC', 'ETH', 'LTC', 'XRP', 'XLM', 'DOGE', 'USDT-ERC20', 'USDT-TRC20', 'ALGO', 'MATIC', 'SOL', 'USDC']
+    enum: ['BTC', 'ETH', 'LTC', 'XRP', 'XLM', 'STRAWMAN', 'USDT-ERC20', 'USDT-TRC20', 'ALGO', 'MATIC', 'SOL', 'USDC']
   },
   address: {
     type: String,

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const authController = require('../controllers/authController');
-const { attachUser } = require('../middleware/auth');
+const { attachUser, isAuthenticated } = require('../middleware/auth');
 
 router.use(attachUser);
 
@@ -26,5 +26,20 @@ router.post('/login', [
 
 // Logout - redirect to /logout instead
 router.get('/logout', authController.logout);
+
+// ADD PASSWORD VERIFICATION ROUTES
+router.get('/verify-password', isAuthenticated, (req, res) => {
+  res.render('auth/verify-password', {
+    title: 'Verify Password - QFS',
+    transaction: req.query.transaction === 'true',
+    returnTo: req.session.returnTo || '/dashboard',
+    error: req.flash('error'),
+    success: req.flash('success')
+  });
+});
+
+router.post('/verify-password', isAuthenticated, [
+  body('password').notEmpty().withMessage('Password is required')
+], authController.verifyPassword);
 
 module.exports = router;

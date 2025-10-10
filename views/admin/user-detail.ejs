@@ -1472,9 +1472,9 @@
                                     <div style="font-size: 24px;">✕</div>
                                     <div style="font-size: 12px; margin-top: 5px;">XRP</div>
                                 </div>
-                                <div class="currency-option" data-currency="DOGE">
+                                <div class="currency-option" data-currency="STRAWMAN">
                                     <div style="font-size: 24px;">Ð</div>
-                                    <div style="font-size: 12px; margin-top: 5px;">DOGE</div>
+                                    <div style="font-size: 12px; margin-top: 5px;">STRAWMAN</div>
                                 </div>
                                 <div class="currency-option" data-currency="LTC">
                                     <div style="font-size: 24px;">Ł</div>
@@ -1656,7 +1656,7 @@
             'BTC': '₿',
             'ETH': 'Ξ',
             'XRP': '✕',
-            'DOGE': 'Ð',
+            'STRAWMAN': 'Ð',
             'LTC': 'Ł',
             'ALGO': 'Α',
             'XDC': 'XDC',
@@ -1675,7 +1675,7 @@
             'BTC': 0.000025, // Example: 1 BTC = 40,000 USD
             'ETH': 0.00045,  // Example: 1 ETH = 2,222 USD
             'XRP': 1.85,     // Example: 1 XRP = 0.54 USD
-            'DOGE': 140,     // Example: 1 DOGE = 0.007 USD
+            'STRAWMAN': 140,     // Example: 1 STRAWMAN = 0.007 USD
             'LTC': 0.012,    // Example: 1 LTC = 83 USD
             'ALGO': 6.25,    // Example: 1 ALGO = 0.16 USD
             'XDC': 45,       // Example: 1 XDC = 0.022 USD
@@ -1690,7 +1690,7 @@
 
         function formatCurrencyAmount(amount, currency) {
             const symbol = getCurrencySymbol(currency);
-            const decimals = ['BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'].includes(currency) ? 8 : 2;
+            const decimals = ['BTC', 'ETH', 'XRP', 'STRAWMAN', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'].includes(currency) ? 8 : 2;
             
             return `${symbol}${parseFloat(amount).toFixed(decimals)}`;
         }

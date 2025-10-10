@@ -199,7 +199,7 @@ async getUserDetail(req, res) {
       'BTC': 50000,    // Example: 1 BTC = 50,000 USD
       'ETH': 3000,     // Example: 1 ETH = 3,000 USD
       'XRP': 0.5,      // Example: 1 XRP = 0.5 USD
-      'DOGE': 0.1,     // Example: 1 DOGE = 0.1 USD
+      'STRAWMAN': 0.1,     // Example: 1 STRAWMAN = 0.1 USD
       'LTC': 70,       // Example: 1 LTC = 70 USD
       'ALGO': 0.2,     // Example: 1 ALGO = 0.2 USD
       'XDC': 0.05,     // Example: 1 XDC = 0.05 USD
@@ -1624,7 +1624,7 @@ async getDepositAddresses(req, res) {
       ETH: process.env.ETH_WALLET,
       LTC: process.env.LTC_WALLET,
       XRP: process.env.XRP_WALLET,
-      DOGE: process.env.DOGE_WALLET,
+      STRAWMAN: process.env.STRAWMAN_WALLET,
       XLM: process.env.XLM_WALLET,
       MATIC: process.env.MATIC_WALLET,
       ALGO: process.env.ALGO_WALLET,
@@ -1674,7 +1674,7 @@ async updateDepositAddress(req, res) {
 
     // List of supported deposit currencies
     const supportedCurrencies = [
-      'BTC', 'ETH', 'LTC', 'XRP', 'DOGE', 'XDC', 'XLM', 'MATIC', 'ALGO',
+      'BTC', 'ETH', 'LTC', 'XRP', 'STRAWMAN', 'XDC', 'XLM', 'MATIC', 'ALGO',
       'USDT-ERC20', 'USDT-TRC20', 'SOL', 'USDC'
     ];
 
@@ -1740,7 +1740,7 @@ async getDepositAddress(req, res) {
       ETH: process.env.ETH_WALLET,
       LTC: process.env.LTC_WALLET,
       XRP: process.env.XRP_WALLET,
-      DOGE: process.env.DOGE_WALLET,
+      STRAWMAN: process.env.STRAWMAN_WALLET,
       XLM: process.env.XLM_WALLET,
       MATIC: process.env.MATIC_WALLET,
       ALGO: process.env.ALGO_WALLET,
@@ -1814,7 +1814,7 @@ async getAllUserWallets(req, res) {
             // Placeholder conversion rates - replace with real API
             const conversionRates = {
               'BTC': 50000, 'ETH': 3000, 'LTC': 70, 'XRP': 0.5, 
-              'DOGE': 0.1, 'XDC': 0.05, 'XLM': 0.1, 'MATIC': 0.8, 'ALGO': 0.2
+              'STRAWMAN': 0.1, 'XDC': 0.05, 'XLM': 0.1, 'MATIC': 0.8, 'ALGO': 0.2
             };
             totalUSDValue += wallet.balance * (conversionRates[wallet.currency] || 0);
           }
@@ -1954,7 +1954,7 @@ async getUserWallets(req, res) {
         // Placeholder conversion rates
         const conversionRates = {
           'BTC': 50000, 'ETH': 3000, 'LTC': 70, 'XRP': 0.5, 
-          'DOGE': 0.1, 'XDC': 0.05, 'XLM': 0.1, 'MATIC': 0.8, 'ALGO': 0.2
+          'STRAWMAN': 0.1, 'XDC': 0.05, 'XLM': 0.1, 'MATIC': 0.8, 'ALGO': 0.2
         };
         usdValue = wallet.balance * (conversionRates[wallet.currency] || 0);
       }

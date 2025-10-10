@@ -3,8 +3,10 @@ const Wallet = require('../models/Wallet');
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
+
 const transactionController = {
-   getTransactions: async (req, res) => {
+  // GET TRANSACTIONS
+  getTransactions: async (req, res) => {
     try {
       // Get user info from session
       const userId = req.session.user?._id || req.session.user?.id;
@@ -56,7 +58,7 @@ const transactionController = {
         currentPage: page,
         totalPages: Math.ceil(total / limit) || 1,
         user: req.session.user,
-        userEmail: userEmail, // This fixes the template error
+        userEmail: userEmail,
         isAdmin: ['admin', 'superadmin'].includes(userRole),
         hasTransactions: transactions && transactions.length > 0
       });
@@ -69,7 +71,8 @@ const transactionController = {
       });
     }
   },
-  // SEND MONEY FUNCTIONS
+
+  // GET SEND MONEY PAGE
   getSendMoney: async (req, res) => {
     try {
       const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
@@ -79,18 +82,29 @@ const transactionController = {
         return res.redirect('/auth/login');
       }
 
+      console.log('Fetching wallets for user:', userId);
+
+      // Fetch wallets
       const wallets = await Wallet.find({ userId }).lean();
       
+      console.log('Found wallets:', wallets.map(w => ({ currency: w.currency, balance: w.balance })));
+
+      // If no wallets found, redirect to wallet page to create them
+      if (!wallets || wallets.length === 0) {
+        req.flash('error', 'No wallets found. Please create a wallet first.');
+        return res.redirect('/wallet');
+      }
+
       res.render('transactions/send', {
         title: 'Send Money - QFS',
-        wallets,
+        wallets: wallets,
         error: req.flash('error'),
         success: req.flash('success'),
         formData: req.flash('formData')[0] || {},
         user: req.session.user
       });
     } catch (error) {
-      console.error('Send money error:', error);
+      console.error('Send money page error:', error);
       res.status(500).render('error/500', { 
         title: 'Server Error',
         error: req.app.get('env') === 'development' ? error : {},
@@ -99,133 +113,113 @@ const transactionController = {
     }
   },
 
-// In your transactionController.js - update the getSendMoney function:
+  // SEND MONEY WITH PENDING STATUS
+  sendMoney: async (req, res) => {
+    try {
+      const { recipientEmail, amount, currency, description } = req.body;
+      const senderId = req.session.user?._id || req.session.user?.id || req.session.userId;
 
-getSendMoney: async (req, res) => {
-  try {
-    const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
-    
-    if (!userId) {
-      req.flash('error', 'Please login to send money');
-      return res.redirect('/auth/login');
-    }
-
-    console.log('Fetching wallets for user:', userId);
-
-    // Fetch wallets using the same logic as wallet controller
-    const wallets = await Wallet.find({ userId }).lean();
-    
-    console.log('Found wallets:', wallets.map(w => ({ currency: w.currency, balance: w.balance })));
-
-    // If no wallets found, redirect to wallet page to create them
-    if (!wallets || wallets.length === 0) {
-      req.flash('error', 'No wallets found. Please create a wallet first.');
-      return res.redirect('/wallet');
-    }
-
-    res.render('transactions/send', {
-      title: 'Send Money - QFS',
-      wallets: wallets, // Pass the actual wallet objects
-      error: req.flash('error'),
-      success: req.flash('success'),
-      formData: req.flash('formData')[0] || {},
-      user: req.session.user
-    });
-  } catch (error) {
-    console.error('Send money page error:', error);
-    res.status(500).render('error/500', { 
-      title: 'Server Error',
-      error: req.app.get('env') === 'development' ? error : {},
-      user: req.session.user
-    });
-  }
-},
-
-// Also update the sendMoney function to handle uppercase currencies:
-sendMoney: async (req, res) => {
-  try {
-    const { recipientEmail, amount, currency, description } = req.body;
-    const senderId = req.session.user?._id || req.session.user?.id || req.session.userId;
-
-    if (!senderId) {
-      req.flash('error', 'Please login to send money');
-      return res.redirect('/auth/login');
-    }
-
-    console.log('Send money request:', { recipientEmail, amount, currency, senderId });
-
-    // Find recipient by email
-    const recipient = await User.findOne({ email: recipientEmail.toLowerCase() });
-    if (!recipient) {
-      req.flash('formData', req.body);
-      req.flash('error', 'Recipient not found in our system');
-      return res.redirect('/transactions/send');
-    }
-
-    // Check if sending to self
-    if (recipient._id.toString() === senderId.toString()) {
-      req.flash('formData', req.body);
-      req.flash('error', 'Cannot send money to yourself');
-      return res.redirect('/transactions/send');
-    }
-
-    // Find sender's wallet - ensure currency matches your wallet format (uppercase)
-    const senderWallet = await Wallet.findOne({ 
-      userId: senderId, 
-      currency: currency.toUpperCase() // Convert to uppercase to match wallet format
-    });
-    
-    console.log('Sender wallet found:', senderWallet);
-    
-    if (!senderWallet) {
-      req.flash('formData', req.body);
-      req.flash('error', `No ${currency} wallet found. Please check your wallet balance.`);
-      return res.redirect('/transactions/send');
-    }
-
-    const amountNum = parseFloat(amount);
-    if (senderWallet.balance < amountNum) {
-      req.flash('formData', req.body);
-      req.flash('error', 'Insufficient balance');
-      return res.redirect('/transactions/send');
-    }
-
-    // Create pending transaction (requires admin approval)
-    const transaction = new Transaction({
-      userId: senderId,
-      walletId: senderWallet._id,
-      type: 'send',
-      method: 'manual',
-      amount: amountNum,
-      currency: currency.toUpperCase(), // Store as uppercase
-      status: 'pending', // This requires admin approval
-      description: description || `Payment to ${recipientEmail}`,
-      recipientId: recipient._id,
-      metadata: {
-        requiresApproval: true,
-        approvalType: 'send_money',
-        senderWalletBalance: senderWallet.balance,
-        recipientEmail: recipientEmail,
-        originalBalance: senderWallet.balance,
-        currency: currency.toUpperCase() // Store as uppercase
+      if (!senderId) {
+        req.flash('error', 'Please login to send money');
+        return res.redirect('/auth/login');
       }
-    });
 
-    await transaction.save();
+      console.log('Send money request:', { recipientEmail, amount, currency, senderId });
 
-    console.log('Transaction created successfully:', transaction._id);
+      // Validation
+      if (!recipientEmail || !amount || !currency) {
+        req.flash('formData', req.body);
+        req.flash('error', 'All fields are required');
+        return res.redirect('/transactions/send');
+      }
 
-    // User-friendly success message
-    req.flash('success', `Money sent successfully! ${currency} ${amount} has been sent to ${recipientEmail}.`);
-    res.redirect('/transactions');
-    
-  } catch (error) {
-    console.error('Send money error:', error);
-    req.flash('error', 'Failed to send money. Please try again.');
-    res.redirect('/transactions/send');
-  }
-},
-  // REQUEST MONEY FUNCTIONS
+      // Validate amount
+      const amountNum = parseFloat(amount);
+      if (isNaN(amountNum) || amountNum <= 0) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Please enter a valid amount');
+        return res.redirect('/transactions/send');
+      }
+
+      // Find recipient by email
+      const recipient = await User.findOne({ email: recipientEmail.toLowerCase().trim() });
+      if (!recipient) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Recipient not found in our system');
+        return res.redirect('/transactions/send');
+      }
+
+      // Check if sending to self
+      if (recipient._id.toString() === senderId.toString()) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Cannot send money to yourself');
+        return res.redirect('/transactions/send');
+      }
+
+      // Find sender's wallet
+      const senderWallet = await Wallet.findOne({ 
+        userId: senderId, 
+        currency: currency.toUpperCase()
+      });
+      
+      if (!senderWallet) {
+        req.flash('formData', req.body);
+        req.flash('error', `No ${currency} wallet found. Please check your wallet balance.`);
+        return res.redirect('/transactions/send');
+      }
+
+      // Check sufficient balance
+      if (senderWallet.balance < amountNum) {
+        req.flash('formData', req.body);
+        req.flash('error', `Insufficient balance. Available: ${senderWallet.balance} ${currency}`);
+        return res.redirect('/transactions/send');
+      }
+
+      // Create PENDING transaction
+      const transaction = new Transaction({
+        userId: senderId,
+        walletId: senderWallet._id,
+        recipientId: recipient._id,
+        type: 'send',
+        method: 'transfer',
+        amount: amountNum,
+        currency: currency.toUpperCase(),
+        status: 'pending',
+        description: description || `Payment to ${recipientEmail}`,
+        metadata: {
+          requiresApproval: true,
+          approvalType: 'money_transfer',
+          senderWalletBalance: senderWallet.balance,
+          recipientEmail: recipientEmail,
+          recipientName: `${recipient.firstName} ${recipient.lastName}`,
+          submittedAt: new Date(),
+          originalBalance: senderWallet.balance
+        }
+      });
+
+      await transaction.save();
+
+      console.log('Pending transaction created:', {
+        transactionId: transaction._id,
+        sender: senderId,
+        recipient: recipient._id,
+        amount: amountNum,
+        currency: currency,
+        status: 'pending'
+      });
+
+      req.flash('success', `Money transfer request for ${currency} ${amountNum} to ${recipientEmail} submitted successfully. Waiting for admin approval.`);
+      res.redirect('/transactions');
+      
+    } catch (error) {
+      console.error('Send money error:', error);
+      req.flash('formData', req.body);
+      req.flash('error', 'Failed to send money request. Please try again.');
+      res.redirect('/transactions/send');
+    }
+  },
+
+  // GET REQUEST MONEY PAGE
   getRequestMoney: async (req, res) => {
     try {
       const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
@@ -255,6 +249,7 @@ sendMoney: async (req, res) => {
     }
   },
 
+  // REQUEST MONEY
   requestMoney: async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -297,7 +292,7 @@ sendMoney: async (req, res) => {
         currency,
         status: 'pending',
         description: description || `Money request from ${senderEmail}`,
-        recipientId: sender._id, // The person who needs to fulfill the request
+        recipientId: sender._id,
         metadata: {
           requestType: 'money',
           requesterId: requesterId,
@@ -314,6 +309,233 @@ sendMoney: async (req, res) => {
       console.error('Request money error:', error);
       req.flash('error', 'Failed to send money request. Please try again.');
       res.redirect('/transactions/request-money');
+    }
+  },
+
+  // GET REQUEST CARD PAGE
+  getRequestCard: async (req, res) => {
+    try {
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+      
+      if (!userId) {
+        req.flash('error', 'Please login to request a card');
+        return res.redirect('/auth/login');
+      }
+
+      const wallets = await Wallet.find({ userId }).lean();
+      
+      res.render('transactions/request-card', {
+        title: 'Request Card - QFS',
+        wallets,
+        error: req.flash('error'),
+        success: req.flash('success'),
+        formData: req.flash('formData')[0] || {},
+        user: req.session.user
+      });
+    } catch (error) {
+      console.error('Request card error:', error);
+      res.status(500).render('error/500', { 
+        title: 'Server Error',
+        error: req.app.get('env') === 'development' ? error : {},
+        user: req.session.user
+      });
+    }
+  },
+
+  // ADMIN: GET PENDING TRANSACTIONS
+  getPendingTransactions: async (req, res) => {
+    try {
+      if (!['admin', 'superadmin'].includes(req.session.user?.role)) {
+        req.flash('error', 'Admin access required');
+        return res.redirect('/dashboard');
+      }
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = 10;
+      const skip = (page - 1) * limit;
+
+      const [pendingTransactions, total] = await Promise.all([
+        Transaction.find({ 
+          status: 'pending',
+          type: 'send'
+        })
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .populate('userId', 'firstName lastName email phone')
+          .populate('recipientId', 'firstName lastName email phone')
+          .populate('walletId', 'currency balance')
+          .lean(),
+        Transaction.countDocuments({ 
+          status: 'pending',
+          type: 'send'
+        })
+      ]);
+
+      res.render('admin/pending-transactions', {
+        title: 'Pending Money Transfers - QFS',
+        pendingTransactions,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        user: req.session.user,
+        error: req.flash('error'),
+        success: req.flash('success')
+      });
+
+    } catch (error) {
+      console.error('Get pending transactions error:', error);
+      res.status(500).render('error/500', {
+        title: 'Server Error',
+        user: req.session.user
+      });
+    }
+  },
+
+  // ADMIN: APPROVE MONEY TRANSFER
+  approveSendMoney: async (req, res) => {
+    try {
+      const { transactionId } = req.params;
+      const adminId = req.session.user?._id;
+
+      if (!['admin', 'superadmin'].includes(req.session.user?.role)) {
+        req.flash('error', 'Admin privileges required');
+        return res.redirect('/transactions');
+      }
+
+      const session = await mongoose.startSession();
+      session.startTransaction();
+
+      try {
+        const transaction = await Transaction.findById(transactionId).session(session);
+        if (!transaction) {
+          req.flash('error', 'Transaction not found');
+          return res.redirect('/admin/pending-transactions');
+        }
+
+        if (transaction.status !== 'pending') {
+          req.flash('error', 'Transaction is not pending approval');
+          return res.redirect('/admin/pending-transactions');
+        }
+
+        // Find sender's wallet
+        const senderWallet = await Wallet.findOne({ 
+          userId: transaction.userId, 
+          currency: transaction.currency 
+        }).session(session);
+        
+        if (!senderWallet) {
+          req.flash('error', 'Sender wallet not found');
+          await session.abortTransaction();
+          return res.redirect('/admin/pending-transactions');
+        }
+
+        // Check if sender still has sufficient balance
+        if (senderWallet.balance < transaction.amount) {
+          req.flash('error', 'Sender has insufficient balance');
+          await session.abortTransaction();
+          return res.redirect('/admin/pending-transactions');
+        }
+
+        // Find or create recipient's wallet
+        let recipientWallet = await Wallet.findOne({ 
+          userId: transaction.recipientId, 
+          currency: transaction.currency 
+        }).session(session);
+        
+        if (!recipientWallet) {
+          recipientWallet = new Wallet({
+            userId: transaction.recipientId,
+            currency: transaction.currency,
+            balance: 0,
+            isActive: true
+          });
+          await recipientWallet.save({ session });
+        }
+
+        // Update balances
+        senderWallet.balance -= transaction.amount;
+        recipientWallet.balance += transaction.amount;
+
+        // Update transaction status
+        transaction.status = 'completed';
+        transaction.metadata.approvedBy = adminId;
+        transaction.metadata.approvedAt = new Date();
+        transaction.metadata.finalSenderBalance = senderWallet.balance;
+        transaction.metadata.finalRecipientBalance = recipientWallet.balance;
+        transaction.metadata.approvalNotes = req.body.approvalNotes || 'Approved by admin';
+
+        await transaction.save({ session });
+        await senderWallet.save({ session });
+        await recipientWallet.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        console.log('Money transfer approved:', {
+          transactionId: transaction._id,
+          approvedBy: adminId,
+          amount: transaction.amount,
+          currency: transaction.currency
+        });
+
+        req.flash('success', `Money transfer of ${transaction.currency} ${transaction.amount} approved successfully`);
+        res.redirect('/admin/pending-transactions');
+        
+      } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
+      }
+
+    } catch (error) {
+      console.error('Approve send money error:', error);
+      req.flash('error', 'Failed to approve money transfer');
+      res.redirect('/admin/pending-transactions');
+    }
+  },
+
+  // ADMIN: REJECT MONEY TRANSFER
+  rejectSendMoney: async (req, res) => {
+    try {
+      const { transactionId } = req.params;
+      const adminId = req.session.user?._id;
+
+      if (!['admin', 'superadmin'].includes(req.session.user?.role)) {
+        req.flash('error', 'Admin privileges required');
+        return res.redirect('/transactions');
+      }
+
+      const transaction = await Transaction.findById(transactionId);
+      if (!transaction) {
+        req.flash('error', 'Transaction not found');
+        return res.redirect('/admin/pending-transactions');
+      }
+
+      if (transaction.status !== 'pending') {
+        req.flash('error', 'Transaction is not pending approval');
+        return res.redirect('/admin/pending-transactions');
+      }
+
+      transaction.status = 'rejected';
+      transaction.metadata.rejectedBy = adminId;
+      transaction.metadata.rejectedAt = new Date();
+      transaction.metadata.rejectionReason = req.body.rejectionReason || 'Rejected by admin';
+
+      await transaction.save();
+
+      console.log('Money transfer rejected:', {
+        transactionId: transaction._id,
+        rejectedBy: adminId,
+        reason: transaction.metadata.rejectionReason
+      });
+
+      req.flash('success', 'Money transfer request rejected');
+      res.redirect('/admin/pending-transactions');
+      
+    } catch (error) {
+      console.error('Reject send money error:', error);
+      req.flash('error', 'Failed to reject money transfer');
+      res.redirect('/admin/pending-transactions');
     }
   },
 
@@ -1324,7 +1546,414 @@ rejectSendMoney: async (req, res) => {
     req.flash('error', 'Failed to reject money transfer');
     res.redirect('/admin/transactions');
   }
+},
+// EXCHANGE MONEY FUNCTIONS
+getExchangeMoney: async (req, res) => {
+  try {
+    const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+    
+    if (!userId) {
+      req.flash('error', 'Please login to exchange money');
+      return res.redirect('/auth/login');
+    }
+
+    const wallets = await Wallet.find({ userId }).lean();
+    
+    res.render('transactions/exchange', {
+      title: 'Exchange Money - QFS',
+      wallets,
+      error: req.flash('error'),
+      success: req.flash('success'),
+      formData: req.flash('formData')[0] || {},
+      user: req.session.user
+    });
+  } catch (error) {
+    console.error('Exchange money error:', error);
+    res.status(500).render('error/500', { 
+      title: 'Server Error',
+      error: req.app.get('env') === 'development' ? error : {},
+      user: req.session.user
+    });
+  }
+},
+
+exchangeMoney: async (req, res) => {
+  const session = await mongoose.startSession();
+  
+  try {
+    await session.withTransaction(async () => {
+      const {
+        from_wallet_id,
+        to_wallet_id,
+        amount,
+        percentage_fee,
+        fixed_fee,
+        total_fee,
+        final_amount,
+        sessionFromWalletCode,
+        sessionToWalletCode,
+        destinationCurrencyRate,
+        destinationCurrencyCode
+      } = req.body;
+
+      const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+
+      if (!userId) {
+        req.flash('error', 'Please login to exchange money');
+        return res.redirect('/auth/login');
+      }
+
+      console.log('Exchange request:', {
+        from_wallet_id,
+        to_wallet_id,
+        amount,
+        percentage_fee,
+        total_fee,
+        final_amount,
+        sessionFromWalletCode,
+        sessionToWalletCode,
+        destinationCurrencyRate,
+        destinationCurrencyCode
+      });
+
+      // Validation
+      if (!from_wallet_id || !to_wallet_id || !amount) {
+        req.flash('formData', req.body);
+        req.flash('error', 'All fields are required');
+        return res.redirect('/transactions/exchange');
+      }
+
+      if (from_wallet_id === to_wallet_id) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Cannot exchange to the same wallet');
+        return res.redirect('/transactions/exchange');
+      }
+
+      const amountNum = parseFloat(amount);
+      if (isNaN(amountNum) || amountNum <= 0) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Please enter a valid amount');
+        return res.redirect('/transactions/exchange');
+      }
+
+      // Find source wallet
+      const sourceWallet = await Wallet.findOne({ 
+        _id: from_wallet_id, 
+        userId 
+      }).session(session);
+
+      if (!sourceWallet) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Source wallet not found');
+        return res.redirect('/transactions/exchange');
+      }
+
+      // Check sufficient balance
+      if (sourceWallet.balance < amountNum) {
+        req.flash('formData', req.body);
+        req.flash('error', `Insufficient balance. Available: ${sourceWallet.balance} ${sourceWallet.currency}`);
+        return res.redirect('/transactions/exchange');
+      }
+
+      // Find target wallet
+      let targetWallet = await Wallet.findOne({ 
+        _id: to_wallet_id, 
+        userId 
+      }).session(session);
+
+      if (!targetWallet) {
+        req.flash('formData', req.body);
+        req.flash('error', 'Target wallet not found');
+        return res.redirect('/transactions/exchange');
+      }
+
+      // Calculate exchange details
+      const exchangeRate = parseFloat(destinationCurrencyRate) || await calculateExchangeRate(sourceWallet.currency, targetWallet.currency);
+      const feePercentage = parseFloat(percentage_fee) || 0.5;
+      const fixedFee = parseFloat(fixed_fee) || 0;
+      const totalFeeAmount = parseFloat(total_fee) || (amountNum * (feePercentage / 100)) + fixedFee;
+      const amountAfterFee = amountNum - totalFeeAmount;
+      const convertedAmount = amountAfterFee * exchangeRate;
+      const finalAmount = parseFloat(final_amount) || convertedAmount;
+
+      console.log('Exchange calculations:', {
+        amountNum,
+        exchangeRate,
+        feePercentage,
+        fixedFee,
+        totalFeeAmount,
+        amountAfterFee,
+        convertedAmount,
+        finalAmount
+      });
+
+      // Update wallet balances
+      sourceWallet.balance -= amountNum;
+      targetWallet.balance += finalAmount;
+
+      // Create exchange transaction record
+      const transaction = new Transaction({
+        userId,
+        type: 'exchange',
+        method: 'system',
+        amount: amountNum,
+        currency: sourceWallet.currency,
+        status: 'completed',
+        description: `Currency exchange from ${sourceWallet.currency} to ${targetWallet.currency}`,
+        metadata: {
+          fromCurrency: sourceWallet.currency,
+          toCurrency: targetWallet.currency,
+          fromWalletId: sourceWallet._id,
+          toWalletId: targetWallet._id,
+          exchangeRate: exchangeRate,
+          exchangedAmount: finalAmount,
+          exchangeFee: totalFeeAmount,
+          feePercentage: feePercentage,
+          fixedFee: fixedFee,
+          originalAmount: amountNum,
+          finalAmount: finalAmount,
+          sourceBalanceBefore: sourceWallet.balance + amountNum,
+          targetBalanceBefore: targetWallet.balance - finalAmount,
+          sourceBalanceAfter: sourceWallet.balance,
+          targetBalanceAfter: targetWallet.balance
+        }
+      });
+
+      // Save everything
+      await transaction.save({ session });
+      await sourceWallet.save({ session });
+      await targetWallet.save({ session });
+
+      console.log('Exchange completed successfully:', {
+        transactionId: transaction._id,
+        from: sourceWallet.currency,
+        to: targetWallet.currency,
+        amount: amountNum,
+        converted: finalAmount,
+        fee: totalFeeAmount,
+        rate: exchangeRate
+      });
+
+      req.flash('success', `Successfully exchanged ${sourceWallet.currency} ${amountNum.toFixed(2)} to ${targetWallet.currency} ${finalAmount.toFixed(2)} (Rate: ${exchangeRate})`);
+    });
+
+    res.redirect('/transactions');
+    
+  } catch (error) {
+    console.error('Exchange money error:', error);
+    
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+    
+    req.flash('formData', req.body);
+    req.flash('error', 'Failed to process exchange. Please try again.');
+    res.redirect('/transactions/exchange');
+  } finally {
+    session.endSession();
+  }
+},
+
+// Helper function to calculate exchange rates
+calculateExchangeRate: async (fromCurrency, toCurrency) => {
+  // Exchange rates (same as frontend for consistency)
+  const exchangeRates = {
+    'USD': 1.00,
+    'BTC': 40000,      // 1 BTC = 40,000 USD
+    'ETH': 2222,       // 1 ETH = 2,222 USD
+    'LTC': 83,         // 1 LTC = 83 USD
+    'XRP': 0.54,       // 1 XRP = 0.54 USD
+    'STRAWMAN': 0.07,      // 1 STRAWMAN = 0.07 USD
+    'XDC': 0.022,      // 1 XDC = 0.022 USD
+    'XLM': 0.04,       // 1 XLM = 0.04 USD
+    'MATIC': 0.83,     // 1 MATIC = 0.83 USD
+    'ALGO': 0.16       // 1 ALGO = 0.16 USD
+  };
+
+  if (fromCurrency === toCurrency) return 1;
+  
+  const fromRate = exchangeRates[fromCurrency];
+  const toRate = exchangeRates[toCurrency];
+  
+  if (!fromRate || !toRate) {
+    throw new Error(`Exchange rate not available for ${fromCurrency} to ${toCurrency}`);
+  }
+  
+  // If from currency is USD
+  if (fromCurrency === 'USD') {
+    return 1 / toRate;
+  }
+  
+  // If to currency is USD
+  if (toCurrency === 'USD') {
+    return fromRate;
+  }
+  
+  // Both are crypto - convert via USD
+  return fromRate / toRate;
+},
+
+// Get exchange rates API endpoint (for real-time rates)
+getExchangeRates: async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    
+    if (!from || !to) {
+      return res.status(400).json({
+        success: false,
+        message: 'From and to currencies are required'
+      });
+    }
+
+    const rate = await calculateExchangeRate(from.toUpperCase(), to.toUpperCase());
+    
+    res.json({
+      success: true,
+      data: {
+        from: from.toUpperCase(),
+        to: to.toUpperCase(),
+        rate: rate,
+        timestamp: new Date()
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get exchange rates error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get exchange rate'
+    });
+  }
+},
+
+// Get user wallets for exchange (API endpoint)
+getExchangeWallets: async (req, res) => {
+  try {
+    const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+    
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    const wallets = await Wallet.find({ userId }).select('currency balance isDefault').lean();
+    
+    res.json({
+      success: true,
+      data: {
+        wallets: wallets || []
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get exchange wallets error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to load wallets'
+    });
+  }
+},
+
+// Validate exchange (pre-check before actual exchange)
+validateExchange: async (req, res) => {
+  try {
+    const { from_wallet_id, to_wallet_id, amount } = req.body;
+    const userId = req.session.user?._id || req.session.user?.id || req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    if (!from_wallet_id || !to_wallet_id || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required'
+      });
+    }
+
+    if (from_wallet_id === to_wallet_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot exchange to the same wallet'
+      });
+    }
+
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter a valid amount'
+      });
+    }
+
+    // Find wallets
+    const [sourceWallet, targetWallet] = await Promise.all([
+      Wallet.findOne({ _id: from_wallet_id, userId }),
+      Wallet.findOne({ _id: to_wallet_id, userId })
+    ]);
+
+    if (!sourceWallet) {
+      return res.status(404).json({
+        success: false,
+        message: 'Source wallet not found'
+      });
+    }
+
+    if (!targetWallet) {
+      return res.status(404).json({
+        success: false,
+        message: 'Target wallet not found'
+      });
+    }
+
+    // Check balance
+    if (sourceWallet.balance < amountNum) {
+      return res.status(400).json({
+        success: false,
+        message: `Insufficient balance. Available: ${sourceWallet.balance} ${sourceWallet.currency}`
+      });
+    }
+
+    // Calculate exchange details
+    const exchangeRate = await calculateExchangeRate(sourceWallet.currency, targetWallet.currency);
+    const feePercentage = 0.5; // 0.5% fee
+    const fixedFee = 0; // No fixed fee
+    const totalFeeAmount = (amountNum * feePercentage) / 100;
+    const amountAfterFee = amountNum - totalFeeAmount;
+    const convertedAmount = amountAfterFee * exchangeRate;
+
+    res.json({
+      success: true,
+      data: {
+        valid: true,
+        fromCurrency: sourceWallet.currency,
+        toCurrency: targetWallet.currency,
+        amount: amountNum,
+        exchangeRate: exchangeRate,
+        feePercentage: feePercentage,
+        fixedFee: fixedFee,
+        totalFee: totalFeeAmount,
+        convertedAmount: convertedAmount,
+        finalAmount: convertedAmount,
+        sourceBalance: sourceWallet.balance,
+        targetBalance: targetWallet.balance
+      }
+    });
+
+  } catch (error) {
+    console.error('Validate exchange error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to validate exchange'
+    });
+  }
 }
+
 };
 
 

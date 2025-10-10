@@ -12,7 +12,7 @@ const investmentSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    enum: ['USD', 'BTC', 'ETH', 'XRP', 'DOGE'],
+    enum: ['USD', 'BTC', 'ETH', 'XRP', 'STRAWMAN'],
     required: true
   },
   amount: {

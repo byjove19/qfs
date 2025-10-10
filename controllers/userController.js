@@ -999,7 +999,7 @@ const changeDefaultCurrency = async (req, res) => {
     }
 
     // Validate currency against enum values
-    const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'DOGE', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'];
+    const validCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'BTC', 'ETH', 'XRP', 'STRAWMAN', 'LTC', 'ALGO', 'XDC', 'XLM', 'MATIC'];
     if (!validCurrencies.includes(currency)) {
       if (req.xhr) {
         return res.status(400).json({ 

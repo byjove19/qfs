@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --tg-body-font-family: 'Inter', sans-serif;
+            --tg-heading-font-family: 'Inter', sans-serif;
+            --tg-body-font-size: 16px;
+            --tg-body-color: #9E9E9E;
+            --tg-heading-color: #ffffff;
+            --tg-theme-primary: #4b59f5;
+            --tg-theme-primary-hover: #3a49e5;
+            --tg-color-dark: #0C0C0C;
+            --tg-color-dark-2: #000000;
+            --tg-color-dark-3: #262626;
+            --tg-border-1: #363636;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --tg-transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] {
+            --tg-body-color: #5a5a5a;
+            --tg-heading-color: #1a1a1a;
+            --tg-color-dark: #f8f9fa;
+            --tg-color-dark-2: #ffffff;
+            --tg-color-dark-3: #e9ecef;
+            --tg-border-1: #dee2e6;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--tg-body-font-family);
+            font-size: var(--tg-body-font-size);
+            color: var(--tg-body-color);
+            background: var(--tg-color-dark);
+            transition: var(--tg-transition);
+            line-height: 1.6;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--tg-color-dark-2);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: var(--tg-transition);
+            box-shadow: var(--tg-shadow);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--tg-color-dark-3);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--tg-heading-color);
+            transition: var(--tg-transition);
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: 280px;
+            background: var(--tg-color-dark-2);
+            border-right: 1px solid var(--tg-border-1);
+            display: flex;
+            flex-direction: column;
+            transition: var(--tg-transition);
+            position: relative;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--tg-heading-color);
+            text-decoration: none;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--tg-heading-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .sidebar-close:hover {
+            background: var(--tg-color-dark-3);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-theme-primary);
+            border-left-color: var(--tg-theme-primary);
+        }
+
+        .nav-link i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+            transition: var(--tg-transition);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--tg-border-1);
+        }
+
+        .sidebar-footer .nav-link {
+            padding: 10px 0;
+            border-left: none;
+        }
+
+        /* Main Content Styles */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--tg-transition);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: var(--tg-color-dark-2);
+            border-bottom: 1px solid var(--tg-border-1);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--tg-heading-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: var(--tg-transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--tg-color-dark-3);
+            transform: rotate(90deg);
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-name {
+            color: var(--tg-heading-color);
+            font-weight: 500;
+        }
+
+        .badge {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--tg-shadow);
+            transition: var(--tg-transition);
+            border: 1px solid var(--tg-border-1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--tg-theme-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        }
+
+        .stat-icon i {
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--tg-heading-color);
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .stat-info p {
+            font-size: 14px;
+            color: var(--tg-body-color);
+            font-weight: 500;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            box-shadow: var(--tg-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: var(--tg-transition);
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .tg-btn {
+            background: var(--tg-theme-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--tg-transition);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tg-btn:hover {
+            background: var(--tg-theme-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+            border-bottom: 1px solid var(--tg-border-1);
+            background: var(--tg-color-dark-3);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--tg-border-1);
+            transition: var(--tg-transition);
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-table tr:hover {
+            background: var(--tg-color-dark-3);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-badge.inactive {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--tg-color-dark-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tg-body-color);
+            text-decoration: none;
+            transition: var(--tg-transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: var(--tg-theme-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--tg-body-color);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--tg-heading-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--tg-color-dark-3);
+            border: 1px solid var(--tg-border-1);
+            border-radius: 8px;
+            color: var(--tg-heading-color);
+            font-size: 14px;
+            transition: var(--tg-transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--tg-theme-primary);
+            box-shadow: 0 0 0 2px rgba(75, 89, 245, 0.2);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239E9E9E' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--tg-theme-primary);
+        }
+
+        .form-check-label {
+            color: var(--tg-heading-color);
+            font-size: 14px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--tg-color-dark-2);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--tg-body-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .modal-close:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--tg-border-1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Currency Grid */
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .currency-card {
+            background: var(--tg-color-dark-2);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--tg-border-1);
+            transition: var(--tg-transition);
+        }
+
+        .currency-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--tg-shadow);
+        }
+
+        .currency-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .currency-pair {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--tg-heading-color);
+        }
+
+        .currency-rate {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tg-theme-primary);
+            margin-bottom: 10px;
+        }
+
+        .currency-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .currency-detail span {
+            color: var(--tg-body-color);
+        }
+
+        .currency-detail strong {
+            color: var(--tg-heading-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .admin-wrapper {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            
+            .admin-sidebar.sidebar-open {
+                left: 0;
+            }
+            
+            .sidebar-close {
+                display: block;
+            }
+            
+            .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .admin-header h1 {
+                font-size: 20px;
+            }
+            
+            .admin-content {
+                padding: 20px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .currency-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Collapsed State */
+        .admin-wrapper.sidebar-collapsed .admin-sidebar {
+            width: 70px;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .logo-text,
+        .admin-wrapper.sidebar-collapsed .nav-link span,
+        .admin-wrapper.sidebar-collapsed .sidebar-footer .nav-link span {
+            display: none;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .nav-link {
+            justify-content: center;
+            padding: 12px;
+        }
+        
+        .admin-wrapper.sidebar-collapsed .nav-link i {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS ADMIN</a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="/admin/users" class="nav-link">
+                        <i class="fas fa-users"></i> <span>Users</span>
+                    </a></li>
+                    <li><a href="/admin/transactions" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                    </a></li>
+                    <li><a href="/admin/investments" class="nav-link">
+                        <i class="fas fa-chart-line"></i> <span>Investments</span>
+                    </a></li>
+                    <li><a href="/admin/tickets" class="nav-link">
+                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
+                    </a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
+                    </a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link">
+                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                    <li><a href="/admin/pending-transfers" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Pending Transfers</span>
+                    </a></li>
+                    <li><a href="/admin/exchange-rates" class="nav-link active">
+                        <i class="fas fa-coins"></i> <span>Exchange Rates</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><%= title %></h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">
+                        <% if (user && user.firstName) { %>
+                            Welcome, <%= user.firstName %> <%= user.lastName %>
+                        <% } else { %>
+                            Welcome, Admin
+                        <% } %>
+                    </span>
+                    <span class="badge">
+                        <% if (user && user.role) { %>
+                            <%= user.role %>
+                        <% } else { %>
+                            admin
+                        <% } %>
+                    </span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Flash Messages -->
+                <% if (messages.error && messages.error.length > 0) { %>
+                    <div class="alert alert-error" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <i class="fas fa-exclamation-circle"></i> <%= messages.error %>
+                    </div>
+                <% } %>
+                <% if (messages.success && messages.success.length > 0) { %>
+                    <div class="alert alert-success" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); color: #28a745; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <i class="fas fa-check-circle"></i> <%= messages.success %>
+                    </div>
+                <% } %>
+
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= Object.keys(groupedRates).length %></h3>
+                            <p>Active Currency Pairs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= Object.values(groupedRates).flat().length %></h3>
+                            <p>Total Exchange Rates</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-toggle-on"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3><%= Object.values(groupedRates).flat().filter(rate => rate.isActive).length %></h3>
+                            <p>Active Rates</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exchange Rates Management -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Exchange Rates Management</h2>
+                        <div>
+                            <button class="tg-btn" id="addRateBtn">
+                                <i class="fas fa-plus"></i> Add New Rate
+                            </button>
+                            <button class="tg-btn" id="bulkUpdateBtn" style="background: #10b981;">
+                                <i class="fas fa-sync-alt"></i> Bulk Update
+                            </button>
+                            <button class="tg-btn" id="initializeRatesBtn" style="background: #8b5cf6;">
+                                <i class="fas fa-database"></i> Initialize Defaults
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <% if (Object.keys(groupedRates).length > 0) { %>
+                            <% Object.keys(groupedRates).forEach(fromCurrency => { %>
+                                <div style="margin-bottom: 30px;">
+                                    <h3 style="color: var(--tg-heading-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--tg-border-1);">
+                                        <%= fromCurrency %> Exchange Rates
+                                    </h3>
+                                    <div class="currency-grid">
+                                        <% groupedRates[fromCurrency].forEach(rate => { %>
+                                            <div class="currency-card">
+                                                <div class="currency-header">
+                                                    <div class="currency-pair">
+                                                        <%= rate.fromCurrency %> → <%= rate.toCurrency %>
+                                                    </div>
+                                                    <span class="status-badge <%= rate.isActive ? 'active' : 'inactive' %>">
+                                                        <%= rate.isActive ? 'Active' : 'Inactive' %>
+                                                    </span>
+                                                </div>
+                                                <div class="currency-rate">
+                                                    <%= rate.rate.toFixed(8) %>
+                                                </div>
+                                                <div class="currency-details">
+                                                    <div class="currency-detail">
+                                                        <span>Fee:</span>
+                                                        <strong><%= rate.feePercentage %>%</strong>
+                                                    </div>
+                                                    <div class="currency-detail">
+                                                        <span>Fixed Fee:</span>
+                                                        <strong><%= rate.fixedFee %></strong>
+                                                    </div>
+                                                    <div class="currency-detail">
+                                                        <span>Updated:</span>
+                                                        <strong><%= new Date(rate.updatedAt).toLocaleDateString() %></strong>
+                                                    </div>
+                                                    <div class="currency-detail">
+                                                        <span>By:</span>
+                                                        <strong>
+                                                            <% if (rate.lastUpdatedBy && rate.lastUpdatedBy.firstName) { %>
+                                                                <%= rate.lastUpdatedBy.firstName %>
+                                                            <% } else { %>
+                                                                System
+                                                            <% } %>
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                <div class="action-buttons" style="margin-top: 15px;">
+                                                    <button class="btn-icon btn-warning edit-rate" 
+                                                            data-rate-id="<%= rate._id %>"
+                                                            data-from-currency="<%= rate.fromCurrency %>"
+                                                            data-to-currency="<%= rate.toCurrency %>"
+                                                            data-rate="<%= rate.rate %>"
+                                                            data-fee-percentage="<%= rate.feePercentage %>"
+                                                            data-fixed-fee="<%= rate.fixedFee %>"
+                                                            data-is-active="<%= rate.isActive %>"
+                                                            title="Edit Rate">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn-icon <%= rate.isActive ? 'btn-danger' : 'btn-success' %> toggle-rate" 
+                                                            data-rate-id="<%= rate._id %>"
+                                                            data-is-active="<%= rate.isActive %>"
+                                                            title="<%= rate.isActive ? 'Deactivate' : 'Activate' %> Rate">
+                                                        <i class="fas <%= rate.isActive ? 'fa-toggle-off' : 'fa-toggle-on' %>"></i>
+                                                    </button>
+                                                    <button class="btn-icon btn-danger delete-rate" 
+                                                            data-rate-id="<%= rate._id %>"
+                                                            data-currency-pair="<%= rate.fromCurrency %>-<%= rate.toCurrency %>"
+                                                            title="Delete Rate">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <i class="fas fa-coins"></i>
+                                <p>No exchange rates configured</p>
+                                <small>Click "Initialize Defaults" to set up default exchange rates</small>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Rate Modal -->
+    <div class="modal-overlay" id="rateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Exchange Rate</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rateForm">
+                    <input type="hidden" id="rateId" name="rateId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="fromCurrency">From Currency</label>
+                            <select class="form-control form-select" id="fromCurrency" name="fromCurrency" required>
+                                <option value="">Select Currency</option>
+                                <% currencies.forEach(currency => { %>
+                                    <option value="<%= currency %>"><%= currency %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="toCurrency">To Currency</label>
+                            <select class="form-control form-select" id="toCurrency" name="toCurrency" required>
+                                <option value="">Select Currency</option>
+                                <% currencies.forEach(currency => { %>
+                                    <option value="<%= currency %>"><%= currency %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="rate">Exchange Rate</label>
+                        <input type="number" class="form-control" id="rate" name="rate" step="0.00000001" min="0.00000001" required>
+                        <small style="color: var(--tg-body-color); font-size: 12px;">
+                            Rate: 1 <span id="fromCurrencyLabel">FROM</span> = <span id="ratePreview">0</span> <span id="toCurrencyLabel">TO</span>
+                        </small>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="feePercentage">Fee Percentage (%)</label>
+                            <input type="number" class="form-control" id="feePercentage" name="feePercentage" step="0.01" min="0" max="100" value="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fixedFee">Fixed Fee</label>
+                            <input type="number" class="form-control" id="fixedFee" name="fixedFee" step="0.00000001" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="updateNotes">Update Notes</label>
+                        <textarea class="form-control" id="updateNotes" name="updateNotes" rows="3" placeholder="Optional notes about this update..."></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isActive" name="isActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            Active (Available for exchanges)
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="tg-btn" style="background: #6c757d;" id="cancelBtn">Cancel</button>
+                <button type="button" class="tg-btn" id="saveRateBtn">Save Rate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Update Modal -->
+    <div class="modal-overlay" id="bulkModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Bulk Update Exchange Rates</h3>
+                <button class="modal-close" id="bulkModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--tg-body-color);">
+                    Update multiple exchange rates at once. You can import from CSV or manually enter rates below.
+                </p>
+                <div class="form-group">
+                    <label class="form-label" for="bulkRates">Rates Data (JSON format)</label>
+                    <textarea class="form-control" id="bulkRates" name="bulkRates" rows="10" placeholder='[{"fromCurrency": "USD", "toCurrency": "BTC", "rate": 0.000025, "feePercentage": 0.5, "fixedFee": 0, "isActive": true}, ...]'></textarea>
+                    <small style="color: var(--tg-body-color); font-size: 12px;">
+                        Format: Array of objects with fromCurrency, toCurrency, rate, feePercentage, fixedFee, and isActive properties
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="tg-btn" style="background: #6c757d;" id="cancelBulkBtn">Cancel</button>
+                <button type="button" class="tg-btn" style="background: #10b981;" id="saveBulkBtn">Update All Rates</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Add click animation
+            themeToggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                themeToggle.style.transform = 'scale(1)';
+            }, 150);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        // Sidebar functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const adminWrapper = document.querySelector('.admin-wrapper');
+
+        // Desktop sidebar toggle (collapse/expand)
+        sidebarToggle.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                adminWrapper.classList.toggle('sidebar-collapsed');
+            } else {
+                // Mobile sidebar open
+                adminSidebar.classList.add('sidebar-open');
+            }
+        });
+
+        // Mobile sidebar close
+        sidebarClose.addEventListener('click', function() {
+            adminSidebar.classList.remove('sidebar-open');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 && 
+                adminSidebar.classList.contains('sidebar-open') &&
+                !adminSidebar.contains(event.target) &&
+                !sidebarToggle.contains(event.target)) {
+                adminSidebar.classList.remove('sidebar-open');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                adminSidebar.classList.remove('sidebar-open');
+                adminWrapper.classList.remove('sidebar-collapsed');
+            }
+        });
+
+        // Modal functionality
+        const rateModal = document.getElementById('rateModal');
+        const bulkModal = document.getElementById('bulkModal');
+        const addRateBtn = document.getElementById('addRateBtn');
+        const bulkUpdateBtn = document.getElementById('bulkUpdateBtn');
+        const initializeRatesBtn = document.getElementById('initializeRatesBtn');
+        const modalClose = document.getElementById('modalClose');
+        const bulkModalClose = document.getElementById('bulkModalClose');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const cancelBulkBtn = document.getElementById('cancelBulkBtn');
+        const saveRateBtn = document.getElementById('saveRateBtn');
+        const saveBulkBtn = document.getElementById('saveBulkBtn');
+        const rateForm = document.getElementById('rateForm');
+        const modalTitle = document.getElementById('modalTitle');
+
+        // Open modals
+        addRateBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Add Exchange Rate';
+            rateForm.reset();
+            document.getElementById('rateId').value = '';
+            rateModal.classList.add('active');
+        });
+
+        bulkUpdateBtn.addEventListener('click', () => {
+            bulkModal.classList.add('active');
+        });
+
+        initializeRatesBtn.addEventListener('click', () => {
+            if (confirm('This will initialize default exchange rates. Existing rates will be updated. Continue?')) {
+                initializeDefaultRates();
+            }
+        });
+
+        // Close modals
+        function closeModals() {
+            rateModal.classList.remove('active');
+            bulkModal.classList.remove('active');
+        }
+
+        modalClose.addEventListener('click', closeModals);
+        bulkModalClose.addEventListener('click', closeModals);
+        cancelBtn.addEventListener('click', closeModals);
+        cancelBulkBtn.addEventListener('click', closeModals);
+
+        // Close modal when clicking outside
+        [rateModal, bulkModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModals();
+                }
+            });
+        });
+
+        // Rate preview update
+        const fromCurrencySelect = document.getElementById('fromCurrency');
+        const toCurrencySelect = document.getElementById('toCurrency');
+        const rateInput = document.getElementById('rate');
+        const fromCurrencyLabel = document.getElementById('fromCurrencyLabel');
+        const toCurrencyLabel = document.getElementById('toCurrencyLabel');
+        const ratePreview = document.getElementById('ratePreview');
+
+        function updateRatePreview() {
+            fromCurrencyLabel.textContent = fromCurrencySelect.value || 'FROM';
+            toCurrencyLabel.textContent = toCurrencySelect.value || 'TO';
+            ratePreview.textContent = rateInput.value || '0';
+        }
+
+        fromCurrencySelect.addEventListener('change', updateRatePreview);
+        toCurrencySelect.addEventListener('change', updateRatePreview);
+        rateInput.addEventListener('input', updateRatePreview);
+
+        // Edit rate buttons
+        document.querySelectorAll('.edit-rate').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rateId = this.getAttribute('data-rate-id');
+                const fromCurrency = this.getAttribute('data-from-currency');
+                const toCurrency = this.getAttribute('data-to-currency');
+                const rate = this.getAttribute('data-rate');
+                const feePercentage = this.getAttribute('data-fee-percentage');
+                const fixedFee = this.getAttribute('data-fixed-fee');
+                const isActive = this.getAttribute('data-is-active') === 'true';
+
+                modalTitle.textContent = 'Edit Exchange Rate';
+                document.getElementById('rateId').value = rateId;
+                document.getElementById('fromCurrency').value = fromCurrency;
+                document.getElementById('toCurrency').value = toCurrency;
+                document.getElementById('rate').value = rate;
+                document.getElementById('feePercentage').value = feePercentage;
+                document.getElementById('fixedFee').value = fixedFee;
+                document.getElementById('isActive').checked = isActive;
+                
+                updateRatePreview();
+                rateModal.classList.add('active');
+            });
+        });
+
+        // Toggle rate status
+        document.querySelectorAll('.toggle-rate').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rateId = this.getAttribute('data-rate-id');
+                const isActive = this.getAttribute('data-is-active') === 'true';
+                
+                if (confirm(`Are you sure you want to ${isActive ? 'deactivate' : 'activate'} this exchange rate?`)) {
+                    toggleRateStatus(rateId);
+                }
+            });
+        });
+
+        // Delete rate
+        document.querySelectorAll('.delete-rate').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rateId = this.getAttribute('data-rate-id');
+                const currencyPair = this.getAttribute('data-currency-pair');
+                
+                if (confirm(`Are you sure you want to delete the ${currencyPair} exchange rate? This action cannot be undone.`)) {
+                    deleteExchangeRate(rateId);
+                }
+            });
+        });
+
+        // Save rate
+        saveRateBtn.addEventListener('click', function() {
+            const formData = new FormData(rateForm);
+            const data = {
+                fromCurrency: formData.get('fromCurrency'),
+                toCurrency: formData.get('toCurrency'),
+                rate: parseFloat(formData.get('rate')),
+                feePercentage: parseFloat(formData.get('feePercentage')),
+                fixedFee: parseFloat(formData.get('fixedFee')),
+                isActive: formData.get('isActive') === 'on',
+                updateNotes: formData.get('updateNotes')
+            };
+
+            if (data.fromCurrency === data.toCurrency) {
+                alert('From and To currencies cannot be the same.');
+                return;
+            }
+
+            const rateId = formData.get('rateId');
+            if (rateId) {
+                updateExchangeRate(rateId, data);
+            } else {
+                createExchangeRate(data);
+            }
+        });
+
+        // Bulk update
+        saveBulkBtn.addEventListener('click', function() {
+            const bulkRatesText = document.getElementById('bulkRates').value;
+            try {
+                const rates = JSON.parse(bulkRatesText);
+                if (!Array.isArray(rates)) {
+                    throw new Error('Rates data must be an array');
+                }
+                bulkUpdateRates(rates);
+            } catch (error) {
+                alert('Invalid JSON format: ' + error.message);
+            }
+        });
+
+        // API Functions
+        async function createExchangeRate(data) {
+            try {
+                const response = await fetch('/admin/exchange-rates/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Exchange rate created successfully!', 'success');
+                    closeModals();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        async function updateExchangeRate(rateId, data) {
+            try {
+                const response = await fetch(`/admin/exchange-rates/update`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({...data, rateId})
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Exchange rate updated successfully!', 'success');
+                    closeModals();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        async function toggleRateStatus(rateId) {
+            try {
+                const response = await fetch(`/admin/exchange-rates/${rateId}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Exchange rate status updated!', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteExchangeRate(rateId) {
+            try {
+                const response = await fetch(`/admin/exchange-rates/${rateId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Exchange rate deleted successfully!', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        async function bulkUpdateRates(rates) {
+            try {
+                const response = await fetch('/admin/exchange-rates/bulk-update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ rates })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`Successfully updated ${result.message.match(/\d+/)[0]} exchange rates!`, 'success');
+                    closeModals();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        async function initializeDefaultRates() {
+            try {
+                const response = await fetch('/admin/exchange-rates/initialize-defaults', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Default exchange rates initialized successfully!', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Utility functions
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            // Create new alert
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.style.cssText = type === 'error' 
+                ? 'background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;'
+                : 'background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); color: #28a745; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;';
+            
+            alert.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+            
+            document.querySelector('.admin-content').insertBefore(alert, document.querySelector('.admin-content').firstChild);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
+        }
+
+        // Add loading animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.stat-card, .card, .currency-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

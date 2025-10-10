@@ -131,6 +131,7 @@ const adminWalletRoutes = require('./routes/adminWalletRoutes');
 const userRoutes = require('./routes/userRoutes');
 const ticketRoutes = require('./routes/tickets');
 const Ticket = require('./models/Ticket');
+const apiRoutes = require('./routes/api');
 
 // ========== PUBLIC ROUTES ==========
 
@@ -264,6 +265,7 @@ app.get('/create-test-ticket', async (req, res) => {
   }
 });
 
+
 // ========== MOUNT ROUTE FILES ==========
 
 // Authentication routes
@@ -287,6 +289,7 @@ app.use('/', ticketRoutes);
 app.use('/admin', adminWalletRoutes);
 app.use('/api/admin', adminWalletRoutes);
 app.use('/api', adminWalletRoutes);
+app.use('/api', apiRoutes);
 
 // ========== PROTECTED PAGE ROUTES ==========
 

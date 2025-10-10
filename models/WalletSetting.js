@@ -18,7 +18,7 @@ const withdrawalSettingSchema = new mongoose.Schema({
   cryptoWallet: String,
   cryptoCurrency: {
     type: String,
-    enum: ['BTC', 'ETH', 'XRP', 'DOGE']
+    enum: ['BTC', 'ETH', 'XRP', 'STRAWMAN']
   },
   isDefault: {
     type: Boolean,

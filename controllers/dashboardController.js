@@ -22,7 +22,7 @@ const dashboardController = {
         { currency: 'ETH', type: 'Crypto', isDefault: false },
         { currency: 'LTC', type: 'Crypto', isDefault: false },
         { currency: 'XRP', type: 'Crypto', isDefault: false },
-        { currency: 'Doge', type: 'Crypto', isDefault: false },
+        { currency: 'STRAWMAN', type: 'Crypto', isDefault: false },
         { currency: 'XDC', type: 'Crypto', isDefault: false },
         { currency: 'XLM', type: 'Crypto', isDefault: false },
         { currency: 'Matic', type: 'Crypto', isDefault: false },
