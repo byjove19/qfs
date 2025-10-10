@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details - <%= ticket.ticketNumber %> - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Copy all the CSS styles from your tickets.ejs file here */
+        :root {
+            --tg-body-font-family: 'Inter', sans-serif;
+            --tg-heading-font-family: 'Inter', sans-serif;
+            --tg-body-font-size: 16px;
+            --tg-body-color: #9E9E9E;
+            --tg-heading-color: #ffffff;
+            --tg-theme-primary: #4b59f5;
+            --tg-theme-primary-hover: #3a49e5;
+            --tg-color-dark: #0C0C0C;
+            --tg-color-dark-2: #000000;
+            --tg-color-dark-3: #262626;
+            --tg-border-1: #363636;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --tg-transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] {
+            --tg-body-color: #5a5a5a;
+            --tg-heading-color: #1a1a1a;
+            --tg-color-dark: #f8f9fa;
+            --tg-color-dark-2: #ffffff;
+            --tg-color-dark-3: #e9ecef;
+            --tg-border-1: #dee2e6;
+            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--tg-body-font-family);
+            font-size: var(--tg-body-font-size);
+            color: var(--tg-body-color);
+            background: var(--tg-color-dark);
+            transition: var(--tg-transition);
+            line-height: 1.6;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Add all the other CSS styles from your tickets.ejs */
+        /* ... copy all CSS styles ... */
+
+        .ticket-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--tg-theme-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: var(--tg-transition);
+        }
+
+        .back-button:hover {
+            background: var(--tg-theme-primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .ticket-header {
+            background: var(--tg-color-dark-2);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 1px solid var(--tg-border-1);
+        }
+
+        .ticket-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--tg-border-1);
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: var(--tg-body-color);
+        }
+
+        .meta-value {
+            color: var(--tg-heading-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar (copy from tickets.ejs) -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS ADMIN</a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="/admin/users" class="nav-link">
+                        <i class="fas fa-users"></i> <span>Users</span>
+                    </a></li>
+                    <li><a href="/admin/transactions" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                    </a></li>
+                    <li><a href="/admin/investments" class="nav-link">
+                        <i class="fas fa-chart-line"></i> <span>Investments</span>
+                    </a></li>
+                    <li><a href="/admin/tickets" class="nav-link active">
+                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
+                    </a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
+                    </a></li>
+                    <li><a href="/admin/wallet-addresses" class="nav-link">
+                        <i class="fas fa-wallet"></i> <span>Wallet Addresses</span>
+                    </a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link">
+                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Ticket Details - <%= ticket.ticketNumber %></h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
+                    <span class="admin-role badge"><%= user.role %></span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Flash Messages -->
+                <% if (messages.error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> <%= messages.error %>
+                    </div>
+                <% } %>
+                <% if (messages.success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> <%= messages.success %>
+                    </div>
+                <% } %>
+
+                <div class="ticket-detail-container">
+                    <a href="/admin/tickets" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to Tickets
+                    </a>
+
+                    <div class="ticket-header">
+                        <h2><%= ticket.subject %></h2>
+                        <div class="ticket-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Status:</span>
+                                <span class="status-badge <%= ticket.status %>"><%= ticket.status %></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Priority:</span>
+                                <span class="priority-badge priority-<%= ticket.priority %>"><%= ticket.priority %></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Category:</span>
+                                <span class="meta-value"><%= ticket.category %></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Created:</span>
+                                <span class="meta-value"><%= new Date(ticket.createdAt).toLocaleString() %></span>
+                            </div>
+                            <% if (ticket.closedAt) { %>
+                            <div class="meta-item">
+                                <span class="meta-label">Resolved:</span>
+                                <span class="meta-value"><%= new Date(ticket.closedAt).toLocaleString() %></span>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>User Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <% if (ticket.userId) { %>
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        <%= ticket.userId.firstName.charAt(0).toUpperCase() %><%= ticket.userId.lastName.charAt(0).toUpperCase() %>
+                                    </div>
+                                    <div class="user-details">
+                                        <strong><%= ticket.userId.firstName %> <%= ticket.userId.lastName %></strong>
+                                        <span><%= ticket.userId.email %></span>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <span class="text-muted">User Not Found</span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Initial Message</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="message-content">
+                                <%= ticket.messages && ticket.messages.length > 0 ? ticket.messages[0].message : 'No message content' %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% if (ticket.messages && ticket.messages.length > 1) { %>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Conversation History</h3>
+                        </div>
+                        <div class="card-body">
+                            <% ticket.messages.slice(1).forEach(msg => { %>
+                                <div class="conversation-item <%= msg.senderId.role === 'admin' ? 'admin' : '' %>">
+                                    <div class="conversation-header">
+                                        <span class="conversation-sender">
+                                            <%= msg.senderId.role === 'admin' ? 'Admin' : `${msg.senderId.firstName} ${msg.senderId.lastName}` %>
+                                        </span>
+                                        <span class="conversation-date">
+                                            <%= new Date(msg.timestamp).toLocaleString() %>
+                                        </span>
+                                    </div>
+                                    <div class="conversation-message"><%= msg.message %></div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Admin Response</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="ticketResponseForm" action="/admin/tickets/respond" method="POST">
+                                <input type="hidden" name="ticketId" value="<%= ticket._id %>">
+                                
+                                <div class="form-group">
+                                    <label for="responseStatus">Update Status</label>
+                                    <select class="form-control" id="responseStatus" name="status">
+                                        <option value="open" <%= ticket.status === 'open' ? 'selected' : '' %>>Open</option>
+                                        <option value="in-progress" <%= ticket.status === 'in-progress' ? 'selected' : '' %>>In Progress</option>
+                                        <option value="on-hold" <%= ticket.status === 'on-hold' ? 'selected' : '' %>>On Hold</option>
+                                        <option value="resolved" <%= ticket.status === 'resolved' ? 'selected' : '' %>>Resolved</option>
+                                        <option value="closed" <%= ticket.status === 'closed' ? 'selected' : '' %>>Closed</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="adminResponse">Your Response</label>
+                                    <textarea 
+                                        class="form-control" 
+                                        id="adminResponse" 
+                                        name="response" 
+                                        placeholder="Type your response to the user..."
+                                        required
+                                        rows="5"
+                                    ></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i> Send Response
+                                    </button>
+                                    <button type="button" class="btn btn-success" id="resolveTicket">
+                                        <i class="fas fa-check"></i> Mark as Resolved
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Quick resolve functionality
+        document.getElementById('resolveTicket').addEventListener('click', function() {
+            if (confirm('Are you sure you want to mark this ticket as resolved?')) {
+                fetch('/admin/tickets/resolve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ticketId: '<%= ticket._id %>',
+                        response: 'Ticket has been resolved by administrator.'
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Ticket marked as resolved!');
+                        location.reload();
+                    } else {
+                        alert('Failed to resolve ticket: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resolving ticket:', error);
+                    alert('Error resolving ticket');
+                });
+            }
+        });
+
+        // Sidebar functionality
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('adminSidebar').classList.toggle('sidebar-open');
+        });
+
+        document.getElementById('sidebarClose').addEventListener('click', function() {
+            document.getElementById('adminSidebar').classList.remove('sidebar-open');
+        });
+    </script>
+</body>
+</html>

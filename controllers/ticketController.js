@@ -1,40 +1,38 @@
-// controllers/ticketController.js
+// controllers/ticketController.js - FIXED VERSION
 const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 
 const ticketController = {
 
-  /** =======================
-   *  USER TICKET MANAGEMENT
-   *  =======================
-   */
-
-  // Get all tickets for the logged-in user (renders the tickets page)
+  // Get all tickets for the logged-in user
   async getUserTickets(req, res) {
     try {
+      console.log('🎫 getUserTickets - User ID:', req.session.user?._id);
+      
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
+      const limit = 10;
       const skip = (page - 1) * limit;
       const status = req.query.status || 'all';
 
-      console.log('Fetching tickets for user:', req.session.user._id);
-      console.log('Status filter:', status);
-
-      const filter = { userId: req.session.user._id };
-      if (status && status !== 'all') {
-        // Map numeric status values to string status
-        const statusMap = {
-          '1': 'open',
-          '2': 'in-progress', 
-          '3': 'on-hold',
-          '4': 'closed'
-        };
-        filter.status = statusMap[status] || status;
+      // Build filter - FIXED: Use proper user ID access
+      const userId = req.session.user?._id || req.session.user?.id;
+      if (!userId) {
+        console.error('❌ No user ID in session');
+        req.flash('error', 'Please login to view tickets');
+        return res.redirect('/auth/login');
       }
 
+      const filter = { userId: userId };
+      if (status !== 'all') {
+        const statusMap = { '1': 'open', '2': 'in-progress', '3': 'on-hold', '4': 'closed' };
+        filter.status = statusMap[status];
+      }
+
+      console.log('🔍 Filter:', filter);
+
+      // Get tickets
       const tickets = await Ticket.find(filter)
-        .populate('assignedTo', 'firstName lastName email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -42,193 +40,78 @@ const ticketController = {
 
       const totalTickets = await Ticket.countDocuments(filter);
 
-      console.log(`Found ${tickets.length} tickets out of ${totalTickets} total`);
+      console.log(`✅ Found ${tickets.length} tickets for user ${userId}`);
 
-      // Calculate ticket statistics for the user
-      const openTickets = await Ticket.countDocuments({ 
-        userId: req.session.user._id, 
-        status: 'open' 
-      });
-      const inProgressTickets = await Ticket.countDocuments({ 
-        userId: req.session.user._id, 
-        status: 'in-progress' 
-      });
-      const closedTickets = await Ticket.countDocuments({ 
-        userId: req.session.user._id, 
-        status: 'closed' 
-      });
-
-      // Helper functions for EJS template
-      const getPriorityBadgeClass = (priority) => {
-        const classes = {
-          'low': 'success',
-          'medium': 'info',
-          'high': 'warning',
-          'urgent': 'danger'
-        };
-        return classes[priority] || 'secondary';
+      // Helper functions
+      const helpers = {
+        getPriorityBadgeClass: (priority) => {
+          return { low: 'success', medium: 'info', high: 'warning', urgent: 'danger' }[priority] || 'secondary';
+        },
+        getStatusBadgeClass: (status) => {
+          return { open: 'primary', 'in-progress': 'info', 'on-hold': 'warning', closed: 'secondary' }[status] || 'secondary';
+        },
+        getStatusDisplayName: (status) => {
+          return { open: 'Open', 'in-progress': 'In Progress', 'on-hold': 'On Hold', closed: 'Closed' }[status] || status;
+        }
       };
 
-      const getStatusBadgeClass = (status) => {
-        const classes = {
-          'open': 'primary',
-          'in-progress': 'info',
-          'on-hold': 'warning',
-          'closed': 'secondary',
-          'resolved': 'success'
-        };
-        return classes[status] || 'secondary';
-      };
-
-      const getStatusDisplayName = (status) => {
-        const names = {
-          'open': 'Open',
-          'in-progress': 'In Progress',
-          'on-hold': 'On Hold',
-          'closed': 'Closed',
-          'resolved': 'Resolved'
-        };
-        return names[status] || status;
-      };
-
-      // Render the tickets page with data
+      // Render the page
       res.render('tickets', {
         title: 'Support Tickets',
-        tickets: tickets || [],
-        totalTickets: totalTickets || 0,
-        openTickets: openTickets || 0,
-        inProgressTickets: inProgressTickets || 0,
-        closedTickets: closedTickets || 0,
+        tickets: tickets,
+        totalTickets: totalTickets,
         currentPage: page,
         totalPages: Math.ceil(totalTickets / limit),
-        filter: { status }, // Pass the filter object
+        filter: { status: status },
         user: req.session.user,
-        helpers: {
-          getPriorityBadgeClass,
-          getStatusBadgeClass,
-          getStatusDisplayName
-        },
+        helpers: helpers,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
         }
       });
+
     } catch (error) {
-      console.error('Get User Tickets Error:', error);
+      console.error('❌ Get User Tickets Error:', error);
       req.flash('error', 'Failed to load your tickets');
       res.redirect('/dashboard');
     }
   },
 
-  // Show create ticket form (renders create ticket page)
-  getCreateTicketForm(req, res) {
-    res.render('tickets/create', {
-      title: 'Create Support Ticket',
-      user: req.session.user,
-      messages: {
-        success: req.flash('success'),
-        error: req.flash('error')
-      }
-    });
-  },
-
-  // Create new ticket (handles form submission) - UPDATED
-  async createTicket(req, res) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      const { subject, priority, category, message } = req.body;
-      const attachment = req.file;
-
-      // Validate required fields
-      if (!subject || !priority || !category || !message) {
-        await session.abortTransaction();
-        session.endSession();
-        req.flash('error', 'All fields are required');
-        return res.redirect('/tickets/create');
-      }
-
-      // Create the ticket - ticketNumber will be auto-generated by middleware
-      const newTicket = new Ticket({
-        userId: req.session.user._id,
-        subject: subject.trim(),
-        priority: priority.toLowerCase(),
-        category: category.toLowerCase(),
-        status: 'open',
-        messages: [{
-          senderId: req.session.user._id,
-          message: message.trim(),
-          timestamp: new Date(),
-          attachments: attachment ? [attachment.filename] : []
-        }],
-        metadata: {
-          ipAddress: req.ip,
-          userAgent: req.get('User-Agent'),
-          attachment: attachment ? {
-            filename: attachment.filename,
-            originalName: attachment.originalname,
-            size: attachment.size,
-            mimetype: attachment.mimetype
-          } : null
-        }
-      });
-
-      await newTicket.save({ session });
-
-      // Notify admins about new ticket
-      await ticketController.notifyAdminsAboutNewTicket(newTicket, req.session.user);
-
-      await session.commitTransaction();
-      session.endSession();
-
-      console.log('Ticket created successfully with number:', newTicket.ticketNumber);
-      
-      req.flash('success', `Ticket #${newTicket.ticketNumber} created successfully! Our support team will review it shortly.`);
-      res.redirect('/tickets');
-
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      console.error('Create Ticket Error:', error);
-      
-      if (error.code === 11000) {
-        req.flash('error', 'Duplicate ticket detected. Please try again.');
-      } else {
-        req.flash('error', 'Failed to create ticket. Please try again.');
-      }
-      
-      res.redirect('/tickets/create');
-    }
-  },
-
-  // AJAX endpoint for creating ticket from modal - UPDATED
+  // AJAX endpoint for creating ticket
   async createTicketAjax(req, res) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
+      console.log('📨 CREATE TICKET AJAX - User:', req.session.user?._id);
+      console.log('Body:', req.body);
+
       const { subject, priority, category, message } = req.body;
+
+      // Validate user session
+      const userId = req.session.user?._id || req.session.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Please login to create a ticket'
+        });
+      }
 
       // Validate required fields
       if (!subject || !priority || !category || !message) {
-        await session.abortTransaction();
-        session.endSession();
         return res.status(400).json({
           success: false,
           message: 'All fields are required'
         });
       }
 
-      // Create the ticket - ticketNumber will be auto-generated by middleware
+      // Create ticket
       const newTicket = new Ticket({
-        userId: req.session.user._id,
+        userId: userId,
         subject: subject.trim(),
         priority: priority.toLowerCase(),
         category: category.toLowerCase(),
         status: 'open',
         messages: [{
-          senderId: req.session.user._id,
+          senderId: userId,
           message: message.trim(),
           timestamp: new Date()
         }],
@@ -238,49 +121,41 @@ const ticketController = {
         }
       });
 
-      await newTicket.save({ session });
+      await newTicket.save();
+      console.log('✅ Ticket created:', newTicket.ticketNumber);
 
-      // Notify admins about new ticket
-      await ticketController.notifyAdminsAboutNewTicket(newTicket, req.session.user);
-
-      await session.commitTransaction();
-      session.endSession();
+      // Notify admins
+      await this.notifyAdminsAboutNewTicket(newTicket, req.session.user);
 
       res.json({
         success: true,
         message: 'Ticket created successfully!',
-        ticketNumber: newTicket.ticketNumber // This is now auto-generated
+        ticketNumber: newTicket.ticketNumber
       });
 
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      console.error('Create Ticket AJAX Error:', error);
+      console.error('❌ Create Ticket AJAX Error:', error);
       
+      let errorMessage = 'Failed to create ticket. Please try again.';
       if (error.code === 11000) {
-        res.status(500).json({
-          success: false,
-          message: 'Duplicate ticket detected. Please try again.'
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: 'Failed to create ticket. Please try again.'
-        });
+        errorMessage = 'Duplicate ticket detected. Please try again.';
       }
+      
+      res.status(500).json({
+        success: false,
+        message: errorMessage
+      });
     }
   },
 
-  // Get single ticket details for user
+  // Get single ticket details
   async getTicketDetails(req, res) {
     try {
+      const userId = req.session.user?._id || req.session.user?.id;
       const ticket = await Ticket.findOne({
         _id: req.params.id,
-        userId: req.session.user._id
-      })
-      .populate('userId', 'firstName lastName email')
-      .populate('assignedTo', 'firstName lastName email')
-      .populate('messages.senderId', 'firstName lastName email role');
+        userId: userId
+      }).populate('assignedTo', 'firstName lastName email');
 
       if (!ticket) {
         req.flash('error', 'Ticket not found');
@@ -289,13 +164,14 @@ const ticketController = {
 
       res.render('tickets/detail', {
         title: `Ticket #${ticket.ticketNumber}`,
-        ticket,
+        ticket: ticket,
         user: req.session.user,
         messages: {
           success: req.flash('success'),
           error: req.flash('error')
         }
       });
+
     } catch (error) {
       console.error('Get Ticket Details Error:', error);
       req.flash('error', 'Failed to load ticket details');
@@ -303,58 +179,19 @@ const ticketController = {
     }
   },
 
-  /** =======================
-   *  NOTIFICATION METHODS
-   *  =======================
-   */
-
-  // Notify admins about new ticket
-  async notifyAdminsAboutNewTicket(ticket, user) {
-    try {
-      // Get all active admins
-      const admins = await User.find({
-        role: { $in: ['admin', 'superadmin'] },
-        isActive: true
-      });
-
-      console.log(`New ticket created by ${user.firstName} ${user.lastName}:`, {
-        ticketNumber: ticket.ticketNumber,
-        subject: ticket.subject,
-        priority: ticket.priority,
-        category: ticket.category,
-        adminsNotified: admins.length
-      });
-
-      // Here you can implement email notifications, push notifications, etc.
-
-    } catch (error) {
-      console.error('Notify Admins Error:', error);
-    }
-  },
-
-  /** =======================
-   *  API ENDPOINTS
-   *  =======================
-   */
-
-  // API: Get tickets for user (for frontend filtering)
+  // API: Get tickets for filtering
   async getUserTicketsAPI(req, res) {
     try {
       const { status, page = 1, limit = 10 } = req.query;
+      const userId = req.session.user?._id || req.session.user?.id;
       
-      const filter = { userId: req.session.user._id };
+      const filter = { userId: userId };
       if (status && status !== 'all') {
-        const statusMap = {
-          '1': 'open',
-          '2': 'in-progress',
-          '3': 'on-hold', 
-          '4': 'closed'
-        };
-        filter.status = statusMap[status] || status;
+        const statusMap = { '1': 'open', '2': 'in-progress', '3': 'on-hold', '4': 'closed' };
+        filter.status = statusMap[status];
       }
 
       const tickets = await Ticket.find(filter)
-        .populate('assignedTo', 'firstName lastName email')
         .sort({ createdAt: -1 })
         .limit(limit * 1)
         .skip((page - 1) * limit)
@@ -376,6 +213,27 @@ const ticketController = {
         success: false,
         message: 'Error fetching tickets'
       });
+    }
+  },
+
+  // Notify admins about new ticket
+  async notifyAdminsAboutNewTicket(ticket, user) {
+    try {
+      const admins = await User.find({
+        role: { $in: ['admin', 'superadmin'] },
+        isActive: true
+      });
+
+      console.log(`📢 New ticket created by ${user.firstName} ${user.lastName}:`, {
+        ticketNumber: ticket.ticketNumber,
+        subject: ticket.subject,
+        priority: ticket.priority,
+        category: ticket.category,
+        adminsNotified: admins.length
+      });
+
+    } catch (error) {
+      console.error('Notify Admins Error:', error);
     }
   }
 

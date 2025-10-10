@@ -3,7 +3,7 @@
 <html lang="en" class="hydrated"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="messages" content="">
     <meta name="author" content="twoone.tech">
     <meta name="csrf-token" content="tiLfEIdLpapV8KvHXwRBGHJgLZFODUJqcXaCWPKM">
 
@@ -395,10 +395,10 @@
                                                     </div>
                                                     
                                                     <p class="card-text mb-0">
-                                                        <% if (ticket.description.length > 150) { %>
-                                                            <%= ticket.description.substring(0, 150) %>...
+                                                        <% if (ticket.messages.length > 150) { %>
+                                                            <%= ticket.messages.substring(0, 150) %>...
                                                         <% } else { %>
-                                                            <%= ticket.description %>
+                                                            <%= ticket.messages %>
                                                         <% } %>
                                                     </p>
                                                 </div>

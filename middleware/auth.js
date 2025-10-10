@@ -1,3 +1,4 @@
+// middleware/auth.js - CLEAN VERSION
 const isAuthenticated = (req, res, next) => {
   if (req.session.user) {
     return next();
@@ -32,7 +33,6 @@ const isSuperAdmin = (req, res, next) => {
   res.redirect('/dashboard');
 };
 
-// NEW: Allow admin login - redirect if already admin, otherwise show form
 const allowAdminLogin = (req, res, next) => {
   // If user is already logged in as admin, redirect to dashboard
   if (req.session.user && ['admin', 'superadmin'].includes(req.session.user.role)) {
@@ -41,7 +41,6 @@ const allowAdminLogin = (req, res, next) => {
   }
   
   // If regular user is logged in, they can still see the admin login form
-  // (they'll need to logout first or enter admin credentials)
   next();
 };
 
@@ -58,5 +57,5 @@ module.exports = {
   isAdmin,
   isSuperAdmin,
   attachUser,
-  allowAdminLogin  // Export the new middleware
+  allowAdminLogin
 };

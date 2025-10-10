@@ -7,25 +7,24 @@ const helmet = require('helmet');
 const path = require('path');
 const flash = require('connect-flash');
 
-
 const app = express();
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI ||  {
+// ========== DATABASE CONNECTION ==========
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qfs', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected successfully'))
+.then(() => console.log('✅ MongoDB connected successfully'))
 .catch(err => {
-  console.error('MongoDB connection error:', err);
+  console.error('❌ MongoDB connection error:', err);
   process.exit(1);
 });
 
-// View engine setup
+// ========== VIEW ENGINE SETUP ==========
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware - UPDATED CSP
+// ========== SECURITY MIDDLEWARE ==========
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -63,14 +62,15 @@ app.use(helmet({
   }
 }));
 
+// ========== STATIC FILES ==========
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads/profiles', express.static(path.join(__dirname, 'uploads', 'profiles')));
 
-
+// ========== BODY PARSING ==========
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session configuration
+// ========== SESSION CONFIGURATION ==========
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
@@ -85,55 +85,29 @@ app.use(session({
   }
 }));
 
+// ========== FLASH MESSAGES ==========
 app.use(flash());
 
-// Import middleware for protected routes
+// ========== AUTHENTICATION MIDDLEWARE ==========
 const { isAuthenticated, isGuest, isAdmin, attachUser, allowAdminLogin } = require('./middleware/auth');
 
-// Global middleware - flash, CSRF token, user
+// Global middleware
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.info = req.flash('info');
-
   next();
 });
 
-// Attach user globally (after flash and CSRF)
+// Attach user to all views
 app.use(attachUser);
 
-// ========== ROUTE IMPORTS ==========
-
-// Import all route files
-const authRoutes = require('./routes/auth');
-const dashboardRoutes = require('./routes/dashboard');
-const adminRoutes = require('./routes/admin');
-const transactionRoutes = require('./routes/transactions');
-const recipientRoutes = require('./routes/recipients');
-const investmentRoutes = require('./routes/investment');
-const walletController = require('./controllers/walletController');
-const depositRoutes = require('./routes/deposit');
-const adminWalletRoutes = require('./routes/adminWalletRoutes');
-const userRoutes = require('./routes/userRoutes'); 
-const ticketRoutes = require('./routes/tickets');
-
+// ========== APPLICATION HELPERS ==========
 app.locals.getCurrencySymbol = function(currency) {
   const symbols = {
-    'USD': '$',
-    'EUR': '€',
-    'GBP': '£',
-    'CAD': 'C$',
-    'AUD': 'A$',
-    'JPY': '¥',
-    'BTC': '₿',
-    'ETH': 'Ξ',
-    'XRP': '✕',
-    'DOGE': 'Ð',
-    'LTC': 'Ł',
-    'ALGO': 'Α',
-    'XDC': 'XDC',
-    'XLM': 'XLM',
-    'MATIC': 'MATIC'
+    'USD': '$', 'EUR': '€', 'GBP': '£', 'CAD': 'C$', 'AUD': 'A$', 'JPY': '¥',
+    'BTC': '₿', 'ETH': 'Ξ', 'XRP': '✕', 'DOGE': 'Ð', 'LTC': 'Ł', 'ALGO': 'Α',
+    'XDC': 'XDC', 'XLM': 'XLM', 'MATIC': 'MATIC'
   };
   return symbols[currency] || currency;
 };
@@ -144,9 +118,23 @@ app.locals.formatCurrencyAmount = function(amount, currency) {
   return `${symbol}${parseFloat(amount).toFixed(decimals)}`;
 };
 
-// ========== PUBLIC ROUTES (No authentication required) ==========
+// ========== ROUTE IMPORTS ==========
+const authRoutes = require('./routes/auth');
+const dashboardRoutes = require('./routes/dashboard');
+const adminRoutes = require('./routes/admin');
+const transactionRoutes = require('./routes/transactions');
+const recipientRoutes = require('./routes/recipients');
+const investmentRoutes = require('./routes/investment');
+const walletController = require('./controllers/walletController');
+const depositRoutes = require('./routes/deposit');
+const adminWalletRoutes = require('./routes/adminWalletRoutes');
+const userRoutes = require('./routes/userRoutes');
+const ticketRoutes = require('./routes/tickets');
+const Ticket = require('./models/Ticket');
 
-// Home and basic pages
+// ========== PUBLIC ROUTES ==========
+
+// Home page
 app.get('/', (req, res) => {
   res.render('index', { title: 'Home - QFS' });
 });
@@ -155,7 +143,7 @@ app.get('/index', (req, res) => {
   res.redirect('/');
 });
 
-// Regular auth pages (guests only - redirect logged in users)
+// Authentication pages (guests only)
 app.get('/login', isGuest, (req, res) => {
   res.render('login', { title: 'Login - QFS' });
 });
@@ -164,7 +152,7 @@ app.get('/signup', isGuest, (req, res) => {
   res.render('signup', { title: 'Sign Up - QFS' });
 });
 
-// Admin login page - ONLY defined here, NOT in auth routes
+// Admin login
 app.get('/admin-login', allowAdminLogin, (req, res) => {
   res.render('admin-login', { 
     title: 'Admin Login - QFS',
@@ -174,32 +162,26 @@ app.get('/admin-login', allowAdminLogin, (req, res) => {
   });
 });
 
-// Admin login POST - handle the form submission
 app.post('/admin-login', async (req, res) => {
-  const { validationResult } = require('express-validator');
   const User = require('./models/User');
   
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     
-    // Check credentials first
     if (!user || !(await user.comparePassword(password))) {
       req.flash('error', 'Invalid email or password');
       return res.redirect('/admin-login');
     }
 
-    // CRITICAL: Check if user has admin privileges
     if (!['admin', 'superadmin'].includes(user.role)) {
       req.flash('error', 'Access denied. Admin privileges required.');
       return res.redirect('/admin-login');
     }
 
-    // Update last login
     user.lastLogin = new Date();
     await user.save();
 
-    // Create session
     req.session.user = {
       id: user._id,
       firstName: user.firstName,
@@ -219,7 +201,7 @@ app.post('/admin-login', async (req, res) => {
   }
 });
 
-// Logout route - accessible at /logout
+// Logout
 app.get('/logout', (req, res) => {
   const wasAdmin = req.session.user && ['admin', 'superadmin'].includes(req.session.user.role);
   
@@ -228,27 +210,72 @@ app.get('/logout', (req, res) => {
       console.error('Logout error:', err);
     }
     res.clearCookie('connect.sid');
-    
-    if (wasAdmin) {
-      res.redirect('/admin-login');
-    } else {
-      res.redirect('/login');
-    }
+    res.redirect(wasAdmin ? '/admin-login' : '/login');
   });
 });
 
-// ========== USE ROUTES IN CORRECT ORDER ==========
+// ========== DEBUG ROUTES (Development only) ==========
+app.get('/debug-tickets', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ error: 'Not logged in' });
+    }
+    
+    const tickets = await Ticket.find({ userId: req.session.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    res.json({
+      success: true,
+      ticketCount: tickets.length,
+      tickets: tickets
+    });
+    
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
+app.get('/create-test-ticket', async (req, res) => {
+  try {
+    if (!req.session.user) return res.redirect('/auth/login');
 
+    const testTicket = new Ticket({
+      userId: req.session.user._id,
+      subject: 'TEST TICKET - ' + new Date().toLocaleString(),
+      priority: 'medium',
+      category: 'general',
+      status: 'open',
+      messages: [{
+        senderId: req.session.user._id,
+        message: 'This is a test ticket to verify the system is working.',
+        timestamp: new Date()
+      }]
+    });
+
+    await testTicket.save();
+    console.log('✅ Test ticket created:', testTicket.ticketNumber);
+    res.redirect('/tickets');
+    
+  } catch (error) {
+    console.error('Test ticket error:', error);
+    res.status(500).send('Error: ' + error.message);
+  }
+});
+
+// ========== MOUNT ROUTE FILES ==========
+
+// Authentication routes
 app.use('/auth', authRoutes);
 
-// Admin routes (protected by isAdmin middleware INSIDE the adminRoutes file)
+// Admin routes
 app.use('/admin', adminRoutes);
 
-// User profile routes
+// User routes
 app.use('/profile', userRoutes);
 
-// Other protected routes
+// Application routes
 app.use('/', dashboardRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/', recipientRoutes);
@@ -256,25 +283,22 @@ app.use('/', investmentRoutes);
 app.use('/', depositRoutes);
 app.use('/', ticketRoutes);
 
-// FIXED: Admin wallet routes - mount ONCE with proper paths
-// This makes /admin/wallet-addresses work for the page
-app.use('/admin', adminWalletRoutes);
-
-// This makes /api/admin/wallets/* work for API calls
-app.use('/api/admin', adminWalletRoutes);
-
-// This makes /api/wallet-addresses/public work for frontend
-app.use('/api', adminWalletRoutes);
-// ========== INDIVIDUAL PROTECTED ROUTES ==========
-
 // Wallet routes
+app.use('/admin', adminWalletRoutes);
+app.use('/api/admin', adminWalletRoutes);
+app.use('/api', adminWalletRoutes);
+
+// ========== PROTECTED PAGE ROUTES ==========
+
+// Wallet
 app.get('/wallet', isAuthenticated, walletController.getWalletPage);
 
+// Deposit
 app.get('/deposit', isAuthenticated, (req, res) => {
   res.render('deposit', { title: 'Deposit Funds - QFS' });
 });
 
-// Investment routes
+// Investment
 app.get('/investment', isAuthenticated, (req, res) => {
   res.render('investment', { title: 'Investments - QFS' });
 });
@@ -283,26 +307,22 @@ app.get('/investment-list', isAuthenticated, (req, res) => {
   res.render('investment-list', { title: 'Investment Plans - QFS' });
 });
 
-// Support routes
+// Support
 app.get('/support', isAuthenticated, (req, res) => {
   res.render('support', { title: 'Support - QFS' });
 });
 
-app.get('/tickets', isAuthenticated, (req, res) => {
-  res.render('tickets', { title: 'My Tickets - QFS' });
-});
-
-// Dispute routes
+// Disputes
 app.get('/disputes', isAuthenticated, (req, res) => {
   res.render('disputes', { title: 'Disputes - QFS' });
 });
 
-// Verification routes
+// Verification
 app.get('/verification', isAuthenticated, (req, res) => {
   res.render('verification', { title: 'Identity Verification - QFS' });
 });
 
-// Virtual card routes
+// Virtual cards
 app.get('/virtual', isAuthenticated, (req, res) => {
   res.render('virtual', { title: 'Virtual Accounts - QFS' });
 });
@@ -317,21 +337,21 @@ app.get('/makedepo', isAuthenticated, (req, res) => {
     user: req.session.user 
   });
 });
+
 // ========== ERROR HANDLERS ==========
 
-// 404 handler
+// 404 Handler
 app.use((req, res) => {
   res.status(404).render('error/404', { title: 'Page Not Found - QFS' });
 });
 
-// Error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('=== SERVER ERROR ===');
   console.error(err.message);
   console.error(err.stack);
   console.error('=== END ERROR ===');
   
-  // CSRF token errors
   if (err.code === 'EBADCSRFTOKEN') {
     req.flash('error', 'Invalid CSRF token');
     return res.redirect('back');
@@ -340,12 +360,13 @@ app.use((err, req, res, next) => {
   res.status(500).render('error/500', { title: 'Server Error - QFS' });
 });
 
+// ========== SERVER STARTUP ==========
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`QFS Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Home page: http://localhost:${PORT}`);
-  console.log(`Admin login: http://localhost:${PORT}/admin-login`);
-  console.log(`Admin panel: http://localhost:${PORT}/admin`);
-  console.log(`User profile: http://localhost:${PORT}/profile`);
+  console.log(`🚀 QFS Server running on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🏠 Home page: http://localhost:${PORT}`);
+  console.log(`🔐 Admin login: http://localhost:${PORT}/admin-login`);
+  console.log(`⚙️  Admin panel: http://localhost:${PORT}/admin`);
+  console.log(`👤 User profile: http://localhost:${PORT}/profile`);
 });
