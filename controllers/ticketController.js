@@ -1,4 +1,4 @@
-// controllers/ticketController.js - FIXED VERSION
+// controllers/ticketController.js - COMPLETE FIXED VERSION
 const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 const mongoose = require('mongoose');
@@ -15,7 +15,7 @@ const ticketController = {
       const skip = (page - 1) * limit;
       const status = req.query.status || 'all';
 
-      // Build filter - FIXED: Use proper user ID access
+      // Build filter
       const userId = req.session.user?._id || req.session.user?.id;
       if (!userId) {
         console.error('❌ No user ID in session');
@@ -124,8 +124,13 @@ const ticketController = {
       await newTicket.save();
       console.log('✅ Ticket created:', newTicket.ticketNumber);
 
-      // Notify admins
-      await this.notifyAdminsAboutNewTicket(newTicket, req.session.user);
+      // Notify admins - FIX: Call as standalone function, not method
+      try {
+        await notifyAdminsAboutNewTicket(newTicket, req.session.user);
+      } catch (notifyError) {
+        console.error('⚠️ Failed to notify admins:', notifyError);
+        // Don't fail the ticket creation if notification fails
+      }
 
       res.json({
         success: true,
@@ -139,6 +144,8 @@ const ticketController = {
       let errorMessage = 'Failed to create ticket. Please try again.';
       if (error.code === 11000) {
         errorMessage = 'Duplicate ticket detected. Please try again.';
+      } else if (error.name === 'ValidationError') {
+        errorMessage = 'Invalid ticket data: ' + Object.values(error.errors).map(e => e.message).join(', ');
       }
       
       res.status(500).json({
@@ -214,29 +221,34 @@ const ticketController = {
         message: 'Error fetching tickets'
       });
     }
-  },
-
-  // Notify admins about new ticket
-  async notifyAdminsAboutNewTicket(ticket, user) {
-    try {
-      const admins = await User.find({
-        role: { $in: ['admin', 'superadmin'] },
-        isActive: true
-      });
-
-      console.log(`📢 New ticket created by ${user.firstName} ${user.lastName}:`, {
-        ticketNumber: ticket.ticketNumber,
-        subject: ticket.subject,
-        priority: ticket.priority,
-        category: ticket.category,
-        adminsNotified: admins.length
-      });
-
-    } catch (error) {
-      console.error('Notify Admins Error:', error);
-    }
   }
 
 };
+
+// Helper function - Notify admins about new ticket (outside the controller object)
+async function notifyAdminsAboutNewTicket(ticket, user) {
+  try {
+    const admins = await User.find({
+      role: { $in: ['admin', 'superadmin'] },
+      isActive: true
+    });
+
+    console.log(`📢 New ticket created by ${user.firstName} ${user.lastName}:`, {
+      ticketNumber: ticket.ticketNumber,
+      subject: ticket.subject,
+      priority: ticket.priority,
+      category: ticket.category,
+      adminsNotified: admins.length
+    });
+
+    // Here you can add email notification, push notification, etc.
+    // For example:
+    // await sendEmailToAdmins(admins, ticket);
+
+  } catch (error) {
+    console.error('Notify Admins Error:', error);
+    throw error;
+  }
+}
 
 module.exports = ticketController;

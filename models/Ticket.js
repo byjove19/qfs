@@ -1,4 +1,4 @@
-// models/Ticket.js
+// models/Ticket.js - FIXED VERSION
 const mongoose = require('mongoose');
 
 const ticketSchema = new mongoose.Schema({
@@ -9,8 +9,9 @@ const ticketSchema = new mongoose.Schema({
   },
   ticketNumber: {
     type: String,
-    required: true,
-    unique: true
+    required: false, // Changed to false, will be set in pre-save
+    unique: true,
+    sparse: true // Allows multiple documents with null/undefined ticketNumber during creation
   },
   subject: {
     type: String,
@@ -50,7 +51,7 @@ const ticketSchema = new mongoose.Schema({
     attachments: [String],
     isInternal: {
       type: Boolean,
-      default: false // If true, only admins can see this message
+      default: false
     }
   }],
   assignedTo: {
@@ -78,41 +79,46 @@ const ticketSchema = new mongoose.Schema({
 
 // Pre-save middleware to generate ticket number
 ticketSchema.pre('save', async function(next) {
-  if (this.isNew && !this.ticketNumber) {
-    try {
-      const Ticket = this.constructor;
-      const prefix = 'TKT';
-      const year = new Date().getFullYear();
-      
-      // Find the latest ticket for this year
-      const latestTicket = await Ticket.findOne({
-        ticketNumber: new RegExp(`^${prefix}-${year}-`)
-      }).sort({ createdAt: -1 });
-      
-      let sequence = 1;
-      if (latestTicket && latestTicket.ticketNumber) {
-        // Extract sequence number from existing ticket (format: TKT-2024-0001)
-        const match = latestTicket.ticketNumber.match(/-(\d+)$/);
-        if (match) {
-          sequence = parseInt(match[1]) + 1;
-        }
+  // Only generate ticket number for new documents
+  if (!this.isNew) {
+    return next();
+  }
+
+  try {
+    const prefix = 'TKT';
+    const year = new Date().getFullYear();
+    
+    // Find the latest ticket number for this year
+    const latestTicket = await this.constructor.findOne({
+      ticketNumber: new RegExp(`^${prefix}-${year}-`, 'i')
+    }).sort({ createdAt: -1 }).select('ticketNumber').lean();
+    
+    let sequence = 1;
+    
+    if (latestTicket && latestTicket.ticketNumber) {
+      // Extract sequence number (format: TKT-2025-0001)
+      const match = latestTicket.ticketNumber.match(/-(\d+)$/);
+      if (match && match[1]) {
+        sequence = parseInt(match[1], 10) + 1;
       }
-      
-      // Generate new ticket number with leading zeros
-      this.ticketNumber = `${prefix}-${year}-${sequence.toString().padStart(4, '0')}`;
-      next();
-    } catch (error) {
-      next(error);
     }
-  } else {
+    
+    // Generate new ticket number with leading zeros (4 digits)
+    this.ticketNumber = `${prefix}-${year}-${String(sequence).padStart(4, '0')}`;
+    
+    console.log('✅ Generated ticket number:', this.ticketNumber);
     next();
+    
+  } catch (error) {
+    console.error('❌ Error generating ticket number:', error);
+    next(error);
   }
 });
 
-// Index for better performance
+// Indexes for better performance
 ticketSchema.index({ userId: 1, createdAt: -1 });
 ticketSchema.index({ status: 1 });
 ticketSchema.index({ assignedTo: 1 });
-ticketSchema.index({ ticketNumber: 1 }, { unique: true });
+ticketSchema.index({ ticketNumber: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model('Ticket', ticketSchema);

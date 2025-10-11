@@ -303,105 +303,112 @@
                         </a>
                     </div>
 
-                    <!-- Tickets List -->
-                    <div id="ticketsContainer">
-                        <% if (typeof tickets !== 'undefined' && tickets.length > 0) { %>
-                            <div class="mt-4">
-                                <% tickets.forEach(function(ticket) { %>
-                                    <div class="ticket-item card mb-3 shadow-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div class="flex-grow-1">
-                                                    <h5 class="card-title mb-1">
-                                                        <a href="/tickets/<%= ticket._id %>" class="text-dark text-decoration-none">
-                                                            <%= ticket.subject %>
-                                                        </a>
-                                                    </h5>
-                                                    <p class="card-text text-muted mb-2">
-                                                        #<%= ticket.ticketNumber %> • 
-                                                        <%= new Date(ticket.createdAt).toLocaleDateString() %>
-                                                    </p>
-                                                    
-                                                    <div class="d-flex gap-2 mb-2 flex-wrap">
-                                                        <span class="badge bg-<%= helpers.getPriorityBadgeClass(ticket.priority) %>">
-                                                            <%= ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1) %>
-                                                        </span>
-                                                        <span class="badge bg-<%= helpers.getStatusBadgeClass(ticket.status) %>">
-                                                            <%= helpers.getStatusDisplayName(ticket.status) %>
-                                                        </span>
-                                                        <span class="badge bg-secondary">
-                                                            <%= ticket.category.charAt(0).toUpperCase() + ticket.category.slice(1) %>
-                                                        </span>
-                                                    </div>
-                                                    
-                                                    <p class="card-text mb-0">
-                                                        <% if (ticket.messages.length > 150) { %>
-                                                            <%= ticket.messages.substring(0, 150) %>...
-                                                        <% } else { %>
-                                                            <%= ticket.messages %>
-                                                        <% } %>
-                                                    </p>
-                                                </div>
-                                                <div class="ms-3 text-end">
-                                                    <div class="mb-2">
-                                                        <small class="text-muted">
-                                                            Last updated: <%= new Date(ticket.updatedAt).toLocaleDateString() %>
-                                                        </small>
-                                                    </div>
-                                                    <a href="/tickets/<%= ticket._id %>" class="btn btn-sm btn-outline-primary">
-                                                        View Details
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% }); %>
-                            </div>
-
-                            <!-- Pagination -->
-                            <% if (totalPages > 1) { %>
-                                <nav aria-label="Ticket pagination" class="mt-4">
-                                    <ul class="pagination justify-content-center">
-                                        <% if (currentPage > 1) { %>
-                                            <li class="page-item">
-                                                <a class="page-link" href="?page=<%= currentPage - 1 %>&status=<%= filter.status %>">Previous</a>
-                                            </li>
-                                        <% } %>
-                                        
-                                        <% for (let i = 1; i <= totalPages; i++) { %>
-                                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                                <a class="page-link" href="?page=<%= i %>&status=<%= filter.status %>"><%= i %></a>
-                                            </li>
-                                        <% } %>
-                                        
-                                        <% if (currentPage < totalPages) { %>
-                                            <li class="page-item">
-                                                <a class="page-link" href="?page=<%= currentPage + 1 %>&status=<%= filter.status %>">Next</a>
-                                            </li>
-                                        <% } %>
-                                    </ul>
-                                </nav>
-                            <% } %>
-                        <% } else { %>
-                            <div class="notfound mt-16 bg-white p-4 shadow">
-                                <div class="d-flex flex-wrap justify-content-center align-items-center gap-26">
-                                    <div class="image-notfound">
-                                        <img src="/Tickets _ QFS_files/not-found.png" class="img-fluid" alt="No tickets found">
-                                    </div>
-                                    <div class="text-notfound">
-                                        <p class="mb-0 f-20 leading-25 gilroy-medium text-dark">Sorry! No tickets found.</p>
-                                        <p class="mb-0 f-16 leading-24 gilroy-regular text-gray-100 mt-12">
-                                            <% if (typeof filter !== 'undefined' && filter.status !== 'all') { %>
-                                                No <%= helpers.getStatusDisplayName(filter.status).toLowerCase() %> tickets found.
-                                            <% } else { %>
-                                                You haven't created any support tickets yet.
-                                            <% } %>
-                                        </p>
-                                    </div>
+                    <!-- Tickets List Section - FIXED VERSION -->
+<div id="ticketsContainer">
+    <% if (typeof tickets !== 'undefined' && tickets.length > 0) { %>
+        <div class="mt-4">
+            <% tickets.forEach(function(ticket) { %>
+                <div class="ticket-item card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">
+                                    <a href="/tickets/<%= ticket._id %>" class="text-dark text-decoration-none">
+                                        <%= ticket.subject %>
+                                    </a>
+                                </h5>
+                                <p class="card-text text-muted mb-2">
+                                    #<%= ticket.ticketNumber %> • 
+                                    <%= new Date(ticket.createdAt).toLocaleDateString() %>
+                                </p>
+                                
+                                <div class="d-flex gap-2 mb-2 flex-wrap">
+                                    <span class="badge bg-<%= helpers.getPriorityBadgeClass(ticket.priority) %>">
+                                        <%= ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1) %>
+                                    </span>
+                                    <span class="badge bg-<%= helpers.getStatusBadgeClass(ticket.status) %>">
+                                        <%= helpers.getStatusDisplayName(ticket.status) %>
+                                    </span>
+                                    <span class="badge bg-secondary">
+                                        <%= ticket.category.charAt(0).toUpperCase() + ticket.category.slice(1) %>
+                                    </span>
                                 </div>
+                                
+                                <!-- FIXED: Display first message properly -->
+                                <p class="card-text mb-0 text-muted">
+                                    <% if (ticket.messages && ticket.messages.length > 0) { %>
+                                        <% 
+                                        const firstMessage = ticket.messages[0].message || '';
+                                        const displayMessage = firstMessage.length > 150 
+                                            ? firstMessage.substring(0, 150) + '...' 
+                                            : firstMessage;
+                                        %>
+                                        <%= displayMessage %>
+                                    <% } else { %>
+                                        No message available
+                                    <% } %>
+                                </p>
                             </div>
-                        <% } %>
+                            <div class="ms-3 text-end">
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        Last updated: <%= new Date(ticket.updatedAt).toLocaleDateString() %>
+                                    </small>
+                                </div>
+                                <a href="/tickets/<%= ticket._id %>" class="btn btn-sm btn-outline-primary">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Ticket pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>&status=<%= filter.status %>">Previous</a>
+                        </li>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>&status=<%= filter.status %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                    
+                    <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>&status=<%= filter.status %>">Next</a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+    <% } else { %>
+        <div class="notfound mt-16 bg-white p-4 shadow">
+            <div class="d-flex flex-wrap justify-content-center align-items-center gap-26">
+                <div class="image-notfound">
+                    <img src="/images/not-found.png" class="img-fluid" alt="No tickets found">
+                </div>
+                <div class="text-notfound">
+                    <p class="mb-0 f-20 leading-25 gilroy-medium text-dark">Sorry! No tickets found.</p>
+                    <p class="mb-0 f-16 leading-24 gilroy-regular text-gray-100 mt-12">
+                        <% if (typeof filter !== 'undefined' && filter.status !== 'all') { %>
+                            No <%= helpers.getStatusDisplayName(filter.status).toLowerCase() %> tickets found.
+                        <% } else { %>
+                            You haven't created any support tickets yet.
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
 
                     <!-- Create Ticket Modal -->
                     <div class="modal fade" id="createTicketModal" tabindex="-1" aria-labelledby="createTicketModalLabel" aria-hidden="true">
