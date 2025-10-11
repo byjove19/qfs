@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs'); // ADD THIS IMPORT
+
 
 // Helper function to sanitize user data
 const sanitizeUser = (user) => {
@@ -364,7 +364,133 @@ verifyPassword: async (req, res) => {
       success: true,
       user: sanitizeUser(req.session.user)
     });
+  },
+
+  async changePassword(req, res) {
+    try {
+      console.log('🔐 Change Password Request Started');
+      console.log('Request body:', req.body);
+      
+      const { old_password, password, password_confirmation } = req.body;
+      const userId = req.session.user?._id || req.session.user?.id;
+
+      console.log('User ID from session:', userId);
+      console.log('Session user:', req.session.user);
+
+      // Validation
+      if (!userId) {
+        console.error('❌ No user ID in session');
+        return res.status(401).json({
+          success: false,
+          message: 'Please login to change password'
+        });
+      }
+
+      if (!old_password || !password || !password_confirmation) {
+        console.error('❌ Missing required fields');
+        return res.status(400).json({
+          success: false,
+          message: 'All fields are required'
+        });
+      }
+
+      if (password !== password_confirmation) {
+        console.error('❌ Password confirmation mismatch');
+        return res.status(400).json({
+          success: false,
+          message: 'New password and confirmation do not match'
+        });
+      }
+
+      if (password.length < 6) {
+        console.error('❌ Password too short');
+        return res.status(400).json({
+          success: false,
+          message: 'Password must be at least 6 characters long'
+        });
+      }
+
+      // Get user
+      const user = await User.findById(userId);
+      if (!user) {
+        console.error('❌ User not found in database');
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      console.log('User found:', user.email);
+
+      // Verify old password using comparePassword method
+      console.log('🔑 Verifying old password...');
+      const isOldPasswordValid = await user.comparePassword(old_password);
+      console.log('Old password valid:', isOldPasswordValid);
+      
+      if (!isOldPasswordValid) {
+        console.error('❌ Old password incorrect');
+        return res.status(401).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      }
+
+      // Check if new password is same as old password
+      if (old_password === password) {
+        console.error('❌ New password same as old password');
+        return res.status(400).json({
+          success: false,
+          message: 'New password cannot be the same as current password'
+        });
+      }
+
+      console.log('🔄 Updating password...');
+      // Update password (plain text - as per your model)
+      user.password = password;
+      await user.save();
+
+      console.log('✅ Password changed successfully for user:', user.email);
+
+      // SUCCESS RESPONSE
+      res.json({
+        success: true,
+        message: 'Password changed successfully!'
+      });
+
+    } catch (error) {
+      console.error('❌ Change Password Error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to change password. Please try again.'
+      });
+    }
+  },
+  // Get user profile
+  async getProfile(req, res) {
+    try {
+      const userId = req.session.user?._id || req.session.user?.id;
+      const user = await User.findById(userId).select('-password');
+      
+      if (!user) {
+        req.flash('error', 'User not found');
+        return res.redirect('/dashboard');
+      }
+
+      res.render('profile', {
+        title: 'Profile - QFS',
+        user: user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
+      });
+    } catch (error) {
+      console.error('Get Profile Error:', error);
+      req.flash('error', 'Failed to load profile');
+      res.redirect('/dashboard');
+    }
   }
+
 };
 
 module.exports = authController;

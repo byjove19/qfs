@@ -23,8 +23,8 @@ router.use(isAuthenticated);
 // Profile routes - authentication runs first, then multer, then controller
 router.get('/', getUserProfile);
 router.post('/update', updateProfile);
-router.post('/update_password', changePassword);
-router.post('/picture', uploadProfile, uploadProfilePicture); // isAuthenticated runs first
+router.post('/update_password', changePassword); // Fixed: removed duplicate line
+router.post('/picture', uploadProfile, uploadProfilePicture);
 router.post('/update-qr-code', updateQRCode);
 router.post('/change-default-currency', changeDefaultCurrency);
 
