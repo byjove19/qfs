@@ -378,7 +378,7 @@ function submitPaymentToServer() {
             showAlert(data.message || 'Payment submitted successfully! Waiting for admin approval.', 'success');
             // Redirect to transactions page after success
             setTimeout(() => {
-                window.location.href = '/transactions';
+                window.location.href = '';
             }, 2000);
         } else {
             showAlert(data.message || 'Payment submission failed', 'error');
