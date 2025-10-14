@@ -23,44 +23,67 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qfs', {
 // ========== VIEW ENGINE SETUP ==========
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// ========== SECURITY MIDDLEWARE ==========
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
-        "https://cdnjs.cloudflare.com",
-        "https://cdn.jsdelivr.net", 
-        "https://fonts.googleapis.com"
-      ],
-      scriptSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
-        "https://code.jquery.com",
-        "https://cdn.jsdelivr.net",
-        "https://cdnjs.cloudflare.com"
-      ],
-      fontSrc: [
-        "'self'", 
-        "https://fonts.gstatic.com",
-        "https://cdn.jsdelivr.net",
-        "https://cdnjs.cloudflare.com"
-      ],
-      imgSrc: [
-        "'self'", 
-        "data:", 
-        "https:",
-        "https://cdnjs.cloudflare.com"
-      ],
-      connectSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: []
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://cdnjs.cloudflare.com",
+          "https://cdn.jsdelivr.net",
+          "https://fonts.googleapis.com",
+          "https://embed.tawk.to" // ✅ added
+        ],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https://cdn.openwidget.com",
+          "https://code.jquery.com",
+          "https://cdn.jsdelivr.net",
+          "https://cdnjs.cloudflare.com",
+          "https://www.chatbase.co",
+          "https://embed.tawk.to" // ✅ added
+        ],
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com",
+          "https://cdn.jsdelivr.net",
+          "https://cdnjs.cloudflare.com"
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https:",
+          "https://cdnjs.cloudflare.com",
+          "https://embed.tawk.to" // ✅ optional for Tawk.to widget icons
+        ],
+        connectSrc: [
+          "'self'",
+          "https://cdn.openwidget.com",
+          "https://api.chatbot.com",
+          "https://*.chatbot.com",
+          "https://cdn.jsdelivr.net",
+          "https://www.chatbase.co",
+          "https://embed.tawk.to", // ✅ added
+          "https://*.tawk.to" // ✅ added for socket connections
+        ],
+        frameSrc: [
+          "'self'",
+          "https://*.chatbot.com",
+          "https://*.openwidget.com",
+          "https://www.chatbase.co",
+          "https://embed.tawk.to" // ✅ added
+        ],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: []
+      }
     }
-  }
-}));
+  })
+);
 
 // ========== STATIC FILES ==========
 app.use(express.static(path.join(__dirname, 'public')));
