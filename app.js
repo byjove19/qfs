@@ -364,6 +364,9 @@ app.get('/makedepo', isAuthenticated, (req, res) => {
     user: req.session.user 
   });
 });
+app.get("/run-tasks", (req, res) => {
+  res.send("App is awake and running.");
+});
 
 // ========== ERROR HANDLERS ==========
 
