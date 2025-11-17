@@ -92,75 +92,77 @@ const adminController = {
    *  USERS MANAGEMENT
    *  =======================
    */
-  async getUsers(req, res) {
-    try {
-      console.log('Loading users...');
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
 
-      const users = await User.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .select('firstName lastName email createdAt isActive currency');
+async getUsers(req, res) {
+  try {
+    console.log('Loading users...');
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10; // This line exists
+    const skip = (page - 1) * limit;
 
-      // Get wallet balances for each user
-      const usersWithBalances = await Promise.all(
-        users.map(async (user) => {
-          const wallet = await Wallet.findOne({ userId: user._id, currency: 'USD' });
-          return {
-            ...user.toObject(),
-            balance: wallet ? wallet.balance : 0
-          };
-        })
-      );
+    const users = await User.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select('firstName lastName email createdAt isActive currency');
 
-      const totalUsers = await User.countDocuments();
+    // Get wallet balances for each user
+    const usersWithBalances = await Promise.all(
+      users.map(async (user) => {
+        const wallet = await Wallet.findOne({ userId: user._id, currency: 'USD' });
+        return {
+          ...user.toObject(),
+          balance: wallet ? wallet.balance : 0
+        };
+      })
+    );
 
-      // Ensure user data is properly passed
-      const currentUser = req.session.user || {
-        firstName: 'Admin',
-        lastName: 'User', 
-        role: 'admin'
-      };
+    const totalUsers = await User.countDocuments();
 
-      res.render('admin/users', {
-        title: 'Manage Users',
-        users: usersWithBalances || [],
-        currentPage: page,
-        totalPages: Math.ceil(totalUsers / limit),
-        totalUsers: totalUsers || 0,
-        user: currentUser,
-        currentUser: currentUser,
-        messages: {
-          success: req.flash('success') || [],
-          error: req.flash('error') || []
-        }
-      });
-    } catch (error) {
-      console.error('Get users error:', error);
-      
-      const fallbackUser = {
-        firstName: 'Admin',
-        lastName: 'User',
-        role: 'admin'
-      };
-      
-      req.flash('error', 'Failed to load users');
-      res.render('admin/users', {
-        title: 'Manage Users',
-        users: [],
-        totalUsers: 0,
-        user: fallbackUser,
-        currentUser: fallbackUser,
-        messages: {
-          error: ['Failed to load users']
-        }
-      });
-    }
-  },
+    // Ensure user data is properly passed
+    const currentUser = req.session.user || {
+      firstName: 'Admin',
+      lastName: 'User', 
+      role: 'admin'
+    };
 
+    res.render('admin/users', {
+      title: 'Manage Users',
+      users: usersWithBalances || [],
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers: totalUsers || 0,
+      limit: limit, // ADD THIS LINE - pass limit to template
+      user: currentUser,
+      currentUser: currentUser,
+      messages: {
+        success: req.flash('success') || [],
+        error: req.flash('error') || []
+      }
+    });
+  } catch (error) {
+    console.error('Get users error:', error);
+    
+    const fallbackUser = {
+      firstName: 'Admin',
+      lastName: 'User',
+      role: 'admin'
+    };
+    
+    req.flash('error', 'Failed to load users');
+    res.render('admin/users', {
+      title: 'Manage Users',
+      users: [],
+      totalUsers: 0,
+      limit: 10, // ADD THIS LINE for error case too
+      user: fallbackUser,
+      currentUser: fallbackUser,
+      messages: {
+        error: ['Failed to load users']
+      }
+    });
+  }
+},
 async getUserDetail(req, res) {
   try {
     const user = await User.findById(req.params.id)
@@ -2232,6 +2234,238 @@ async getUserWallets(req, res) {
       res.redirect(`/admin/card-requests/${req.params.id}`);
     }
   },
+  // Permanently delete a user and all associated data
+async deleteUser(req, res) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
+  try {
+    const { userId } = req.params;
+    
+    if (!userId) {
+      req.flash('error', 'User ID is required');
+      return res.redirect('/admin/users');
+    }
+
+    // Prevent admin from deleting themselves
+    if (userId === req.session.user._id.toString()) {
+      req.flash('error', 'You cannot delete your own account');
+      return res.redirect('/admin/users');
+    }
+
+    // Find user to get details for audit
+    const user = await User.findById(userId).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
+
+    const userEmail = user.email;
+    const userName = `${user.firstName} ${user.lastName}`;
+
+    // Check if user has any balance or active transactions
+    const userWallets = await Wallet.find({ userId: userId }).session(session);
+    const totalBalance = userWallets.reduce((sum, wallet) => sum + wallet.balance, 0);
+    
+    if (totalBalance > 0) {
+      await session.abortTransaction();
+      session.endSession();
+      req.flash('error', `Cannot delete user with balance. User has $${totalBalance.toFixed(2)} across all wallets. Please zero out balances first.`);
+      return res.redirect('/admin/users');
+    }
+
+    // Check for pending transactions
+    const pendingTransactions = await Transaction.countDocuments({
+      userId: userId,
+      status: 'pending'
+    }).session(session);
+
+    if (pendingTransactions > 0) {
+      await session.abortTransaction();
+      session.endSession();
+      req.flash('error', `Cannot delete user with ${pendingTransactions} pending transactions. Please process or cancel them first.`);
+      return res.redirect('/admin/users');
+    }
+
+    // Check for active investments
+    const activeInvestments = await Investment.countDocuments({
+      userId: userId,
+      status: 'active'
+    }).session(session);
+
+    if (activeInvestments > 0) {
+      await session.abortTransaction();
+      session.endSession();
+      req.flash('error', `Cannot delete user with ${activeInvestments} active investments. Please close them first.`);
+      return res.redirect('/admin/users');
+    }
+
+    // Check for open tickets
+    const openTickets = await Ticket.countDocuments({
+      userId: userId,
+      status: { $in: ['open', 'in-progress'] }
+    }).session(session);
+
+    if (openTickets > 0) {
+      await session.abortTransaction();
+      session.endSession();
+      req.flash('error', `Cannot delete user with ${openTickets} open support tickets. Please resolve them first.`);
+      return res.redirect('/admin/users');
+    }
+
+    // Create audit log before deletion
+    await Transaction.create([{
+      type: 'system',
+      amount: 0,
+      currency: 'USD',
+      status: 'completed',
+      description: `User account deleted: ${userName} (${userEmail})`,
+      adminNote: `Deleted by ${req.session.user.firstName} ${req.session.user.lastName}. User had ${userWallets.length} wallets.`,
+      metadata: {
+        adminId: req.session.user._id,
+        deletedUserId: userId,
+        deletedUserEmail: userEmail,
+        deletedUserName: userName,
+        walletCount: userWallets.length,
+        action: 'user_deletion'
+      }
+    }], { session });
+
+    // Delete user data in correct order (to maintain referential integrity)
+    
+    // 1. Delete wallets
+    await Wallet.deleteMany({ userId: userId }).session(session);
+    
+    // 2. Delete investments
+    await Investment.deleteMany({ userId: userId }).session(session);
+    
+    // 3. Delete card requests
+    await CardRequest.deleteMany({ userId: userId }).session(session);
+    
+    // 4. Update tickets to mark user as deleted
+    await Ticket.updateMany(
+      { userId: userId },
+      { 
+        $set: { 
+          userId: null, // Or keep reference but mark as deleted
+          status: 'closed',
+          adminNote: `Ticket closed due to user account deletion by administrator`
+        }
+      }
+    ).session(session);
+    
+    // 5. Keep transactions but mark user as deleted for audit purposes
+    await Transaction.updateMany(
+      { userId: userId },
+      { 
+        $set: { 
+          metadata: { 
+            ...(Transaction.metadata || {}),
+            userDeleted: true,
+            deletedAt: new Date(),
+            deletedByAdmin: req.session.user._id
+          }
+        }
+      }
+    ).session(session);
+    
+    // 6. Finally delete the user
+    await User.findByIdAndDelete(userId).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    req.flash('success', `User "${userName}" (${userEmail}) has been permanently deleted from the system.`);
+    res.redirect('/admin/users');
+    
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Delete User Error:', error);
+    req.flash('error', 'Failed to delete user: ' + error.message);
+    res.redirect('/admin/users');
+  }
+},
+// Safe delete user (anonymize instead of permanent deletion)
+async safeDeleteUser(req, res) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
+  try {
+    const { userId } = req.params;
+    
+    if (!userId) {
+      req.flash('error', 'User ID is required');
+      return res.redirect('/admin/users');
+    }
+
+    // Prevent admin from deleting themselves
+    if (userId === req.session.user._id.toString()) {
+      req.flash('error', 'You cannot delete your own account');
+      return res.redirect('/admin/users');
+    }
+
+    const user = await User.findById(userId).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+      req.flash('error', 'User not found');
+      return res.redirect('/admin/users');
+    }
+
+    const originalEmail = user.email;
+    const originalName = `${user.firstName} ${user.lastName}`;
+
+    // Anonymize user data instead of deleting
+    user.email = `deleted_${userId}@deleted.com`;
+    user.firstName = 'Deleted';
+    user.lastName = 'User';
+    user.phone = null;
+    user.address = null;
+    user.city = null;
+    user.country = null;
+    user.postalCode = null;
+    user.dateOfBirth = null;
+    user.isActive = false;
+    user.deletedAt = new Date();
+    user.deletedBy = req.session.user._id;
+    user.deletionReason = 'Deleted by administrator';
+
+    await user.save({ session });
+
+    // Create audit transaction
+    await Transaction.create([{
+      type: 'system',
+      amount: 0,
+      currency: 'USD',
+      status: 'completed',
+      description: `User account anonymized: ${originalName} (${originalEmail})`,
+      adminNote: `Anonymized by ${req.session.user.firstName} ${req.session.user.lastName}`,
+      metadata: {
+        adminId: req.session.user._id,
+        anonymizedUserId: userId,
+        originalEmail: originalEmail,
+        originalName: originalName,
+        action: 'user_anonymization'
+      }
+    }], { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    req.flash('success', `User "${originalName}" has been anonymized and deactivated. Data preserved for audit purposes.`);
+    res.redirect('/admin/users');
+    
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Safe Delete User Error:', error);
+    req.flash('error', 'Failed to anonymize user: ' + error.message);
+    res.redirect('/admin/users');
+  }
+},
 
 };
 

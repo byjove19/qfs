@@ -438,6 +438,163 @@
             transform: translateY(-2px);
         }
 
+        /* Delete Button Styles */
+        .btn-icon.delete-safe {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-icon.delete-safe:hover {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-icon.delete-permanent {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-icon.delete-permanent:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--tg-color-dark-2);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--tg-border-1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--tg-border-1);
+        }
+
+        .modal-header h3 {
+            color: var(--tg-heading-color);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--tg-body-color);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--tg-transition);
+        }
+
+        .modal-close:hover {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-heading-color);
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+        }
+
+        .modal-message {
+            color: var(--tg-body-color);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .modal-warning {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #dc3545;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--tg-transition);
+            border: none;
+            min-width: 100px;
+        }
+
+        .modal-btn-cancel {
+            background: var(--tg-color-dark-3);
+            color: var(--tg-body-color);
+        }
+
+        .modal-btn-cancel:hover {
+            background: var(--tg-border-1);
+        }
+
+        .modal-btn-confirm-safe {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .modal-btn-confirm-safe:hover {
+            background: #ffc107;
+            color: white;
+        }
+
+        .modal-btn-confirm-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .modal-btn-confirm-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+
         /* Pagination */
         .pagination {
             display: flex;
@@ -616,6 +773,26 @@
                 width: 45px;
                 height: 45px;
             }
+
+            .action-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 20px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                min-width: auto;
+                width: 100%;
+            }
         }
 
         @media (max-width: 576px) {
@@ -649,6 +826,15 @@
             
             .pagination-info {
                 order: -1;
+            }
+
+            .action-buttons {
+                gap: 4px;
+            }
+
+            .btn-icon {
+                width: 32px;
+                height: 32px;
             }
         }
 
@@ -829,6 +1015,24 @@
                                                         <a href="/admin/users/<%= user._id %>/login-history" class="btn-icon" title="Login History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
+                                                        
+                                                        <!-- Safe Delete Button -->
+                                                        <button type="button" class="btn-icon delete-safe" 
+                                                                title="Anonymize User"
+                                                                data-user-id="<%= user._id %>"
+                                                                data-user-name="<%= user.firstName %> <%= user.lastName %>"
+                                                                data-delete-type="safe">
+                                                            <i class="fas fa-user-slash"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Permanent Delete Button -->
+                                                        <button type="button" class="btn-icon delete-permanent" 
+                                                                title="Permanently Delete User"
+                                                                data-user-id="<%= user._id %>"
+                                                                data-user-name="<%= user.firstName %> <%= user.lastName %>"
+                                                                data-delete-type="permanent">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -852,7 +1056,7 @@
                         <% if (totalPages > 1) { %>
                             <div class="pagination">
                                 <% if (currentPage > 1) { %>
-                                    <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">
+                                    <a href="?page=<%= currentPage - 1 %>" class="pagination-btn">
                                         <i class="fas fa-chevron-left"></i> Previous
                                     </a>
                                 <% } %>
@@ -862,7 +1066,7 @@
                                 </span>
                                 
                                 <% if (currentPage < totalPages) { %>
-                                    <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">
+                                    <a href="?page=<%= currentPage + 1 %>" class="pagination-btn">
                                         Next <i class="fas fa-chevron-right"></i>
                                     </a>
                                 <% } %>
@@ -872,6 +1076,33 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Confirm Deletion</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage" class="modal-message"></p>
+                <div id="modalWarning" class="modal-warning" style="display: none;">
+                    <strong><i class="fas fa-exclamation-triangle"></i> Warning:</strong>
+                    <span id="warningText"></span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-cancel" id="cancelDeleteBtn">
+                    Cancel
+                </button>
+                <button type="button" id="confirmDeleteBtn" class="modal-btn">
+                    Confirm
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -987,6 +1218,134 @@
             usersCount.textContent = visibleCount;
         });
 
+        // Delete Modal Functionality
+        let currentUserId = null;
+        let currentDeleteType = null;
+
+        function openDeleteModal(userId, userName, deleteType) {
+            console.log('Opening delete modal for user:', userId, 'Type:', deleteType);
+            currentUserId = userId;
+            currentDeleteType = deleteType;
+            
+            const modal = document.getElementById('deleteModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalWarning = document.getElementById('modalWarning');
+            const warningText = document.getElementById('warningText');
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            
+            if (deleteType === 'safe') {
+                modalTitle.textContent = 'Anonymize User';
+                modalMessage.textContent = `Are you sure you want to anonymize "${userName}"? This will remove all personal data but preserve transaction history for audit purposes.`;
+                modalWarning.style.display = 'none';
+                confirmBtn.textContent = 'Anonymize';
+                confirmBtn.className = 'modal-btn modal-btn-confirm-safe';
+            } else {
+                modalTitle.textContent = 'Permanently Delete User';
+                modalMessage.textContent = `You are about to permanently delete "${userName}" and all associated data.`;
+                modalWarning.style.display = 'block';
+                warningText.textContent = 'This action cannot be undone. All user data including transactions, wallets, and history will be permanently lost.';
+                confirmBtn.textContent = 'Delete Permanently';
+                confirmBtn.className = 'modal-btn modal-btn-confirm-danger';
+            }
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentUserId = null;
+            currentDeleteType = null;
+        }
+
+        // Event delegation for delete buttons
+        document.addEventListener('click', function(event) {
+            // Check if the clicked element is a delete button or inside one
+            const deleteButton = event.target.closest('.delete-safe, .delete-permanent');
+            
+            if (deleteButton) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                const userId = deleteButton.getAttribute('data-user-id');
+                const userName = deleteButton.getAttribute('data-user-name');
+                const deleteType = deleteButton.getAttribute('data-delete-type');
+                
+                console.log('Delete button clicked:', { userId, userName, deleteType });
+                
+                if (userId && userName && deleteType) {
+                    openDeleteModal(userId, userName, deleteType);
+                } else {
+                    console.error('Missing data attributes on delete button');
+                }
+            }
+        });
+
+        // Confirm delete action
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (currentUserId && currentDeleteType) {
+                console.log('Processing delete for user:', currentUserId, 'Type:', currentDeleteType);
+                
+                // Create a hidden form and submit it
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.style.display = 'none';
+                
+                // Add CSRF token if you're using it
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_csrf';
+                    csrfInput.value = csrfToken.getAttribute('content');
+                    form.appendChild(csrfInput);
+                }
+                
+                // Set the correct action URL based on delete type
+                if (currentDeleteType === 'safe') {
+                    form.action = `/admin/users/${currentUserId}/safe-delete`;
+                    console.log('Submitting safe delete form to:', form.action);
+                } else {
+                    form.action = `/admin/users/${currentUserId}/delete`;
+                    console.log('Submitting permanent delete form to:', form.action);
+                }
+                
+                document.body.appendChild(form);
+                
+                // Close modal first
+                closeDeleteModal();
+                
+                // Then submit the form
+                setTimeout(() => {
+                    form.submit();
+                }, 100);
+            } else {
+                console.error('No user ID or delete type specified');
+            }
+        });
+
+        // Modal close handlers
+        document.getElementById('modalClose').addEventListener('click', closeDeleteModal);
+        document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                closeDeleteModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+
         // Enhanced table row interactions
         document.addEventListener('DOMContentLoaded', function() {
             const tableRows = document.querySelectorAll('.admin-table tbody tr');
@@ -1001,6 +1360,10 @@
                     }
                 });
             });
+
+            // Debug: Check if delete buttons are found
+            const deleteButtons = document.querySelectorAll('.delete-safe, .delete-permanent');
+            console.log('Found delete buttons:', deleteButtons.length);
         });
 
         // Handle window resize
@@ -1024,6 +1387,8 @@
             setTimeout(() => {
                 setLoadingState(false);
             }, 500);
+            
+            console.log('Admin users page loaded with CSP-compliant delete buttons');
         });
     </script>
 </body>

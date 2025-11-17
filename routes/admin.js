@@ -62,4 +62,8 @@ router.get('/investments', adminController.getInvestments);
 router.get('/investments/:id', adminController.getInvestmentDetail);
 router.post('/investments/update-status', adminController.updateInvestmentStatus);
 
+// Delete user routes
+router.post('/users/:userId/delete', adminController.deleteUser);
+router.post('/users/:userId/safe-delete', adminController.safeDeleteUser);
+
 module.exports = router;
