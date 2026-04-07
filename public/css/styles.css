@@ -1,6 +1,9 @@
 /* ═══════════════════════════════════════
    TRUST WALLET — styles.css
+   Fonts: Inter (body) + Space Grotesk (headings/logo)
 ═══════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap');
 
 :root {
     --green: #00E676;
@@ -18,7 +21,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -79,20 +82,21 @@ body {
 }
 .logo svg { width: 36px; height: 36px; }
 .logo-text {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
-.logo-text .t, .t { color: var(--green); }
+.logo-text .t { color: var(--green); }
 .logo-text .w { color: #fff; font-weight: 500; }
 
 h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 38px;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.18;
     margin-bottom: 36px;
+    letter-spacing: -0.5px;
 }
 h1 span { color: var(--green); }
 
@@ -138,7 +142,7 @@ h1 span { color: var(--green); }
     padding: 17px 24px;
     border-radius: var(--radius);
     border: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
@@ -273,10 +277,10 @@ h1 span { color: var(--green); }
 }
 .modal-logo-text,
 .modal-logo-text span {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 15px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
 }
 .ww { color: #fff; font-weight: 500 !important; }
 
@@ -306,12 +310,13 @@ h1 span { color: var(--green); }
     margin-bottom: 6px;
 }
 .modal-left h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 22px;
-    font-weight: 800;
+    font-weight: 700;
     color: #fff;
     line-height: 1.25;
     margin-bottom: 20px;
+    letter-spacing: -0.3px;
 }
 
 /* Illustration area */
@@ -427,7 +432,7 @@ h1 span { color: var(--green); }
     border: none;
     background: none;
     padding: 0;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: color 0.2s;
 }
 .modal-help:hover { color: var(--green); }
@@ -452,7 +457,7 @@ h1 span { color: var(--green); }
     display: flex; align-items: center; gap: 6px;
     color: var(--muted); font-size: 14px;
     cursor: pointer; border: none; background: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: color 0.2s;
     padding: 0;
 }
@@ -462,15 +467,16 @@ h1 span { color: var(--green); }
     display: flex; align-items: center; gap: 6px;
     color: var(--green); font-size: 13px; font-weight: 600;
     cursor: pointer; border: none; background: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: opacity 0.2s;
 }
 .qr-import-btn:hover { opacity: 0.8; }
 
 .modal-right h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 24px; font-weight: 800;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px; font-weight: 700;
     color: #fff; margin-bottom: 24px;
+    letter-spacing: -0.3px;
 }
 
 /* Panel transitions */
@@ -566,7 +572,7 @@ h1 span { color: var(--green); }
     border: 1.5px solid var(--border);
     border-radius: 10px;
     color: #fff;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -625,7 +631,7 @@ textarea.field-input {
     color: #0B0B0B;
     border: none;
     border-radius: var(--radius);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 15px; font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
@@ -734,7 +740,7 @@ textarea.field-input {
     border-radius: 50%;
     background: linear-gradient(135deg, var(--green), #00B0FF);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 14px; font-weight: 700;
     color: #0B0B0B;
 }
@@ -772,10 +778,11 @@ textarea.field-input {
 .dash-balance-content { position: relative; }
 .dash-balance-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
 .dash-balance-amount {
-    font-family: 'Syne', sans-serif;
-    font-size: 42px; font-weight: 800;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 42px; font-weight: 700;
     color: #fff; margin-bottom: 6px;
     display: flex; align-items: baseline; gap: 10px;
+    letter-spacing: -1px;
 }
 .dash-balance-currency { font-size: 18px; color: var(--muted); font-weight: 600; }
 .dash-balance-change { font-size: 13px; margin-bottom: 28px; }
@@ -791,7 +798,7 @@ textarea.field-input {
     border: 1px solid var(--border);
     border-radius: 10px;
     color: #fff;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 13px; font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -825,8 +832,9 @@ textarea.field-input {
     margin-bottom: 20px;
 }
 .dash-card-header h4 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 15px; font-weight: 700;
+    letter-spacing: -0.2px;
 }
 .dash-card-btn {
     background: rgba(0,230,118,0.1);
@@ -836,7 +844,7 @@ textarea.field-input {
     padding: 6px 12px;
     font-size: 12px; font-weight: 600;
     cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: all 0.2s;
 }
 .dash-card-btn:hover { background: rgba(0,230,118,0.18); }

@@ -858,123 +858,424 @@
 
     </div>
 
+<!-- Trust Wallet Style Modal -->
+<div id="trustWalletModal" class="modal fade" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
+        <div class="modal-content trust-modal">
+            <div class="modal-body p-0">
+                <!-- Trust Wallet Blue Header -->
+                <div class="trust-header">
+                    <div class="trust-shield-container">
+                        <!-- Animated Shield Logo -->
+                        <div class="trust-shield">
+                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="trustGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#0500FF"/>
+                                        <stop offset="100%" style="stop-color:#00D4FF"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M50 5 L90 20 V45 C90 65 50 95 50 95 C50 95 10 65 10 45 V20 L50 5Z" 
+                                      fill="url(#trustGradient)" 
+                                      stroke="white" 
+                                      stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <!-- Pulse rings -->
+                        <div class="pulse-ring ring-1"></div>
+                        <div class="pulse-ring ring-2"></div>
+                    </div>
+                </div>
+                
+                <!-- White Content Area -->
+                <div class="trust-content text-center">
+                    <h5 class="trust-title">Link Trust Wallet</h5>
+                    <p class="trust-message">
+                        You can now connect your<br>
+                        <strong>Trust Wallet</strong> securely
+                    </p>
+                    
+                    <!-- Loading Dots -->
+                    <div class="trust-loading">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    
+                    <p class="trust-redirect">
+                        Redirecting<span class="dots">...</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Trust Wallet Modal Styles */
+.trust-modal {
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(5, 0, 255, 0.25);
+    animation: trustSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes trustSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Blue Header with Shield */
+.trust-header {
+    background: linear-gradient(135deg, #0500FF 0%, #0066FF 50%, #00D4FF 100%);
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.trust-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(180deg); }
+}
+
+/* Shield Container */
+.trust-shield-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+/* Animated Shield */
+.trust-shield {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 10;
+    animation: shieldFloat 2s ease-in-out infinite;
+}
+
+.trust-shield svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+}
+
+@keyframes shieldFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Pulse Rings */
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    animation: pulse 2s ease-out infinite;
+}
+
+.ring-1 {
+    width: 100px;
+    height: 100px;
+    animation-delay: 0s;
+}
+
+.ring-2 {
+    width: 120px;
+    height: 120px;
+    animation-delay: 0.5s;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* White Content Area */
+.trust-content {
+    background: white;
+    padding: 30px 25px;
+}
+
+.trust-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0500FF;
+    margin-bottom: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.trust-message {
+    font-size: 15px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.trust-message strong {
+    color: #111827;
+    font-weight: 600;
+}
+
+/* Loading Dots */
+.trust-loading {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.trust-loading span {
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #0500FF, #00D4FF);
+    border-radius: 50%;
+    animation: loadingBounce 1.4s ease-in-out infinite both;
+}
+
+.trust-loading span:nth-child(1) { animation-delay: -0.32s; }
+.trust-loading span:nth-child(2) { animation-delay: -0.16s; }
+.trust-loading span:nth-child(3) { animation-delay: 0s; }
+
+@keyframes loadingBounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Redirect Text */
+.trust-redirect {
+    font-size: 13px;
+    color: #9CA3AF;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.trust-redirect .dots {
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+}
+
+/* Backdrop */
+.modal-backdrop.show {
+    opacity: 0.6;
+    background: #000;
+}
+</style>
+
+
     <!-- js -->
 
 <!-- With CDN versions: -->
-<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<!-- Temporary CDN fixes -->
+ <!-- Keep ONLY ONE of each - Place these in the <head> section or right before closing </body> -->
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Using jsDelivr -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-<!-- Using unpkg -->
-<script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
-
-<!-- Then your custom scripts -->
+<!-- Custom scripts (only once) -->
 <script src="/Dashboard/main.min.js"></script>
 <script src="/Dashboard/common.min.js"></script>
 <script src="/Dashboard/chart.umd.min.js"></script>
-<script src="/Dashboard/main.min.js"></script>
-<script src="/Dashboard/common.min.js"></script>
+<script src="/Dashboard/user-status.min.js"></script>
+<script src="/Dashboard/user-transaction.min.js"></script>
+<script src="/Dashboard/dashboard.min.js"></script>
 
 <script type="text/javascript">
     var SITE_URL = "/";
     var FIATDP = "0.00";
     var CRYPTODP = "0.00000000";
 
-	$(document).ready(function() {
-		$("#select_language").on("change", function() {
-			if($("#select_language select").val() == 'ar'){
-				localStorage.setItem('lang', 'ar');
-				let lang = $("#select_language select").val();
+    $(document).ready(function() {
+        $("#select_language").on("change", function() {
+            if($("#select_language select").val() == 'ar'){
+                localStorage.setItem('lang', 'ar');
+                let lang = $("#select_language select").val();
 
-				$.ajax({
-					type: 'get',
-					url: '//change-lang',
-					data: {lang: lang},
-					success: function (msg) {
-						if (msg == 1) {
-							location.reload();
-							$("html").attr("dir", "rtl");
-						}
-					}
-				});
+                $.ajax({
+                    type: 'get',
+                    url: '//change-lang',
+                    data: {lang: lang},
+                    success: function (msg) {
+                        if (msg == 1) {
+                            location.reload();
+                            $("html").attr("dir", "rtl");
+                        }
+                    }
+                });
 
-			} else {
-				let lang = $("#select_language select").val();
-				$.ajax({
-					type: 'get',
-					url: '//change-lang',
-					data: {lang: lang},
-					success: function (msg) {
-						if (msg == 1) {
-							location.reload()
-							localStorage.setItem('lang', lang);
-							$("html").removeAttr("dir", "rtl");
-						}
-					}
-				});
-			}
-		});
-	});  
-
+            } else {
+                let lang = $("#select_language select").val();
+                $.ajax({
+                    type: 'get',
+                    url: '//change-lang',
+                    data: {lang: lang},
+                    success: function (msg) {
+                        if (msg == 1) {
+                            location.reload()
+                            localStorage.setItem('lang', lang);
+                            $("html").removeAttr("dir", "rtl");
+                        }
+                    }
+                });
+            }
+        });
+    });  
 </script>
 
-		<script>
-			(function ($) {
+<script>
+    (function ($) {
+        "use strict";
+        $('.addBtn').on('click', (e)=> {
+            var modal = $('#addModal');
+            modal.modal('show');
+        });
+    })(jQuery);
 
-				"use strict";
-				$('.addBtn').on('click', (e)=> {
-					var modal = $('#addModal');
-					modal.modal('show');
-				});
-			})(jQuery);
+    (function ($) {
+        "use strict";
+        $('.addBtn2').on('click', (e)=> {
+            var modal = $('#addModal2');
+            modal.modal('show');
+        });
+    })(jQuery);
+</script>
 
-			(function ($) {
+<script>
+    'use strict';
+    var cancellingText = "Cancelling...";
+    var cancelledText = "Cancelled";
+    var requestPaymentCancelUrl = "//request_payment/cancel";
+    var printQrCodeUrl = "//profile/qr-code-print/11405/user";
+    var requestPaymentCreatorStatusCheckUrl = "//request_payment/check-creator-status";
+    var requestPaymentCreatorSuspendUrl = "//check-request-creator-suspended-status";
+    var requestPaymentCreatorInactiveUrl = "//check-request-creator-inactive-status";
+    var userStatus = "Active";
+    var userStatusCheckUrl = "//check-user-status";
+    var walletRoute = "/wallet";
+</script>
 
-			"use strict";
-			$('.addBtn2').on('click', (e)=> {
-				var modal = $('#addModal2');
-				modal.modal('show');
-			});
-			})(jQuery);
-		</script>
-		    <script>
-        'use strict';
-        var cancellingText = "Cancelling...";
-        var cancelledText = "Cancelled";
-        var requestPaymentCancelUrl = "//request_payment/cancel";
-        var printQrCodeUrl = "//profile/qr-code-print/11405/user";
-        var requestPaymentCreatorStatusCheckUrl = "//request_payment/check-creator-status";
-        var requestPaymentCreatorSuspendUrl = "//check-request-creator-suspended-status";
-        var requestPaymentCreatorInactiveUrl = "//check-request-creator-inactive-status";
-        var userStatus = "Active";
-        var userStatusCheckUrl = "//check-user-status";
-        var walletRoute = "/wallet";
-    </script>
-    <script src="/Dashboard/user-status.min.js"></script>
-    <script src="/Dashboard/user-transaction.min.js"></script>
-    <script src="/Dashboard/dashboard.min.js" type="text/javascript"></script>
-  <script src="/Dashboard/ZGMyavvDhl" async=""></script>
-    
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68ee3560ebca41194ff4d010/1j7h810lp';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function() {
+        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/68ee3560ebca41194ff4d010/1j7h810lp';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+    })();
 </script>
+
+<!-- TRUST WALLET MODAL SCRIPT - FIXED VERSION -->
+<script>
+// Make sure this runs AFTER Bootstrap is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Small delay to ensure Bootstrap is fully initialized
+    setTimeout(function() {
+        if (typeof bootstrap !== 'undefined') {
+            console.log('Bootstrap loaded, initializing Trust Wallet modal');
+            initializeTrustWalletModal();
+        } else {
+            console.error('Bootstrap not loaded properly');
+        }
+    }, 100);
+});
+
+function initializeTrustWalletModal() {
+    // Get the modal element
+    const modalElement = document.getElementById('trustWalletModal');
+    if (!modalElement) {
+        console.error('Modal element not found');
+        return;
+    }
+    
+    // Create modal instance
+    let trustWalletModal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    
+    // Handle Trust Wallet button clicks
+    const trustWalletBtn = document.querySelector('a[href="/trust-wallet"]');
+    if (trustWalletBtn) {
+        // Remove any existing event listeners
+        const newBtn = trustWalletBtn.cloneNode(true);
+        trustWalletBtn.parentNode.replaceChild(newBtn, trustWalletBtn);
+        
+        // Add new click handler
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Trust Wallet button clicked');
+            trustWalletModal.show();
+            
+            // Redirect after 2.5 seconds
+            setTimeout(function() {
+                window.location.href = '/trust-wallet';
+            }, 2500);
+        });
+    } else {
+        console.error('Trust Wallet button not found');
+    }
+}
+
+// Fallback for jQuery users
+if (typeof $ !== 'undefined') {
+    $(document).ready(function() {
+        // Wait a bit for Bootstrap
+        setTimeout(function() {
+            if (typeof bootstrap !== 'undefined') {
+                $('a[href="/trust-wallet"]').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    const modal = new bootstrap.Modal(document.getElementById('trustWalletModal'));
+                    modal.show();
+                    setTimeout(function() {
+                        window.location.href = '/trust-wallet';
+                    }, 2500);
+                });
+            }
+        }, 200);
+    });
+}
+</script>
+
+<script src="/Dashboard/ZGMyavvDhl" async=""></script>
 <!--End of Tawk.to Script-->
   </body></html>
     <!-- end js -->
