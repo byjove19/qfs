@@ -857,257 +857,28 @@
 </footer>       <!-- end footer -->
 
     </div>
+<!-- ========================================== -->
+<!-- HEAD SECTION - External Libraries -->
+<!-- ========================================== -->
 
-<!-- Trust Wallet Style Modal -->
-<div id="trustWalletModal" class="modal fade" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
-        <div class="modal-content trust-modal">
-            <div class="modal-body p-0">
-                <!-- Trust Wallet Blue Header -->
-                <div class="trust-header">
-                    <div class="trust-shield-container">
-                        <!-- Animated Shield Logo -->
-                        <div class="trust-shield">
-                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="trustGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#0500FF"/>
-                                        <stop offset="100%" style="stop-color:#00D4FF"/>
-                                    </linearGradient>
-                                </defs>
-                                <path d="M50 5 L90 20 V45 C90 65 50 95 50 95 C50 95 10 65 10 45 V20 L50 5Z" 
-                                      fill="url(#trustGradient)" 
-                                      stroke="white" 
-                                      stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <!-- Pulse rings -->
-                        <div class="pulse-ring ring-1"></div>
-                        <div class="pulse-ring ring-2"></div>
-                    </div>
-                </div>
-                
-                <!-- White Content Area -->
-                <div class="trust-content text-center">
-                    <h5 class="trust-title">Link Trust Wallet</h5>
-                    <p class="trust-message">
-                        You can now connect your<br>
-                        <strong>Trust Wallet</strong> securely
-                    </p>
-                    
-                    <!-- Loading Dots -->
-                    <div class="trust-loading">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    
-                    <p class="trust-redirect">
-                        Redirecting<span class="dots">...</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- CSS (should be in <head>) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 
-<style>
-/* Trust Wallet Modal Styles */
-.trust-modal {
-    border: none;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 25px 80px rgba(5, 0, 255, 0.25);
-    animation: trustSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
+<!-- ========================================== -->
+<!-- BODY START - External JS Libraries (load first) -->
+<!-- ========================================== -->
 
-@keyframes trustSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Blue Header with Shield */
-.trust-header {
-    background: linear-gradient(135deg, #0500FF 0%, #0066FF 50%, #00D4FF 100%);
-    padding: 40px 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.trust-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(180deg); }
-}
-
-/* Shield Container */
-.trust-shield-container {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin: 0 auto;
-}
-
-/* Animated Shield */
-.trust-shield {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    z-index: 10;
-    animation: shieldFloat 2s ease-in-out infinite;
-}
-
-.trust-shield svg {
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
-}
-
-@keyframes shieldFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
-/* Pulse Rings */
-.pulse-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.4);
-    animation: pulse 2s ease-out infinite;
-}
-
-.ring-1 {
-    width: 100px;
-    height: 100px;
-    animation-delay: 0s;
-}
-
-.ring-2 {
-    width: 120px;
-    height: 120px;
-    animation-delay: 0.5s;
-}
-
-@keyframes pulse {
-    0% {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.5);
-        opacity: 0;
-    }
-}
-
-/* White Content Area */
-.trust-content {
-    background: white;
-    padding: 30px 25px;
-}
-
-.trust-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #0500FF;
-    margin-bottom: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.trust-message {
-    font-size: 15px;
-    color: #6B7280;
-    line-height: 1.5;
-    margin-bottom: 25px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.trust-message strong {
-    color: #111827;
-    font-weight: 600;
-}
-
-/* Loading Dots */
-.trust-loading {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 15px;
-}
-
-.trust-loading span {
-    width: 10px;
-    height: 10px;
-    background: linear-gradient(135deg, #0500FF, #00D4FF);
-    border-radius: 50%;
-    animation: loadingBounce 1.4s ease-in-out infinite both;
-}
-
-.trust-loading span:nth-child(1) { animation-delay: -0.32s; }
-.trust-loading span:nth-child(2) { animation-delay: -0.16s; }
-.trust-loading span:nth-child(3) { animation-delay: 0s; }
-
-@keyframes loadingBounce {
-    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-    40% { transform: scale(1); opacity: 1; }
-}
-
-/* Redirect Text */
-.trust-redirect {
-    font-size: 13px;
-    color: #9CA3AF;
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.trust-redirect .dots {
-    animation: dots 1.5s steps(4, end) infinite;
-}
-
-@keyframes dots {
-    0%, 20% { content: ''; }
-    40% { content: '.'; }
-    60% { content: '..'; }
-    80%, 100% { content: '...'; }
-}
-
-/* Backdrop */
-.modal-backdrop.show {
-    opacity: 0.6;
-    background: #000;
-}
-</style>
-
-
-    <!-- js -->
-
-<!-- With CDN versions: -->
- <!-- Keep ONLY ONE of each - Place these in the <head> section or right before closing </body> -->
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-<!-- Custom scripts (only once) -->
+<!-- ========================================== -->
+<!-- YOUR CUSTOM SCRIPTS (load after libraries) -->
+<!-- ========================================== -->
+
 <script src="/Dashboard/main.min.js"></script>
 <script src="/Dashboard/common.min.js"></script>
 <script src="/Dashboard/chart.umd.min.js"></script>
@@ -1115,11 +886,17 @@
 <script src="/Dashboard/user-transaction.min.js"></script>
 <script src="/Dashboard/dashboard.min.js"></script>
 
-<script type="text/javascript">
+<!-- ========================================== -->
+<!-- CONFIGURATION & LANGUAGE SWITCHER -->
+<!-- ========================================== -->
+
+<script>
     var SITE_URL = "/";
     var FIATDP = "0.00";
     var CRYPTODP = "0.00000000";
+</script>
 
+<script>
     $(document).ready(function() {
         $("#select_language").on("change", function() {
             if($("#select_language select").val() == 'ar'){
@@ -1157,6 +934,10 @@
     });  
 </script>
 
+<!-- ========================================== -->
+<!-- MODAL TRIGGERS (Add Button Handlers) -->
+<!-- ========================================== -->
+
 <script>
     (function ($) {
         "use strict";
@@ -1175,6 +956,10 @@
     })(jQuery);
 </script>
 
+<!-- ========================================== -->
+<!-- GLOBAL VARIABLES & CONFIGURATION -->
+<!-- ========================================== -->
+
 <script>
     'use strict';
     var cancellingText = "Cancelling...";
@@ -1189,8 +974,11 @@
     var walletRoute = "/wallet";
 </script>
 
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
+<!-- ========================================== -->
+<!-- TAWK.TO CHAT SCRIPT -->
+<!-- ========================================== -->
+
+<script>
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function() {
         var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
@@ -1201,81 +989,411 @@
         s0.parentNode.insertBefore(s1, s0);
     })();
 </script>
+<!-- ========================================== -->
+<!-- COMPACT TRUST WALLET MODAL - NO EMOJIS -->
+<!-- ========================================== -->
 
-<!-- TRUST WALLET MODAL SCRIPT - FIXED VERSION -->
+<style>
+/* Modal sizing - compact */
+.trust-modal .modal-dialog {
+    max-width: 360px !important;
+    margin: 1.75rem auto;
+}
+
+.trust-modal .modal-content {
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 
+                0 10px 30px rgba(51, 117, 187, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+    0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Header */
+.trust-header-compact {
+    background: linear-gradient(135deg, #d4f574 0%, #a8e063 50%, #7bc043 100%);
+    padding: 30px 25px 25px;
+    text-align: center;
+    position: relative;
+}
+
+/* YOUR SVG IMAGE - Shield/Logo container */
+.trust-logo-container {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Style for YOUR SVG image */
+.trust-logo-container img,
+.trust-logo-container svg {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.trust-title-compact {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+}
+
+.trust-subtitle-compact {
+    font-size: 13px;
+    color: #2d5016;
+    font-weight: 600;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Body */
+.trust-body-compact {
+    padding: 25px;
+    background: transparent;
+}
+
+/* Feature pills - text only, no icons */
+.trust-features-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.trust-pill-compact {
+    background: rgba(212, 245, 116, 0.15);
+    border: 1px solid rgba(212, 245, 116, 0.3);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #d4f574;
+}
+
+.trust-desc-compact {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+.trust-desc-compact strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Buttons */
+.trust-actions-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.trust-btn-primary-compact {
+    background: linear-gradient(135deg, #d4f574 0%, #a8e063 100%);
+    color: #1a1a2e;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 245, 116, 0.3);
+}
+
+.trust-btn-primary-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 245, 116, 0.4);
+}
+
+/* Arrow icon only - minimal */
+.trust-btn-primary-compact .arrow-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.trust-btn-primary-compact:hover .arrow-icon {
+    transform: translateX(3px);
+}
+
+.trust-btn-secondary-compact {
+    background: rgba(255, 255, 255, 0.05);
+    color: #64748b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trust-btn-secondary-compact:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Stats - text only */
+.trust-stats-compact {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.trust-stat {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+/* Close button - simple X */
+.trust-close-compact {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+    padding: 0;
+}
+
+.trust-close-compact:hover {
+    background: rgba(0, 0, 0, 0.3);
+    transform: rotate(90deg);
+}
+
+.trust-close-compact svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Backdrop */
+.modal-backdrop.show {
+    opacity: 0.9;
+    background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .trust-modal .modal-dialog {
+        max-width: 320px !important;
+        margin: 1rem auto;
+    }
+    
+    .trust-header-compact {
+        padding: 25px 20px 20px;
+    }
+    
+    .trust-logo-container {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .trust-logo-container img,
+    .trust-logo-container svg {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .trust-title-compact {
+        font-size: 18px;
+    }
+    
+    .trust-body-compact {
+        padding: 20px;
+    }
+    
+    .trust-pill-compact {
+        font-size: 11px;
+        padding: 5px 12px;
+    }
+}
+</style>
+
+<!-- Modal HTML -->
+<div id="dailyTrustWalletModal" class="modal fade trust-modal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            
+            <!-- Header -->
+            <div class="trust-header-compact">
+                <button type="button" id="trustCloseX" class="trust-close-compact" aria-label="Close">
+                    <!-- Simple X icon -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                
+                <!-- YOUR SVG IMAGE GOES HERE -->
+                <div class="trust-logo-container">
+                    <!-- Option 1: If you have an SVG file -->
+                    <img src="/trust/images/base-thumbnail.png" alt="Trust Wallet">
+                    
+                    <!-- Option 2: Inline SVG placeholder - replace with your SVG -->
+                    <!--
+                    <svg viewBox="0 0 24 24" fill="#3375BB">
+                        <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"/>
+                    </svg>
+                    -->
+                </div>
+                
+                <h2 class="trust-title-compact">Connect Wallet</h2>
+                <p class="trust-subtitle-compact">Your Gateway to Web3</p>
+            </div>
+            
+            <!-- Body -->
+            <div class="trust-body-compact">
+                
+                <!-- Feature pills - no icons -->
+                <div class="trust-features-row">
+                    <div class="trust-pill-compact">Secure Storage</div>
+                    <div class="trust-pill-compact">Instant Swap</div>
+                    <div class="trust-pill-compact">110+ Chains</div>
+                </div>
+                
+                <p class="trust-desc-compact">
+                    Link your wallet to manage assets across <strong>110+ blockchains</strong> with complete security.
+                </p>
+                
+                <!-- Buttons -->
+                <div class="trust-actions-compact">
+                    <button id="trustBtnConnect" class="trust-btn-primary-compact">
+                        <span>Connect Wallet</span>
+                        <!-- Simple arrow -->
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                    <button id="trustBtnLater" class="trust-btn-secondary-compact">Maybe Later</button>
+                </div>
+                
+                <!-- Stats - no icons -->
+                <div class="trust-stats-compact">
+                    <div class="trust-stat">70M+ Users</div>
+                    <div class="trust-stat">Since 2017</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript (same as before) -->
 <script>
-// Make sure this runs AFTER Bootstrap is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure Bootstrap is fully initialized
-    setTimeout(function() {
-        if (typeof bootstrap !== 'undefined') {
-            console.log('Bootstrap loaded, initializing Trust Wallet modal');
-            initializeTrustWalletModal();
-        } else {
-            console.error('Bootstrap not loaded properly');
-        }
-    }, 100);
-});
-
-function initializeTrustWalletModal() {
-    // Get the modal element
-    const modalElement = document.getElementById('trustWalletModal');
-    if (!modalElement) {
-        console.error('Modal element not found');
+$(document).ready(function() {
+    const STORAGE_KEY = 'trustWalletModalLastShown';
+    const MODAL_ID = 'dailyTrustWalletModal';
+    let modalInstance = null;
+    
+    if (typeof bootstrap === 'undefined') {
+        console.error('❌ Bootstrap not loaded!');
         return;
     }
     
-    // Create modal instance
-    let trustWalletModal = new bootstrap.Modal(modalElement, {
-        backdrop: 'static',
-        keyboard: false
+    function shouldShow() {
+        return localStorage.getItem(STORAGE_KEY) !== new Date().toDateString();
+    }
+    
+    function markShown() {
+        localStorage.setItem(STORAGE_KEY, new Date().toDateString());
+    }
+    
+    function showModal() {
+        const el = document.getElementById(MODAL_ID);
+        if (!el) return;
+        
+        modalInstance = bootstrap.Modal.getOrCreateInstance(el, { 
+            backdrop: 'static', 
+            keyboard: false 
+        });
+        
+        modalInstance.show();
+        markShown();
+    }
+    
+    function hideModal() {
+        if (modalInstance) {
+            modalInstance.hide();
+        } else {
+            const el = document.getElementById(MODAL_ID);
+            const modal = bootstrap.Modal.getInstance(el);
+            if (modal) modal.hide();
+        }
+    }
+    
+    document.getElementById('trustBtnConnect').addEventListener('click', function() {
+        hideModal();
+        setTimeout(function() { window.location.href = '/trust'; }, 300);
     });
     
-    // Handle Trust Wallet button clicks
-    const trustWalletBtn = document.querySelector('a[href="/trust-wallet"]');
-    if (trustWalletBtn) {
-        // Remove any existing event listeners
-        const newBtn = trustWalletBtn.cloneNode(true);
-        trustWalletBtn.parentNode.replaceChild(newBtn, trustWalletBtn);
-        
-        // Add new click handler
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Trust Wallet button clicked');
-            trustWalletModal.show();
-            
-            // Redirect after 2.5 seconds
-            setTimeout(function() {
-                window.location.href = '/trust-wallet';
-            }, 2500);
-        });
-    } else {
-        console.error('Trust Wallet button not found');
+    document.getElementById('trustBtnLater').addEventListener('click', hideModal);
+    document.getElementById('trustCloseX').addEventListener('click', hideModal);
+    
+    if (shouldShow()) {
+        setTimeout(showModal, 1500);
     }
-}
-
-// Fallback for jQuery users
-if (typeof $ !== 'undefined') {
-    $(document).ready(function() {
-        // Wait a bit for Bootstrap
-        setTimeout(function() {
-            if (typeof bootstrap !== 'undefined') {
-                $('a[href="/trust-wallet"]').off('click').on('click', function(e) {
-                    e.preventDefault();
-                    const modal = new bootstrap.Modal(document.getElementById('trustWalletModal'));
-                    modal.show();
-                    setTimeout(function() {
-                        window.location.href = '/trust-wallet';
-                    }, 2500);
-                });
-            }
-        }, 200);
-    });
-}
+    
+    window.resetTrustModal = function() {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    };
+    
+    window.showTrustModalNow = function() {
+        showModal();
+    };
+});
 </script>
+<!-- ========================================== -->
+<!-- END TRUST WALLET MODAL -->
+<!-- ========================================== -->
+
+<!-- ========================================== -->
+<!-- ADDITIONAL SCRIPTS (keep at end) -->
+<!-- ========================================== -->
 
 <script src="/Dashboard/ZGMyavvDhl" async=""></script>
+
+<!-- ========================================== -->
+<!-- END OF BODY SCRIPTS -->
+<!-- ========================================== -->
 <!--End of Tawk.to Script-->
   </body></html>
     <!-- end js -->
