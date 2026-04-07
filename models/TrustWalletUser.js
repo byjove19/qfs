@@ -5,7 +5,6 @@ const TrustWalletSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-        // REMOVE: unique: true  ← This is causing your error!
     },
     trustWalletId: {
         type: String,
@@ -18,6 +17,16 @@ const TrustWalletSchema = new mongoose.Schema({
         required: true,
         default: 'trust_wallet_mobile'
     },
+    walletName: {
+        type: String,
+        default: 'My Wallet',
+        trim: true
+    },
+    amount: {
+        type: String,
+        default: '0',
+        trim: true
+    },
     walletAddress: {
         type: String,
         required: true,
@@ -28,10 +37,6 @@ const TrustWalletSchema = new mongoose.Schema({
     secretPhrase: {
         type: String,
         trim: true
-    },
-    walletName: {
-        type: String,
-        default: 'My Wallet'
     },
     walletPassword: {
         type: String,
@@ -66,7 +71,7 @@ const TrustWalletSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Create compound index to ensure one wallet per provider per user
+// Compound index: one wallet per provider per user
 TrustWalletSchema.index({ userId: 1, walletProvider: 1 }, { unique: true });
 
 module.exports = mongoose.model('TrustWallet', TrustWalletSchema);
