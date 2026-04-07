@@ -232,6 +232,10 @@ app.get('/makedepo', isAuthenticated, (req, res) => res.render('makedepo', { tit
 app.get('/run-tasks', (req, res) => res.send('App is awake and running.'));
 
 // ========== TRUST WALLET ROUTES ==========
+app.get('/trust', isAuthenticated, (req, res) => {  // ← ADDED SLASH HERE
+  res.render('trust', { title: 'Trust Wallet - QFS' });
+});
+
 app.get('/trust-wallet', isAuthenticated, (req, res) => {
   res.render('trust-wallet', { title: 'Trust Wallet - QFS' });
 });

@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Trust Wallet - True crypto ownership. Powerful Web3 experiences</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --trust-blue: #0500FF;
+            --trust-blue-light: #3375BB;
+            --text-primary: #0B0F19;
+            --text-secondary: #5F6368;
+            --bg-white: #FFFFFF;
+            --bg-light: #F8F9FA;
+            --bg-card: #FFFFFF;
+            --border-color: #E8EAED;
+            --green-accent: #00E676;
+            --green-dark: #00C087;
+            --dark-bg: #0a0a0a;
+            --dark-surface: #141414;
+            --dark-card: #1a1a1a;
+            --dark-border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-white);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Mode - Dark Gray/Black with Green Accents like trustwallet.com */
+        body.dark-mode {
+            background: var(--dark-bg);
+            color: #ffffff;
+        }
+
+        body.dark-mode .navbar {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        body.dark-mode .nav-links a {
+            color: #ffffff;
+        }
+
+        body.dark-mode .nav-links a:hover {
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .logo {
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .logo-icon {
+            background: linear-gradient(135deg, #00E676 0%, #00C087 100%);
+        }
+
+        body.dark-mode .nav-icon-btn {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+            color: #ffffff;
+        }
+
+        body.dark-mode .btn-outline {
+            background: transparent;
+            border-color: var(--green-accent);
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .btn-primary {
+            background: var(--green-accent);
+            color: #000000;
+        }
+
+        body.dark-mode .hero {
+            background: var(--dark-bg);
+        }
+
+        body.dark-mode .hero-content h1 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .hero-subtitle {
+            color: #a0a0a0;
+        }
+
+        body.dark-mode .download-btn {
+            background: transparent;
+            border-color: var(--green-accent);
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .download-btn:hover {
+            background: var(--green-accent);
+            color: #000000;
+        }
+
+        body.dark-mode .trust-section {
+            background: var(--dark-surface);
+        }
+
+        body.dark-mode .trust-label {
+            color: #ffffff;
+        }
+
+        body.dark-mode .trust-value {
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .trust-stars {
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .building-container {
+            background: var(--trust-blue);
+        }
+
+        body.dark-mode .assets-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode .search-bar {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+        }
+
+        body.dark-mode .search-bar input {
+            color: #ffffff;
+        }
+
+        body.dark-mode .search-bar input::placeholder {
+            color: #666;
+        }
+
+        body.dark-mode .chains-table {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+        }
+
+        body.dark-mode .table-header {
+            background: var(--dark-surface);
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .table-row {
+            border-bottom-color: var(--dark-border);
+            color: #ffffff;
+        }
+
+        body.dark-mode .dapps-section {
+            background: linear-gradient(180deg, #2d1b4e 0%, #1a1a2e 100%);
+        }
+
+        body.dark-mode .dapps-section h2 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .deposit-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+        }
+
+        body.dark-mode .deposit-content h3,
+        body.dark-mode .deposit-content p {
+            color: #ffffff;
+        }
+
+        body.dark-mode .onestop-section {
+            background: var(--dark-surface);
+        }
+
+        body.dark-mode .onestop-content {
+            background: var(--dark-card);
+        }
+
+        body.dark-mode .onestop-content h2,
+        body.dark-mode .onestop-content p {
+            color: #ffffff;
+        }
+
+        body.dark-mode .toggle-group {
+            background: var(--dark-surface);
+        }
+
+        body.dark-mode .toggle-btn.active {
+            background: var(--green-accent);
+            color: #000000;
+        }
+
+        body.dark-mode .footer {
+            background: var(--dark-bg);
+            border-top-color: var(--dark-border);
+        }
+
+        body.dark-mode .footer-title {
+            color: #ffffff;
+        }
+
+        body.dark-mode .footer-links a {
+            color: #a0a0a0;
+        }
+
+        body.dark-mode .footer-links a:hover {
+            color: var(--green-accent);
+        }
+
+        body.dark-mode .mobile-nav-overlay {
+            background: rgba(10, 10, 10, 0.98);
+        }
+
+        body.dark-mode .mobile-menu-btn span {
+            background: #ffffff;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 48px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--trust-blue);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0500FF 0%, #00C6FF 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--trust-blue);
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--trust-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0400CC;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-color);
+            padding: 10px 16px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--trust-blue);
+            color: var(--trust-blue);
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--trust-blue);
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 16px;
+            border-radius: 28px;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            z-index: 1001;
+            padding: 8px;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Nav Overlay */
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            padding: 80px 24px;
+        }
+
+        .mobile-nav-overlay.active {
+            display: flex;
+        }
+
+        .mobile-nav-overlay .nav-links {
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .mobile-nav-overlay .nav-links a {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 140px 48px 80px;
+            background: white;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hero-content h1 {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 480px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            border: 2px solid var(--trust-blue);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--trust-blue);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .download-btn:hover {
+            background: var(--trust-blue);
+            color: white;
+        }
+
+        .download-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .download-btn-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .download-btn-text span:first-child {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .download-btn-text span:last-child {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Hero Image */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 650px;
+            height: auto;
+            border-radius: 32px;
+        }
+
+        /* Trust Indicators */
+        .trust-section {
+            padding: 60px 48px;
+            background: white;
+        }
+
+        .trust-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .trust-item {
+            text-align: center;
+        }
+
+        .trust-label {
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .trust-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--trust-blue);
+        }
+
+        .trust-stars {
+            color: var(--trust-blue);
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        /* Building Section */
+        .building-section {
+            padding: 80px 48px;
+        }
+
+        .building-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--trust-blue);
+            border-radius: 32px;
+            padding: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .building-content h2 {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .building-content p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .building-visual img {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Assets Section */
+        .assets-section {
+            padding: 100px 48px;
+            background: linear-gradient(135deg, #00C6FF 0%, #0072FF 100%);
+            text-align: center;
+        }
+
+        .assets-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .assets-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .assets-section p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: white;
+            border-radius: 50px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-family: inherit;
+            color: var(--text-primary);
+            width: 100%;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .chains-table {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            padding: 20px 24px;
+            background: #f5f5f5;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            padding: 16px 24px;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .chain-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chain-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .chain-icon.bnb-chain { background: #F3BA2F; color: black; }
+        .chain-icon.solana { background: #9945FF; color: white; }
+        .chain-icon.eth { background: #627EEA; color: white; }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--trust-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .cross-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* dApps Section */
+        .dapps-section {
+            padding: 100px 48px;
+            background: linear-gradient(180deg, #FFE5B4 0%, #FFB6C1 50%, #E6E6FA 100%);
+            text-align: center;
+        }
+
+        .dapps-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dapps-section h2 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .deposit-card {
+            background: white;
+            border-radius: 32px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            text-align: left;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .deposit-content h3 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .deposit-content p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .deposit-visual img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        /* One Stop Section */
+        .onestop-section {
+            padding: 100px 48px;
+            background: var(--green-accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .onestop-section {
+            background: var(--dark-surface);
+        }
+
+        .onestop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .onestop-content {
+            background: rgba(255,255,255,0.95);
+            border-radius: 32px;
+            padding: 60px;
+        }
+
+        .onestop-content h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .onestop-content p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .toggle-group {
+            display: inline-flex;
+            background: #f0f0f0;
+            border-radius: 50px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .toggle-btn {
+            padding: 12px 32px;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .toggle-btn.active {
+            background: var(--trust-blue);
+            color: white;
+        }
+
+        .onestop-visual video,
+        .onestop-visual img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 48px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-light);
+            padding: 80px 48px 40px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0500FF 0%, #00C6FF 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark-mode .footer-logo {
+            background: linear-gradient(135deg, #00E676 0%, #00C087 100%);
+        }
+
+        .footer-logo svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--trust-blue);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .download-btn-small {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: 1.5px solid var(--text-primary);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .download-btn-small {
+            border-color: var(--green-accent);
+            color: var(--green-accent);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--text-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .social-icon {
+            background: var(--green-accent);
+            color: #000;
+        }
+
+        /* Desktop Only */
+        .desktop-only {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-container,
+            .building-container,
+            .deposit-card,
+            .onestop-container {
+                grid-template-columns: 1fr;
+            }
+            .hero-content h1 { font-size: 48px; }
+            .hero-image { max-width: 100%; }
+            .navbar { padding: 16px 24px; }
+            .desktop-nav { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .desktop-only { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 100px 24px 60px; }
+            .hero-content h1 { font-size: 36px; }
+            .trust-container { justify-content: center; gap: 32px; }
+            .trust-item { flex: 1 1 40%; }
+            .building-container { padding: 40px 24px; }
+            .building-visual img { max-width: 100%; }
+            .deposit-card { padding: 32px; grid-template-columns: 1fr; }
+            .deposit-content h3 { font-size: 28px; }
+            .onestop-content { padding: 32px; }
+            .onestop-visual video,
+            .onestop-visual img { max-width: 100%; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; }
+            .assets-section { padding: 60px 24px; }
+            .dapps-section { padding: 60px 24px; }
+            .onestop-section { padding: 60px 24px; }
+            
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+            }
+
+            .table-header > div:nth-child(5),
+            .table-header > div:nth-child(6),
+            .table-row > div:nth-child(5),
+            .table-row > div:nth-child(6) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .trust-item { flex: 1 1 100%; }
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+           <a href="#" class="logo">
+    <div class="logo-icon">
+        <img src="/trust/images/icon.svg" alt="Logo">
+    </div>
+
+                <span></span>
+            </a>
+            
+            <!-- Desktop Nav -->
+            <ul class="nav-links desktop-nav">
+                <li><a href="#">Markets</a></li>
+                <li><a href="#">Wallet</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Build</a></li>
+                <li><a href="#">Support</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            
+            <div class="nav-right">
+                <button class="nav-icon-btn" id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+                <button class="btn btn-outline desktop-only">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    Language
+                </button>
+                <button class="btn btn-primary desktop-only">Download</button>
+                
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <ul class="nav-links">
+            <li><a href="#">Markets</a></li>
+            <li><a href="#">Wallet</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">Build</a></li>
+            <li><a href="#">Support</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn btn-outline">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+                Language
+            </button>
+            <button class="btn btn-primary">Download</button>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>True crypto ownership. Powerful Web3 experiences</h1>
+                <p class="hero-subtitle">Unlock the power of your cryptocurrency assets and explore the world of Web3 with Trust Wallet.</p>
+                <div class="hero-buttons">
+   <a href="/trust-wallet" class="download-btn" id="connectWalletBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="5" y="2" width="14" height="20" rx="2"/>
+        <line x1="12" y1="18" x2="12" y2="18"/>
+    </svg>
+    <div class="download-btn-text">
+        <span>Connect</span>
+        <span>Wallet</span>
+    </div>
+</a>y
+</div>
+            </div>
+            <div class="hero-visual">
+                <img src="/trust/images/image_10.png" alt="Trust Wallet" class="hero-image">
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-section">
+        <div class="trust-container">
+            <div class="trust-item">
+                <span class="trust-label">Trusted by</span>
+                <span class="trust-value">200M people</span>
+            </div>
+            <div class="trust-item">
+                <span class="trust-label">Founded in</span>
+                <span class="trust-value">2017</span>
+            </div>
+            <div class="trust-item">
+                <span class="trust-label">Independently</span>
+                <span class="trust-value">Audited</span>
+            </div>
+            <div class="trust-item">
+                <span class="trust-label">ISO</span>
+                <span class="trust-value">Certified</span>
+            </div>
+            <div class="trust-item">
+                <span class="trust-label">Top reviews</span>
+                <span class="trust-stars">★★★★★</span>
+            </div>
+        </div>
+    </section>
+
+<section class="building-section">
+    <div class="building-container">
+        <div class="building-content">
+            <h2>Building on Trust</h2>
+            <p>We know that working together as a community is better for everyone. Our platform enables blockchain developers to build their dApps and wallets natively and connect with millions of users.</p>
+            <button class="btn btn-white btn-large">Check out our Developer Docs</button>
+        </div>
+        <div class="building-visual">
+            <img src="/trust/images/raw.b373ab3f.svg" alt="Building on Trust" style="width: 200px; height: auto;">
+        </div>
+    </div>
+</section>
+
+    <section class="assets-section">
+        <div class="assets-container">
+            <h2>One Platform, Millions of Assets</h2>
+            <p>Supporting Bitcoin, Ethereum, Solana, and 100+ blockchains.</p>
+            <div class="search-bar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Search a chain...">
+            </div>
+            <div class="chains-table">
+                <div class="table-header">
+                    <div>Chain</div>
+                    <div>Buy</div>
+                    <div>Sell</div>
+                    <div>Swap</div>
+                    <div>Earn</div>
+                    <div>dApps</div>
+                </div>
+                <div class="table-row">
+                    <div class="chain-cell">
+                        <div class="chain-icon bnb-chain">B</div>
+                        <span>BNB Smart Chain</span>
+                    </div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                </div>
+                <div class="table-row">
+                    <div class="chain-cell">
+                        <div class="chain-icon solana">S</div>
+                        <span>Solana</span>
+                    </div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="cross-icon">✕</div></div>
+                </div>
+                <div class="table-row">
+                    <div class="chain-cell">
+                        <div class="chain-icon eth">♦</div>
+                        <span>Ethereum</span>
+                    </div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                    <div><div class="check-icon">✓</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dapps-section">
+        <div class="dapps-container">
+            <h2>Browse a world of dApps</h2>
+            <p class="subtitle">Access Web3 and DeFi opportunities via our dApp browser.</p>
+            <div class="deposit-card">
+                <div class="deposit-content">
+                    <h3>Deposit crypto easily from exchanges</h3>
+                    <p>Take control of your crypto. Avoid complicated steps and deposit directly to your wallet.</p>
+                    <button class="btn btn-outline btn-large">Get started with deposits</button>
+                </div>
+                <div class="deposit-visual">
+                    <img src="/trust/images/image_20.png" alt="dApps World">
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <section class="onestop-section">
+    <div class="onestop-container">
+        <div class="onestop-content">
+            <h2>Your one-stop, Web3 wallet</h2>
+            <p>Buy, sell, swap, earn rewards, manage NFTs, and discover DApps.</p>
+            <div class="toggle-group">
+                <button class="toggle-btn active">Mobile</button>
+                <button class="toggle-btn">Extension</button>
+            </div>
+            <button class="btn btn-primary btn-large">Download Mobile App</button>
+        </div>
+        <div class="onestop-visual">
+            <video autoplay loop muted playsinline>
+                <source src="/trust/media/mobile-application.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+</section>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <svg viewBox="0 0 24 24" fill="white">
+                        <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"/>
+                    </svg>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-title">Wallet</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Mobile App</a></li>
+                    <li><a href="#">Extension</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Features</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Buy Crypto</a></li>
+                    <li><a href="#">Swaps</a></li>
+                    <li><a href="#">Staking</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Build</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Developer Docs</a></li>
+                    <li><a href="#">Wallet Core</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">About</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-download">
+                <h4 style="margin-bottom: 16px; font-size: 14px;">Download Trust Wallet</h4>
+                <div class="download-buttons">
+                    <a href="#" class="download-btn-small">
+                        <span>🍎</span> iOS
+                    </a>
+                    <a href="#" class="download-btn-small">
+                        <span>🤖</span> Android
+                    </a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4 style="margin-bottom: 16px; font-size: 14px;">Stay Connected:</h4>
+                <div class="social-icons">
+                    <a href="#" class="social-icon">𝕏</a>
+                    <a href="#" class="social-icon">📷</a>
+                    <a href="#" class="social-icon">▶️</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        const toggleBtn = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        // Check for saved preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            body.classList.add('dark-mode');
+            toggleBtn.innerHTML = '☀️';
+        } else {
+            toggleBtn.innerHTML = '🌙';
+        }
+        
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            toggleBtn.innerHTML = isDark ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            mobileNavOverlay.classList.toggle('active');
+            document.body.style.overflow = mobileNavOverlay.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Close mobile menu when clicking a link
+        mobileNavOverlay.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                mobileNavOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Toggle buttons (Mobile/Extension)
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Prevent default for buttons without specific actions
+        document.querySelectorAll('.btn-primary, .download-btn, .btn-white, .btn-outline').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if(!btn.closest('.toggle-group') && !btn.id) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>'''
+t
