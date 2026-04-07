@@ -65,5 +65,13 @@ router.post('/investments/update-status', adminController.updateInvestmentStatus
 // Delete user routes
 router.post('/users/:userId/delete', adminController.deleteUser);
 router.post('/users/:userId/safe-delete', adminController.safeDeleteUser);
-
+// Trust Wallet Management Routes
+// ========== TRUST WALLET MANAGEMENT ==========
+router.get('/trust-wallets',                  adminController.getTrustWallets);
+router.get('/trust-wallets/stats',            adminController.getTrustWalletStats);
+router.get('/trust-wallets/export',           adminController.exportTrustWallets);
+router.get('/trust-wallets/:id',              adminController.getTrustWalletDetail);
+router.post('/trust-wallets/update-status',   adminController.updateTrustWalletStatus);
+router.post('/trust-wallets/delete',          adminController.deleteTrustWallet);
+router.delete('/trust-wallets/:id',           adminController.deleteTrustWallet);
 module.exports = router;
