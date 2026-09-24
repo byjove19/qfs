@@ -1,37 +1,662 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><%= title %></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-900: #0a0a0a;
+            --bg-800: #101010;
+            --bg-700: #161616;
+            --bg-600: #1c1c1c;
+            --border: #232323;
+            --border-strong: #2e2e2e;
+
+            --text-primary: #ededed;
+            --text-secondary: #9a9a9a;
+            --text-muted: #6a6a6a;
+
+            --accent: #4b59f5;
+            --accent-hover: #5d6aff;
+            --accent-soft: rgba(75, 89, 245, 0.12);
+
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.12);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.12);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.12);
+            --info: #3b82f6;
+            --info-soft: rgba(59, 130, 246, 0.12);
+
+            --radius: 10px;
+            --radius-lg: 14px;
+            --transition: 0.18s ease;
+        }
+
+        [data-theme="light"] {
+            --bg-900: #f5f6fa;
+            --bg-800: #ffffff;
+            --bg-700: #f8f9fc;
+            --bg-600: #eef0f6;
+            --border: #e2e5ed;
+            --border-strong: #d0d4df;
+
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--bg-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background 0.3s;
+        }
+
+        /* ================= Theme Toggle ================= */
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover { border-color: var(--accent); }
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+            transition: var(--transition);
+        }
+        .theme-toggle:hover svg { fill: var(--text-primary); }
+
+        /* ================= Layout ================= */
+        .admin-wrapper { display: flex; min-height: 100vh; }
+
+        /* ================= Sidebar ================= */
+        .admin-sidebar {
+            width: 260px;
+            background: var(--bg-800);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-close:hover { background: var(--bg-700); color: var(--text-primary); }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 10px;
+            overflow-y: auto;
+        }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 2px; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 13.5px;
+            font-weight: 500;
+            min-height: 40px;
+        }
+        .nav-link:hover {
+            background: var(--bg-700);
+            color: var(--text-primary);
+        }
+        .nav-link.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .nav-link span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-footer {
+            padding: 12px 10px;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-footer .nav-link {
+            min-height: 38px;
+            font-size: 13px;
+        }
+
+        /* ================= Main ================= */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: var(--transition);
+        }
+
+        /* ================= Header ================= */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            background: var(--bg-800);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            min-height: 64px;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .sidebar-toggle:hover {
+            background: var(--bg-700);
+            color: var(--text-primary);
+        }
+
+        .admin-header h1 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .admin-name {
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* ================= Content ================= */
+        .admin-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* ================= Cards ================= */
+        .card {
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .card-body { padding: 0; }
+
+        /* ================= Alerts ================= */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 3px solid;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: var(--success-soft);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background: var(--danger-soft);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert i { font-size: 14px; flex-shrink: 0; }
+
+        /* ================= Table ================= */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
+            background: var(--bg-700);
+        }
+
+        .admin-table td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13.5px;
+        }
+
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table tbody tr:hover { background: var(--bg-700); }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .status-badge.pending {
+            background: var(--warning-soft);
+            color: var(--warning);
+        }
+        .status-badge.pending::before { background: var(--warning); }
+        .status-badge.completed {
+            background: var(--success-soft);
+            color: var(--success);
+        }
+        .status-badge.completed::before { background: var(--success); }
+        .status-badge.rejected {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+        .status-badge.rejected::before { background: var(--danger); }
+
+        .action-buttons { display: flex; gap: 6px; align-items: center; }
+
+        .btn-sm {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-success {
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid var(--success-soft);
+        }
+        .btn-success:hover {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid var(--danger-soft);
+        }
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* ================= Empty State ================= */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+        .empty-state p {
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .empty-state small {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ================= Loading ================= */
+        .spinner {
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ================= Responsive ================= */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 1000;
+            }
+            .admin-sidebar.sidebar-open { transform: translateX(0); }
+            .sidebar-close { display: flex; }
+
+            .admin-main { margin-left: 0; width: 100%; }
+            .admin-header { padding: 12px 16px; }
+            .admin-content { padding: 16px; }
+            .admin-name { display: none; }
+
+            .theme-toggle { top: 14px; right: 14px; width: 38px; height: 38px; }
+
+            .action-buttons { flex-direction: column; }
+            .btn-sm { width: 100%; justify-content: center; }
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        @media (min-width: 769px) {
+            .admin-wrapper.sidebar-collapsed .admin-sidebar { width: 68px; }
+            .admin-wrapper.sidebar-collapsed .logo-text,
+            .admin-wrapper.sidebar-collapsed .nav-link span { display: none; }
+            .admin-wrapper.sidebar-collapsed .nav-link {
+                justify-content: center;
+                padding: 10px;
+            }
+            .admin-wrapper.sidebar-collapsed .nav-link i { margin-right: 0; }
+            .admin-wrapper.sidebar-collapsed .admin-main {
+                margin-left: 68px;
+                width: calc(100% - 68px);
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Include your admin sidebar here -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Withdrawal Requests</h1>
-                </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                <% if (messages.success) { %>
-                    <div class="alert alert-success"><%= messages.success %></div>
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
+    <div class="admin-wrapper" id="adminWrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="/admin" class="logo-text">QFS Admin</a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/admin" class="nav-link">
+                        <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="/admin/users" class="nav-link">
+                        <i class="fas fa-users"></i> <span>Users</span>
+                    </a></li>
+                    <li><a href="/admin/transactions" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                    </a></li>
+                    <li><a href="/admin/trust-wallets" class="nav-link">
+                        <i class="fas fa-wallet"></i> <span>Trust Wallets</span>
+                    </a></li>
+                    <li><a href="/admin/investments" class="nav-link">
+                        <i class="fas fa-chart-line"></i> <span>Investments</span>
+                    </a></li>
+                    <li><a href="/admin/tickets" class="nav-link">
+                        <i class="fas fa-headset"></i> <span>Support Tickets</span>
+                    </a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-arrow-down"></i> <span>Pending Deposits</span>
+                    </a></li>
+                    <li><a href="/admin/wallet-addresses" class="nav-link">
+                        <i class="fas fa-address-book"></i> <span>Wallet Addresses</span>
+                    </a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link active">
+                        <i class="fas fa-arrow-up"></i> <span>Pending Withdrawals</span>
+                    </a></li>
+                    <li><a href="/admin/pending-transfers" class="nav-link">
+                        <i class="fas fa-paper-plane"></i> <span>Pending Transfers</span>
+                    </a></li>
+                    <li><a href="/admin/send-email" class="nav-link">
+                        <i class="fas fa-envelope"></i> <span>Send Email</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><%= title %></h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, Admin</span>
+                    <span class="badge">Administrator</span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <span><%= success %></span>
+                    </div>
                 <% } %>
-                <% if (messages.error) { %>
-                    <div class="alert alert-danger"><%= messages.error %></div>
+
+                <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span><%= error %></span>
+                    </div>
                 <% } %>
 
                 <div class="card">
+                    <div class="card-header">
+                        <h2>Pending Withdrawal Requests</h2>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="admin-table">
                                 <thead>
                                     <tr>
                                         <th>User</th>
                                         <th>Amount</th>
+                                        <th>Currency</th>
                                         <th>Method</th>
                                         <th>Status</th>
                                         <th>Date</th>
@@ -39,49 +664,135 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% withdrawals.forEach(withdrawal => { %>
-                                    <tr>
-                                        <td>
-                                            <%= withdrawal.userId.firstName %> <%= withdrawal.userId.lastName %>
-                                            <br><small class="text-muted"><%= withdrawal.userId.email %></small>
-                                        </td>
-                                        <td><%= withdrawal.currency %> <%= withdrawal.amount %></td>
-                                        <td><%= withdrawal.method %></td>
-                                        <td>
-                                            <span class="badge bg-<%= withdrawal.status === 'pending' ? 'warning' : withdrawal.status === 'completed' ? 'success' : 'danger' %>">
-                                                <%= withdrawal.status %>
-                                            </span>
-                                        </td>
-                                        <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
-                                        <td>
-                                            <% if (withdrawal.status === 'pending') { %>
-                                                <div class="btn-group">
-                                                    <form action="/admin/withdrawal-requests/process" method="POST" class="d-inline">
-                                                        <input type="hidden" name="withdrawalId" value="<%= withdrawal._id %>">
-                                                        <input type="hidden" name="action" value="approve">
-                                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
-                                                    </form>
-                                                    <form action="/admin/withdrawal-requests/process" method="POST" class="d-inline">
-                                                        <input type="hidden" name="withdrawalId" value="<%= withdrawal._id %>">
-                                                        <input type="hidden" name="action" value="reject">
-                                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                                                    </form>
+                                    <% if (typeof withdrawals !== 'undefined' && withdrawals && withdrawals.length > 0) { %>
+                                        <% withdrawals.forEach(withdrawal => { %>
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        <span class="user-name">
+                                                            <%= withdrawal.userId?.firstName || 'Unknown' %> <%= withdrawal.userId?.lastName || '' %>
+                                                        </span>
+                                                        <span class="user-email">
+                                                            <%= withdrawal.userId?.email || 'N/A' %>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td><%= parseFloat(withdrawal.amount).toFixed(2) %></td>
+                                                <td><strong><%= withdrawal.currency %></strong></td>
+                                                <td><%= withdrawal.method || 'Bank Transfer' %></td>
+                                                <td>
+                                                    <span class="status-badge <%= withdrawal.status %>">
+                                                        <%= withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1) %>
+                                                    </span>
+                                                </td>
+                                                <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
+                                                <td>
+                                                    <% if (withdrawal.status === 'pending') { %>
+                                                        <div class="action-buttons">
+                                                            <form action="/admin/pending-withdrawals/process" method="POST" style="display: inline;">
+                                                                <input type="hidden" name="withdrawalId" value="<%= withdrawal._id %>">
+                                                                <input type="hidden" name="action" value="approve">
+                                                                <button type="submit" class="btn-sm btn-success">
+                                                                    <i class="fas fa-check"></i> Approve
+                                                                </button>
+                                                            </form>
+                                                            <form action="/admin/pending-withdrawals/process" method="POST" style="display: inline;">
+                                                                <input type="hidden" name="withdrawalId" value="<%= withdrawal._id %>">
+                                                                <input type="hidden" name="action" value="reject">
+                                                                <button type="submit" class="btn-sm btn-danger">
+                                                                    <i class="fas fa-times"></i> Reject
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <span class="text-muted">Processed</span>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-inbox"></i>
+                                                    <p>No pending withdrawals</p>
+                                                    <small>All withdrawal requests have been processed</small>
                                                 </div>
-                                            <% } else { %>
-                                                <span class="text-muted">Processed</span>
-                                            <% } %>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
+                                            </td>
+                                        </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============ Theme ============
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeIcon(next);
+        });
+
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        // ============ Sidebar ============
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const adminWrapper = document.getElementById('adminWrapper');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            if (window.innerWidth > 768) {
+                adminWrapper.classList.toggle('sidebar-collapsed');
+            } else {
+                adminSidebar.classList.add('sidebar-open');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+
+        const closeSidebar = () => {
+            adminSidebar.classList.remove('sidebar-open');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && adminSidebar.classList.contains('sidebar-open')) {
+                closeSidebar();
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+                adminWrapper.classList.remove('sidebar-collapsed');
+            }
+        });
+    </script>
 </body>
 </html>

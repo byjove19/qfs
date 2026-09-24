@@ -3,25 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send Email - Admin | QFS</title>
+  <title>Compose Email | QFS Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
 
-    body {
-      background: #0a0a0a;
-      color: #e0e0e0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
+    :root {
+      --bg-900: #0a0a0a;
+      --bg-800: #111111;
+      --bg-700: #161616;
+      --bg-600: #1c1c1c;
+      --border: #262626;
+      --border-strong: #363636;
+      --text-primary: #e8e8e8;
+      --text-secondary: #9a9a9a;
+      --text-muted: #666666;
+      --accent: #4b59f5;
+      --accent-light: #6b7aff;
+      --accent-soft: rgba(75, 89, 245, 0.12);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius: 10px;
+      --radius-lg: 14px;
     }
 
-    /* ===== Topbar ===== */
+    body {
+      background: var(--bg-900);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Topbar */
     .topbar {
-      background: #141414;
-      border-bottom: 1px solid #262626;
-      padding: 14px 20px;
+      background: var(--bg-800);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -29,27 +51,57 @@
       top: 0;
       z-index: 100;
     }
-    .topbar h2 { margin: 0; font-size: 18px; color: #fff; font-weight: 700; }
-    .topbar p { margin: 2px 0 0; font-size: 12px; color: #888; display: none; }
-    @media (min-width: 576px) { .topbar p { display: block; } }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .topbar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-light);
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .topbar p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
 
     .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: transparent;
-      border: 1px solid #363636;
-      color: #b0b0b0;
-      padding: 8px 16px;
-      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      padding: 8px 14px;
+      border-radius: var(--radius);
       text-decoration: none;
       font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
+      font-weight: 500;
+      transition: all 0.15s;
     }
-    .btn-back:hover { background: #262626; color: #fff; border-color: #4b59f5; }
+    .btn-back:hover {
+      background: var(--bg-700);
+      color: var(--text-primary);
+      border-color: var(--accent);
+    }
 
-    /* ===== Workspace ===== */
+    /* Layout */
     .workspace {
-      padding: 20px;
-      max-width: 1400px;
+      padding: 24px;
+      max-width: 1320px;
       margin: 0 auto;
     }
 
@@ -59,56 +111,57 @@
       gap: 20px;
     }
     @media (min-width: 992px) {
-      .layout { grid-template-columns: 1fr 1fr; }
+      .layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     }
 
-    /* ===== Cards ===== */
+    /* Cards */
     .card {
-      background: #141414;
-      border: 1px solid #262626;
-      border-radius: 16px;
+      background: var(--bg-800);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
       overflow: hidden;
       margin-bottom: 16px;
     }
 
     .card-header {
       padding: 14px 20px;
-      border-bottom: 1px solid #262626;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
       user-select: none;
     }
-    .card-header h5 {
-      margin: 0;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
+    .card-header-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .card-header-left svg {
+      color: var(--text-muted);
     }
     .card-header .chevron {
-      color: #666;
+      color: var(--text-muted);
       transition: transform 0.2s;
-      font-size: 12px;
     }
     .card.collapsed .card-header .chevron { transform: rotate(-90deg); }
     .card.collapsed .card-body { display: none; }
 
     .card-body { padding: 20px; }
 
-    /* ===== Form fields ===== */
+    /* Form */
     .form-label {
-      color: #fff;
-      font-weight: 600;
+      display: block;
+      color: var(--text-primary);
+      font-weight: 500;
       font-size: 13px;
       margin-bottom: 8px;
-      display: block;
     }
     .form-label .hint {
-      color: #666;
+      color: var(--text-muted);
       font-weight: 400;
       font-size: 12px;
       margin-left: 6px;
@@ -116,106 +169,135 @@
 
     .form-control {
       width: 100%;
-      background: #0a0a0a;
-      border: 1px solid #363636;
-      color: #fff;
-      border-radius: 10px;
+      background: var(--bg-900);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      border-radius: var(--radius);
       padding: 11px 14px;
       font-size: 14px;
-      transition: all 0.2s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
     .form-control:focus {
-      background: #0a0a0a;
-      color: #fff;
-      border-color: #4b59f5;
-      box-shadow: 0 0 0 3px rgba(75, 89, 245, 0.15);
       outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
     .form-control::placeholder { color: #555; }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 18px; }
 
-    /* ===== Recipient search ===== */
-    .search-wrapper {
-      position: relative;
-    }
-    .search-icon {
+    /* Search */
+    .search-wrapper { position: relative; }
+    .search-wrapper .search-icon {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: #666;
-      font-size: 15px;
+      color: var(--text-muted);
       pointer-events: none;
+      display: flex;
     }
-    .search-input {
-      padding-left: 40px;
-    }
+    .search-input { padding-left: 42px; }
+
     .search-results {
-      background: #0a0a0a;
-      border: 1px solid #363636;
-      border-radius: 10px;
+      background: var(--bg-900);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
       margin-top: 6px;
-      max-height: 240px;
+      max-height: 260px;
       overflow-y: auto;
       display: none;
     }
     .search-results.show { display: block; }
+    .search-results::-webkit-scrollbar { width: 6px; }
+    .search-results::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
     .search-results .result {
       padding: 12px 14px;
       cursor: pointer;
-      border-bottom: 1px solid #1a1a1a;
+      border-bottom: 1px solid var(--bg-700);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s;
+      transition: background 0.1s;
     }
     .search-results .result:last-child { border-bottom: none; }
-    .search-results .result:hover { background: #1a1a1a; }
-    .search-results .result .name { color: #fff; font-size: 13px; font-weight: 600; }
-    .search-results .result .email { color: #888; font-size: 12px; margin-top: 2px; }
+    .search-results .result:hover { background: var(--bg-700); }
+    .search-results .result .name {
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .search-results .result .email {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
     .search-results .result .add-btn {
-      background: rgba(75, 89, 245, 0.15);
-      color: #6b7aff;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--accent-soft);
+      color: var(--accent-light);
       border: none;
-      padding: 4px 12px;
+      padding: 5px 12px;
       border-radius: 6px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
     }
-    .search-results .result.added { opacity: 0.5; pointer-events: none; }
+    .search-results .result.added { opacity: 0.45; pointer-events: none; }
 
-    /* ===== Recipient chips ===== */
+    .search-state {
+      padding: 14px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Chips */
     .chips-wrapper {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 12px;
-      min-height: 10px;
+      min-height: 20px;
     }
+    .chips-empty {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin: 0;
+    }
+
     .chip {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: linear-gradient(135deg, #4b59f5 0%, #6b7aff 100%);
+      background: var(--accent);
       color: #fff;
-      padding: 6px 12px;
+      padding: 5px 6px 5px 12px;
       border-radius: 20px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       max-width: 100%;
     }
-    .chip .email {
-      font-weight: 400;
-      opacity: 0.85;
+    .chip .chip-name {
+      font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 180px;
+      max-width: 130px;
+    }
+    .chip .chip-email {
+      font-weight: 400;
+      opacity: 0.75;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 160px;
     }
     .chip .remove {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       color: #fff;
       width: 18px;
@@ -224,12 +306,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
       cursor: pointer;
       padding: 0;
-      line-height: 1;
+      transition: background 0.15s;
     }
-    .chip .remove:hover { background: rgba(255,255,255,0.35); }
+    .chip .remove:hover { background: rgba(255, 255, 255, 0.3); }
 
     .chips-actions {
       display: flex;
@@ -237,95 +318,117 @@
       margin-top: 12px;
       flex-wrap: wrap;
     }
+
     .btn-mini {
-      background: #1a1a1a;
-      border: 1px solid #363636;
-      color: #b0b0b0;
-      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-700);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      padding: 6px 12px;
       border-radius: 8px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
+      transition: all 0.15s;
     }
-    .btn-mini:hover { background: #262626; color: #fff; border-color: #4b59f5; }
-    .btn-mini.danger { color: #f87171; border-color: rgba(220, 53, 69, 0.4); }
-    .btn-mini.danger:hover { background: rgba(220, 53, 69, 0.15); }
+    .btn-mini:hover {
+      background: var(--bg-600);
+      color: var(--text-primary);
+      border-color: var(--accent);
+    }
+    .btn-mini.danger { color: #f87171; border-color: rgba(239, 68, 68, 0.35); }
+    .btn-mini.danger:hover { background: rgba(239, 68, 68, 0.1); }
 
-    /* ===== Quill ===== */
+    /* Quill */
     .editor-wrapper {
       background: #fff;
-      border-radius: 10px;
+      border-radius: var(--radius);
       overflow: hidden;
     }
     .ql-toolbar.ql-snow {
-      background: #f8f9fa;
-      border: 1px solid #363636 !important;
+      background: #f7f8fa;
+      border: 1px solid var(--border-strong) !important;
       border-bottom: none !important;
-      border-radius: 10px 10px 0 0;
+      border-radius: var(--radius) var(--radius) 0 0;
       padding: 8px;
       flex-wrap: wrap;
     }
     .ql-container.ql-snow {
-      border: 1px solid #363636 !important;
-      border-radius: 0 0 10px 10px;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      border: 1px solid var(--border-strong) !important;
+      border-radius: 0 0 var(--radius) var(--radius);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 15px;
-      min-height: 220px;
+      min-height: 240px;
     }
     .ql-editor {
-      min-height: 220px;
+      min-height: 240px;
       padding: 16px;
-      color: #333;
+      color: #222;
     }
     .ql-editor.ql-blank::before { color: #999; font-style: normal; }
     .ql-snow .ql-stroke { stroke: #444 !important; }
     .ql-snow .ql-fill { fill: #444 !important; }
     .ql-snow .ql-picker-label { color: #444 !important; }
 
-    /* ===== Send button ===== */
+    /* Send button */
     .btn-send {
-      background: linear-gradient(135deg, #4b59f5 0%, #6b7aff 100%);
-      color: #fff;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 13px 24px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .btn-send:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(75, 89, 245, 0.4); }
+    .btn-send:hover:not(:disabled) { background: var(--accent-light); }
     .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ===== Preview ===== */
+    /* Preview */
     .preview-frame {
-      background: #f4f6fb;
+      background: #eef1f7;
       padding: 16px;
-      border-radius: 12px;
-      max-height: 600px;
+      border-radius: var(--radius);
+      max-height: 620px;
       overflow-y: auto;
     }
+    .preview-frame::-webkit-scrollbar { width: 6px; }
+    .preview-frame::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
     .email-preview {
       background: #fff;
       max-width: 600px;
       margin: 0 auto;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      font-family: 'Segoe UI', Arial, sans-serif;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     }
     .email-head {
       background: linear-gradient(135deg, #4b59f5 0%, #6b7aff 100%);
       padding: 24px;
       text-align: center;
     }
-    .email-head h1 { color: #fff; margin: 0; font-size: 20px; letter-spacing: 2px; font-weight: 800; }
-    .email-head p { color: rgba(255,255,255,0.9); margin: 4px 0 0; font-size: 11px; }
+    .email-head h1 {
+      color: #fff;
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+    .email-head p {
+      color: rgba(255, 255, 255, 0.9);
+      margin: 4px 0 0;
+      font-size: 11px;
+    }
     .email-body { padding: 24px 20px; color: #333; font-size: 14px; line-height: 1.6; }
     .email-body h2 { color: #0044ff; font-size: 20px; margin: 0 0 12px; font-weight: 700; }
     .email-body p { margin: 0 0 14px; color: #444; }
@@ -352,110 +455,160 @@
     }
     .email-foot a { color: #888; text-decoration: none; margin: 0 4px; }
 
-    /* ===== Alerts ===== */
-    .alert-success {
-      background: rgba(40, 167, 69, 0.15);
-      border: 1px solid rgba(40, 167, 69, 0.4);
-      color: #4ade80;
+    /* Alerts */
+    .alert {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       padding: 12px 16px;
-      border-radius: 10px;
+      border-radius: var(--radius);
       margin-bottom: 16px;
       font-size: 13px;
+    }
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #4ade80;
     }
     .alert-danger {
-      background: rgba(220, 53, 69, 0.15);
-      border: 1px solid rgba(220, 53, 69, 0.4);
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
       color: #f87171;
-      padding: 12px 16px;
-      border-radius: 10px;
-      margin-bottom: 16px;
-      font-size: 13px;
     }
 
-    /* ===== Mobile tweaks ===== */
-    @media (max-width: 576px) {
-      .topbar { padding: 12px 14px; }
-      .topbar h2 { font-size: 15px; }
-      .btn-back { padding: 6px 12px; font-size: 12px; }
-      .workspace { padding: 12px; }
-      .card-body { padding: 16px; }
-      .chip .email { max-width: 120px; }
-      .search-results .result { padding: 10px 12px; }
-    }
-
-    /* ===== Spinner ===== */
+    /* Spinner */
     .spinner {
       display: inline-block;
       width: 14px;
       height: 14px;
-      border: 2px solid #666;
-      border-top-color: #6b7aff;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 576px) {
+      .topbar { padding: 12px 16px; }
+      .topbar h1 { font-size: 15px; }
+      .workspace { padding: 16px; }
+      .card-body { padding: 16px; }
+      .chip .chip-email { max-width: 100px; }
+    }
   </style>
 </head>
 <body>
 
 <!-- Topbar -->
 <div class="topbar">
-  <div>
-    <h2>📧 Compose Email</h2>
-    <p>Search and select recipients, compose, and send</p>
+  <div class="topbar-left">
+    <div class="topbar-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+    </div>
+    <div>
+      <h1>Compose Email</h1>
+      <p>Send a message to one or more users</p>
+    </div>
   </div>
-  <a href="/admin/dashboard" class="btn-back">← Back</a>
+  <a href="/admin/dashboard" class="btn-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back
+  </a>
 </div>
 
 <div class="workspace">
 
   <% if (messages && messages.success && messages.success.length) { %>
-    <div class="alert-success">✓ <%= messages.success[0] %></div>
+    <div class="alert alert-success">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <%= messages.success[0] %>
+    </div>
   <% } %>
   <% if (messages && messages.error && messages.error.length) { %>
-    <div class="alert-danger">✗ <%= messages.error[0] %></div>
+    <div class="alert alert-danger">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <%= messages.error[0] %>
+    </div>
   <% } %>
 
   <div class="layout">
 
-    <!-- ============ LEFT: COMPOSE ============ -->
+    <!-- LEFT: Compose -->
     <div>
 
       <!-- Recipients Card -->
       <div class="card" id="recipientsCard">
         <div class="card-header" onclick="toggleCard('recipientsCard')">
-          <h5>👥 Recipients <span id="recipientCount" style="color:#6b7aff;font-size:12px;">(0)</span></h5>
-          <span class="chevron">▼</span>
+          <div class="card-header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Recipients
+            <span id="recipientCount" style="color: var(--accent-light); font-weight: 500;">0</span>
+          </div>
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
         <div class="card-body">
 
-          <!-- Search input -->
           <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
             <input
               type="text"
               id="userSearchInput"
               class="form-control search-input"
-              placeholder="Search by name or email..."
+              placeholder="Search by name or email"
               autocomplete="off"
             >
           </div>
           <div class="search-results" id="searchResults"></div>
 
-          <!-- Chips -->
           <div class="chips-wrapper" id="chipsWrapper"></div>
 
-          <!-- Actions -->
           <div class="chips-actions">
-            <button type="button" class="btn-mini" onclick="selectAllUsers()">📢 Select All Users</button>
-            <button type="button" class="btn-mini danger" onclick="clearRecipients()">✕ Clear All</button>
+            <button type="button" class="btn-mini" onclick="selectAllUsers()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              Select all users
+            </button>
+            <button type="button" class="btn-mini danger" onclick="clearRecipients()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Clear all
+            </button>
           </div>
 
-          <!-- Hidden field for form submission -->
           <input type="hidden" name="recipients" id="recipientsInput" form="emailForm">
 
-          <p style="color:#666;font-size:12px;margin-top:12px;line-height:1.4;">
-            Type a name or email to search. Click a result to add as recipient. Use <strong>Select All</strong> to send to everyone.
+          <p style="color: var(--text-muted); font-size: 12px; margin: 14px 0 0; line-height: 1.5;">
+            Type a name or email to search. Click a result to add as a recipient.
           </p>
         </div>
       </div>
@@ -463,24 +616,32 @@
       <!-- Compose Card -->
       <div class="card" id="composeCard">
         <div class="card-header" onclick="toggleCard('composeCard')">
-          <h5>✏️ Compose</h5>
-          <span class="chevron">▼</span>
+          <div class="card-header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            Message
+          </div>
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
         <div class="card-body">
           <form method="POST" action="/admin/send-email" id="emailForm">
 
             <div class="form-group">
-              <label class="form-label">Subject Line</label>
+              <label class="form-label">Subject</label>
               <input type="text" name="subject" id="subject" class="form-control" required placeholder="e.g. Important account update">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Heading <span class="hint">(top of email)</span></label>
+              <label class="form-label">Heading <span class="hint">shown at the top of the email</span></label>
               <input type="text" name="heading" id="heading" class="form-control" required placeholder="e.g. Your account is ready">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Email Body</label>
+              <label class="form-label">Message</label>
               <div class="editor-wrapper">
                 <div id="quillEditor"></div>
               </div>
@@ -488,8 +649,8 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Call-to-Action Button <span class="hint">(optional)</span></label>
-              <input type="text" name="ctaText" id="ctaText" class="form-control" placeholder="Button text" style="margin-bottom:8px;">
+              <label class="form-label">Call-to-action <span class="hint">optional</span></label>
+              <input type="text" name="ctaText" id="ctaText" class="form-control" placeholder="Button label" style="margin-bottom: 8px;">
               <input type="text" name="ctaUrl" id="ctaUrl" class="form-control" placeholder="https://...">
             </div>
 
@@ -499,7 +660,11 @@
             </div>
 
             <button type="submit" class="btn-send" id="sendBtn">
-              📤 Send Email
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              Send email
             </button>
           </form>
         </div>
@@ -507,11 +672,19 @@
 
     </div>
 
-    <!-- ============ RIGHT: PREVIEW ============ -->
+    <!-- RIGHT: Preview -->
     <div class="card" id="previewCard">
       <div class="card-header" onclick="toggleCard('previewCard')">
-        <h5>👁️ Live Preview</h5>
-        <span class="chevron">▼</span>
+        <div class="card-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Preview
+        </div>
+        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
       </div>
       <div class="card-body">
         <div class="preview-frame">
@@ -523,21 +696,21 @@
             <div class="email-body">
               <h2 id="pvHeading">Your heading appears here</h2>
               <div id="pvBody">
-                <p style="color:#999;">Start typing to see your email preview...</p>
+                <p style="color: #999;">Start typing to see your email preview.</p>
               </div>
 
-              <div class="cta-box" id="pvCta" style="display:none;">
+              <div class="cta-box" id="pvCta" style="display: none;">
                 <a href="#" class="cta-btn" id="pvCtaLink">CTA</a>
               </div>
 
               <div class="email-divider"></div>
 
-              <p style="font-size:12px;">You're receiving this because you have a QFS account.</p>
-              <p style="font-size:12px;" id="pvSignature"><strong>The QFS Team</strong></p>
+              <p style="font-size: 12px;">You're receiving this because you have a QFS account.</p>
+              <p style="font-size: 12px;" id="pvSignature"><strong>The QFS Team</strong></p>
             </div>
             <div class="email-foot">
-              <p style="margin:0 0 6px;">© <%= new Date().getFullYear() %> Quantum Financial System</p>
-              <p style="margin:0;">
+              <p style="margin: 0 0 6px;">© <%= new Date().getFullYear() %> Quantum Financial System</p>
+              <p style="margin: 0;">
                 <a href="/dashboard">Dashboard</a> |
                 <a href="/profile">Profile</a> |
                 <a href="/support">Support</a>
@@ -551,37 +724,33 @@
   </div>
 </div>
 
-<!-- ============ SCRIPTS ============ -->
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 <script>
-  // ========== STATE ==========
-  let recipients = [];       // array of { _id, email, firstName, lastName }
+  // ============ STATE ============
+  let recipients = [];
   let searchTimeout = null;
-  let allUsersSelected = false;
 
-  // ========== QUILL ==========
+  // ============ QUILL ============
   const quill = new Quill('#quillEditor', {
     theme: 'snow',
-    placeholder: 'Write your email body here...',
+    placeholder: 'Write your message here...',
     modules: {
       toolbar: [
         [{ header: [1, 2, 3, false] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ align: [] }],
         ['link', 'image'],
         ['clean']
       ]
     }
   });
 
-  // ========== CARD TOGGLE (mobile-friendly) ==========
+  // ============ CARD TOGGLE ============
   function toggleCard(cardId) {
-    const card = document.getElementById(cardId);
-    card.classList.toggle('collapsed');
+    document.getElementById(cardId).classList.toggle('collapsed');
   }
 
-  // ========== SEARCH USERS ==========
+  // ============ SEARCH ============
   const searchInput = document.getElementById('userSearchInput');
   const searchResults = document.getElementById('searchResults');
 
@@ -596,8 +765,7 @@
     }
 
     searchResults.classList.add('show');
-    searchResults.innerHTML = '<div style="padding:14px;text-align:center;color:#666;font-size:13px;"><span class="spinner"></span> Searching...</div>';
-
+    searchResults.innerHTML = '<div class="search-state">Searching...</div>';
     searchTimeout = setTimeout(() => doSearch(q), 300);
   });
 
@@ -607,24 +775,23 @@
       const data = await res.json();
 
       if (!data.success || !data.users.length) {
-        searchResults.innerHTML = '<div style="padding:14px;text-align:center;color:#666;font-size:13px;">No users found</div>';
+        searchResults.innerHTML = '<div class="search-state">No users found</div>';
         return;
       }
 
       searchResults.innerHTML = data.users.map(u => {
-        const alreadyAdded = recipients.some(r => r._id === u._id);
+        const added = recipients.some(r => r._id === u._id);
         return `
-          <div class="result ${alreadyAdded ? 'added' : ''}" data-user='${JSON.stringify(u).replace(/'/g, "&apos;")}'>
+          <div class="result ${added ? 'added' : ''}" data-user='${JSON.stringify(u).replace(/'/g, "&apos;")}'>
             <div>
-              <div class="name">${escapeHtml(u.firstName || '')} ${escapeHtml(u.lastName || '')}</div>
+              <div class="name">${escapeHtml((u.firstName || '') + ' ' + (u.lastName || ''))}</div>
               <div class="email">${escapeHtml(u.email)}</div>
             </div>
-            <button type="button" class="add-btn">${alreadyAdded ? 'Added' : '+ Add'}</button>
+            <button type="button" class="add-btn">${added ? 'Added' : '+ Add'}</button>
           </div>
         `;
       }).join('');
 
-      // Attach click handlers
       searchResults.querySelectorAll('.result').forEach(el => {
         el.addEventListener('click', function () {
           const user = JSON.parse(this.dataset.user.replace(/&apos;/g, "'"));
@@ -633,11 +800,11 @@
       });
     } catch (err) {
       console.error('Search error:', err);
-      searchResults.innerHTML = '<div style="padding:14px;text-align:center;color:#f87171;font-size:13px;">Search failed</div>';
+      searchResults.innerHTML = '<div class="search-state">Search failed</div>';
     }
   }
 
-  // ========== RECIPIENT MANAGEMENT ==========
+  // ============ RECIPIENTS ============
   function addRecipient(user) {
     if (recipients.some(r => r._id === user._id)) return;
     recipients.push(user);
@@ -654,7 +821,6 @@
 
   function clearRecipients() {
     recipients = [];
-    allUsersSelected = false;
     renderChips();
   }
 
@@ -663,19 +829,24 @@
     const counter = document.getElementById('recipientCount');
     const hidden = document.getElementById('recipientsInput');
 
-    counter.textContent = '(' + recipients.length + ')';
+    counter.textContent = recipients.length;
 
     if (recipients.length === 0) {
-      wrapper.innerHTML = '<p style="color:#666;font-size:12px;margin:0;">No recipients selected yet</p>';
+      wrapper.innerHTML = '<p class="chips-empty">No recipients selected yet</p>';
       hidden.value = '';
       return;
     }
 
     wrapper.innerHTML = recipients.map(r => `
       <div class="chip">
-        <span>${escapeHtml(r.firstName || r.email)}</span>
-        <span class="email">${escapeHtml(r.email)}</span>
-        <button type="button" class="remove" data-id="${r._id}">×</button>
+        <span class="chip-name">${escapeHtml(r.firstName || r.email)}</span>
+        <span class="chip-email">${escapeHtml(r.email)}</span>
+        <button type="button" class="remove" data-id="${r._id}" aria-label="Remove">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
     `).join('');
 
@@ -685,11 +856,10 @@
       });
     });
 
-    // Send to backend as JSON array of emails
     hidden.value = JSON.stringify(recipients.map(r => r.email));
   }
 
-  // ========== SELECT ALL ==========
+  // ============ SELECT ALL ============
   async function selectAllUsers() {
     try {
       const res = await fetch('/admin/users/all');
@@ -699,14 +869,13 @@
         return;
       }
       recipients = data.users;
-      allUsersSelected = true;
       renderChips();
     } catch (err) {
       alert('Failed to load users');
     }
   }
 
-  // ========== PREVIEW ==========
+  // ============ PREVIEW ============
   function updatePreview() {
     const heading = document.getElementById('heading').value || 'Your heading appears here';
     const sig = document.getElementById('signature').value || 'The QFS Team';
@@ -719,51 +888,47 @@
     const bodyHtml = quill.root.innerHTML;
     const bodyEmpty = bodyHtml.replace(/<[^>]*>/g, '').trim().length === 0;
     document.getElementById('pvBody').innerHTML = bodyEmpty
-      ? '<p style="color:#999;">Start typing to see your email preview...</p>'
+      ? '<p style="color: #999;">Start typing to see your email preview.</p>'
       : bodyHtml;
 
     const ctaBox = document.getElementById('pvCta');
     if (ctaText && ctaUrl) {
       ctaBox.style.display = 'block';
       const link = document.getElementById('pvCtaLink');
-      link.textContent = ctaText + ' →';
+      link.textContent = ctaText;
       link.href = ctaUrl;
     } else {
       ctaBox.style.display = 'none';
     }
   }
 
-  // ========== FORM SUBMIT ==========
+  // ============ FORM SUBMIT ============
   document.getElementById('emailForm').addEventListener('submit', function (e) {
-    // Validate recipients
     if (recipients.length === 0) {
       e.preventDefault();
       alert('Please select at least one recipient before sending.');
       return;
     }
 
-    // Confirm bulk
     if (recipients.length > 5) {
-      const ok = confirm(`⚠️ This will send the email to ${recipients.length} users. Continue?`);
+      const ok = confirm('This will send the email to ' + recipients.length + ' users. Continue?');
       if (!ok) { e.preventDefault(); return; }
     }
 
-    // Sync Quill content
     document.getElementById('bodyHtml').value = quill.root.innerHTML;
 
-    // Disable button to prevent double submit
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Sending...';
   });
 
-  // ========== LIVE PREVIEW LISTENERS ==========
+  // ============ PREVIEW LISTENERS ============
   ['heading', 'ctaText', 'ctaUrl', 'signature'].forEach(id => {
     document.getElementById(id).addEventListener('input', updatePreview);
   });
   quill.on('text-change', updatePreview);
 
-  // ========== HELPERS ==========
+  // ============ HELPERS ============
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -774,14 +939,13 @@
       .replace(/'/g, '&#39;');
   }
 
-  // ========== CLOSE SEARCH ON OUTSIDE CLICK ==========
   document.addEventListener('click', function (e) {
     if (!e.target.closest('.search-wrapper') && !e.target.closest('.search-results')) {
       searchResults.classList.remove('show');
     }
   });
 
-  // ========== INIT ==========
+  // ============ INIT ============
   renderChips();
   updatePreview();
 </script>

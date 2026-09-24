@@ -3,236 +3,858 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Details - <%= ticket.ticketNumber %> - Admin</title>
+    <title>Ticket <%= ticket.ticketNumber || ticket._id.toString().slice(-6) %> | QFS Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
     <style>
-        /* Copy all the CSS styles from your tickets.ejs file here */
         :root {
-            --tg-body-font-family: 'Inter', sans-serif;
-            --tg-heading-font-family: 'Inter', sans-serif;
-            --tg-body-font-size: 16px;
-            --tg-body-color: #9E9E9E;
-            --tg-heading-color: #ffffff;
-            --tg-theme-primary: #4b59f5;
-            --tg-theme-primary-hover: #3a49e5;
-            --tg-color-dark: #0C0C0C;
-            --tg-color-dark-2: #000000;
-            --tg-color-dark-3: #262626;
-            --tg-border-1: #363636;
-            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --tg-transition: all 0.3s ease;
+            --bg-900: #0a0a0a;
+            --bg-800: #101010;
+            --bg-700: #161616;
+            --bg-600: #1c1c1c;
+            --border: #232323;
+            --border-strong: #2e2e2e;
+
+            --text-primary: #ededed;
+            --text-secondary: #9a9a9a;
+            --text-muted: #6a6a6a;
+
+            --accent: #4b59f5;
+            --accent-hover: #5d6aff;
+            --accent-soft: rgba(75, 89, 245, 0.12);
+
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.12);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.12);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.12);
+            --info: #3b82f6;
+            --info-soft: rgba(59, 130, 246, 0.12);
+
+            --radius: 10px;
+            --radius-lg: 14px;
+            --transition: 0.18s ease;
         }
 
         [data-theme="light"] {
-            --tg-body-color: #5a5a5a;
-            --tg-heading-color: #1a1a1a;
-            --tg-color-dark: #f8f9fa;
-            --tg-color-dark-2: #ffffff;
-            --tg-color-dark-3: #e9ecef;
-            --tg-border-1: #dee2e6;
-            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --bg-900: #f5f6fa;
+            --bg-800: #ffffff;
+            --bg-700: #f8f9fc;
+            --bg-600: #eef0f6;
+            --border: #e2e5ed;
+            --border-strong: #d0d4df;
+
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
         body {
-            font-family: var(--tg-body-font-family);
-            font-size: var(--tg-body-font-size);
-            color: var(--tg-body-color);
-            background: var(--tg-color-dark);
-            transition: var(--tg-transition);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--bg-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s;
         }
 
-        .admin-wrapper {
+        /* ========= Theme Toggle ========= */
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             display: flex;
-            min-height: 100vh;
-        }
-
-        /* Add all the other CSS styles from your tickets.ejs */
-        /* ... copy all CSS styles ... */
-
-        .ticket-detail-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .back-button {
-            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--tg-theme-primary);
-            color: white;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover { border-color: var(--accent); }
+        .theme-toggle svg { width: 18px; height: 18px; fill: var(--text-secondary); }
+        .theme-toggle:hover svg { fill: var(--text-primary); }
+
+        /* ========= Layout ========= */
+        .admin-wrapper { display: flex; min-height: 100vh; }
+
+        /* ========= Sidebar ========= */
+        .admin-sidebar {
+            width: 260px;
+            background: var(--bg-800);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-close:hover { background: var(--bg-700); color: var(--text-primary); }
+
+        .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 2px; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: var(--text-secondary);
             text-decoration: none;
             border-radius: 8px;
-            margin-bottom: 20px;
-            transition: var(--tg-transition);
+            transition: var(--transition);
+            font-size: 13.5px;
+            font-weight: 500;
+            min-height: 40px;
+        }
+        .nav-link:hover { background: var(--bg-700); color: var(--text-primary); }
+        .nav-link.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .nav-link span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .back-button:hover {
-            background: var(--tg-theme-primary-hover);
-            transform: translateY(-2px);
+        .sidebar-footer { padding: 12px 10px; border-top: 1px solid var(--border); }
+        .sidebar-footer .nav-link { min-height: 38px; font-size: 13px; }
+
+        /* ========= Main ========= */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: var(--transition);
         }
 
-        .ticket-header {
-            background: var(--tg-color-dark-2);
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            border: 1px solid var(--tg-border-1);
-        }
-
-        .ticket-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        /* ========= Header ========= */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            background: var(--bg-800);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            min-height: 64px;
             gap: 15px;
-            margin-top: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .sidebar-toggle:hover { background: var(--bg-700); color: var(--text-primary); }
+
+        .admin-header h1 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .admin-header h1 .ticket-num {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-left: 6px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .admin-name {
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* ========= Content ========= */
+        .admin-content { flex: 1; padding: 24px; overflow-y: auto; }
+
+        .content-wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ========= Back link ========= */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+            transition: var(--transition);
+        }
+        .back-link:hover {
+            background: var(--bg-700);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+
+        /* ========= Card ========= */
+        .card {
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-header h2 i { color: var(--text-muted); font-size: 13px; }
+
+        .card-body { padding: 20px; }
+
+        /* ========= Ticket Header ========= */
+        .ticket-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .ticket-head-left { flex: 1; min-width: 200px; }
+        .ticket-head-left h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .ticket-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ticket-head-right {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        /* ========= Status Badge ========= */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .status-badge.open { background: var(--warning-soft); color: var(--warning); }
+        .status-badge.open::before { background: var(--warning); }
+
+        .status-badge.in-progress,
+        .status-badge.inprogress { background: var(--info-soft); color: var(--info); }
+        .status-badge.in-progress::before,
+        .status-badge.inprogress::before { background: var(--info); }
+
+        .status-badge.on-hold,
+        .status-badge.onhold { background: var(--warning-soft); color: var(--warning); }
+        .status-badge.on-hold::before,
+        .status-badge.onhold::before { background: var(--warning); }
+
+        .status-badge.resolved { background: var(--success-soft); color: var(--success); }
+        .status-badge.resolved::before { background: var(--success); }
+
+        .status-badge.closed { background: rgba(128, 128, 128, 0.12); color: var(--text-muted); }
+        .status-badge.closed::before { background: var(--text-muted); }
+
+        /* ========= Priority Badge ========= */
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .priority-badge.low    { background: var(--success-soft); color: var(--success); }
+        .priority-badge.medium { background: var(--warning-soft); color: var(--warning); }
+        .priority-badge.high   { background: var(--danger-soft); color: var(--danger); }
+        .priority-badge.urgent { background: var(--danger); color: #fff; }
+
+        /* ========= Meta Grid ========= */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
         }
 
         .meta-item {
             display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--tg-border-1);
+            flex-direction: column;
+            gap: 3px;
         }
 
         .meta-label {
+            font-size: 10.5px;
             font-weight: 600;
-            color: var(--tg-body-color);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .meta-value {
-            color: var(--tg-heading-color);
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        /* ========= User Card ========= */
+        .user-info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4b59f5, #6b7aff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-details strong {
+            color: var(--text-primary);
+            display: block;
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+        .user-details span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ========= Message Content ========= */
+        .message-content {
+            background: var(--bg-700);
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: var(--text-primary);
+            font-size: 13.5px;
+            word-break: break-word;
+        }
+
+        /* ========= Conversation ========= */
+        .conversation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .conversation-item {
+            background: var(--bg-700);
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--border-strong);
+        }
+
+        .conversation-item.admin {
+            border-left-color: var(--accent);
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .conversation-sender {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sender-tag {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .conversation-message {
+            color: var(--text-secondary);
+            line-height: 1.55;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* ========= Form ========= */
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 12.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-900);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 13.5px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236a6a6a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+            padding-right: 36px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 9px 16px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        .btn-secondary {
+            background: var(--bg-700);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--bg-600); color: var(--text-primary); }
+
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+        .btn-success:hover { filter: brightness(1.1); }
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ========= Alert ========= */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .alert-success {
+            background: var(--success-soft);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+        .alert-error {
+            background: var(--danger-soft);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        /* ========= Responsive ========= */
+        @media (max-width: 992px) {
+            .admin-header { padding: 12px 18px; }
+            .admin-content { padding: 18px; }
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle { top: 14px; right: 14px; width: 38px; height: 38px; }
+
+            .admin-sidebar {
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 1000;
+            }
+            .admin-sidebar.sidebar-open { transform: translateX(0); }
+            .sidebar-close { display: flex; }
+
+            .admin-main { margin-left: 0; width: 100%; }
+
+            .admin-header { padding: 12px 16px; min-height: 58px; }
+            .admin-header h1 { font-size: 15px; }
+            .admin-name { display: none; }
+
+            .admin-content { padding: 16px; }
+
+            .ticket-head { flex-direction: column; }
+            .ticket-head-right { width: 100%; }
+            .ticket-head-left h2 { font-size: 16px; }
+
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+
+            .form-actions { flex-direction: column-reverse; }
+            .form-actions .btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .admin-content { padding: 12px; }
+            .card-body { padding: 16px; }
+            .card-header { padding: 12px 16px; }
+            .meta-grid { grid-template-columns: 1fr; }
+            .user-avatar { width: 38px; height: 38px; font-size: 13px; }
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        /* Desktop collapsed */
+        @media (min-width: 769px) {
+            .admin-wrapper.sidebar-collapsed .admin-sidebar { width: 68px; }
+            .admin-wrapper.sidebar-collapsed .logo-text,
+            .admin-wrapper.sidebar-collapsed .nav-link span { display: none; }
+            .admin-wrapper.sidebar-collapsed .nav-link {
+                justify-content: center;
+                padding: 10px;
+            }
+            .admin-wrapper.sidebar-collapsed .nav-link i { margin-right: 0; }
+            .admin-wrapper.sidebar-collapsed .admin-main {
+                margin-left: 68px;
+                width: calc(100% - 68px);
+            }
+            .admin-wrapper.sidebar-collapsed .sidebar-header {
+                justify-content: center;
+                padding: 0 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-wrapper">
-        <!-- Sidebar (copy from tickets.ejs) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
+    <div class="admin-wrapper" id="adminWrapper">
+        <!-- Sidebar -->
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
-                <a href="/admin" class="logo-text">QFS ADMIN</a>
-                <button class="sidebar-close" id="sidebarClose">
+                <a href="/admin" class="logo-text">QFS Admin</a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="/admin" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-                    </a></li>
-                    <li><a href="/admin/users" class="nav-link">
-                        <i class="fas fa-users"></i> <span>Users</span>
-                    </a></li>
-                    <li><a href="/admin/transactions" class="nav-link">
-                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
-                    </a></li>
-                     <li><a href="/admin/trust-wallets" class="nav-link active">
-                        <i class="fas fa-wallet"></i> <span>Trust Wallets</span>
-                    </a></li>
-                    <li><a href="/admin/investments" class="nav-link">
-                        <i class="fas fa-chart-line"></i> <span>Investments</span>
-                    </a></li>
-                    <li><a href="/admin/tickets" class="nav-link active">
-                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
-                    </a></li>
-                    <li><a href="/admin/pending-deposits" class="nav-link">
-                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
-                    </a></li>
-                    <li><a href="/admin/wallet-addresses" class="nav-link">
-                        <i class="fas fa-wallet"></i> <span>Wallet Addresses</span>
-                    </a></li>
-                    <li><a href="/admin/pending-withdrawals" class="nav-link">
-                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
-                    </a></li>
-                     <li><a href="/admin/send-email" class="nav-link">
-                        <i class="fas fa-telegram"></i> <span>Send Email</span>
-                    </a></li>
+                    <li><a href="/admin" class="nav-link"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="/admin/users" class="nav-link"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="/admin/transactions" class="nav-link"><i class="fas fa-exchange-alt"></i> <span>Transactions</span></a></li>
+                    <li><a href="/admin/trust-wallets" class="nav-link"><i class="fas fa-shield-alt"></i> <span>Trust Wallets</span></a></li>
+                    <li><a href="/admin/investments" class="nav-link"><i class="fas fa-chart-line"></i> <span>Investments</span></a></li>
+                    <li><a href="/admin/tickets" class="nav-link active"><i class="fas fa-headset"></i> <span>Support Tickets</span></a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link"><i class="fas fa-arrow-down"></i> <span>Pending Deposits</span></a></li>
+                    <li><a href="/admin/wallet-addresses" class="nav-link"><i class="fas fa-address-book"></i> <span>Wallet Addresses</span></a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link"><i class="fas fa-arrow-up"></i> <span>Pending Withdrawals</span></a></li>
+                    <li><a href="/admin/pending-transfers" class="nav-link"><i class="fas fa-paper-plane"></i> <span>Pending Transfers</span></a></li>
+                    <li><a href="/admin/send-email" class="nav-link"><i class="fas fa-envelope"></i> <span>Send Email</span></a></li>
+                    <li><a href="/admin/exchange" class="nav-link"><i class="fas fa-dollar-sign"></i> <span>Exchange Rate</span></a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <a href="/dashboard" class="nav-link">
-                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
-                </a>
-                <a href="/auth/logout" class="nav-link">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </a>
+                <a href="/dashboard" class="nav-link"><i class="fas fa-arrow-left"></i> <span>Back to Site</span></a>
+                <a href="/auth/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
             </div>
         </aside>
 
+        <!-- Main -->
         <main class="admin-main">
             <header class="admin-header">
                 <div class="header-left">
-                    <button class="sidebar-toggle" id="sidebarToggle">
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1>Ticket Details - <%= ticket.ticketNumber %></h1>
+                    <h1>Ticket <span class="ticket-num">#<%= ticket.ticketNumber || ticket._id.toString().slice(-6) %></span></h1>
                 </div>
                 <div class="header-right">
                     <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
-                    <span class="admin-role badge"><%= user.role %></span>
+                    <span class="badge"><%= user.role %></span>
                 </div>
             </header>
 
             <div class="admin-content">
-                <!-- Flash Messages -->
-                <% if (messages.error) { %>
-                    <div class="alert alert-error">
-                        <i class="fas fa-exclamation-circle"></i> <%= messages.error %>
-                    </div>
-                <% } %>
-                <% if (messages.success) { %>
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i> <%= messages.success %>
-                    </div>
-                <% } %>
+                <div class="content-wrap">
 
-                <div class="ticket-detail-container">
-                    <a href="/admin/tickets" class="back-button">
+                    <a href="/admin/tickets" class="back-link">
                         <i class="fas fa-arrow-left"></i> Back to Tickets
                     </a>
 
-                    <div class="ticket-header">
-                        <h2><%= ticket.subject %></h2>
-                        <div class="ticket-meta">
-                            <div class="meta-item">
-                                <span class="meta-label">Status:</span>
-                                <span class="status-badge <%= ticket.status %>"><%= ticket.status %></span>
+                    <% if (messages && messages.error) { %>
+                        <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= messages.error %></div>
+                    <% } %>
+                    <% if (messages && messages.success) { %>
+                        <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= messages.success %></div>
+                    <% } %>
+
+                    <!-- Ticket Summary -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="ticket-head">
+                                <div class="ticket-head-left">
+                                    <h2><%= ticket.subject %></h2>
+                                    <div class="ticket-meta-row">
+                                        <span class="status-badge <%= ticket.status %>"><%= ticket.status %></span>
+                                        <span class="priority-badge <%= ticket.priority || 'medium' %>"><%= ticket.priority || 'medium' %></span>
+                                    </div>
+                                </div>
+                                <div class="ticket-head-right">
+                                    <% if (ticket.status !== 'closed' && ticket.status !== 'resolved') { %>
+                                        <button class="btn btn-success" id="quickResolveBtn">
+                                            <i class="fas fa-check"></i> Mark Resolved
+                                        </button>
+                                    <% } %>
+                                </div>
                             </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Priority:</span>
-                                <span class="priority-badge priority-<%= ticket.priority %>"><%= ticket.priority %></span>
+
+                            <div class="meta-grid">
+                                <div class="meta-item">
+                                    <span class="meta-label">Ticket ID</span>
+                                    <span class="meta-value">#<%= ticket.ticketNumber || ticket._id.toString().slice(-6) %></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Category</span>
+                                    <span class="meta-value"><%= ticket.category || 'General' %></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Created</span>
+                                    <span class="meta-value"><%= new Date(ticket.createdAt).toLocaleString('en-GB') %></span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Last Updated</span>
+                                    <span class="meta-value"><%= new Date(ticket.updatedAt).toLocaleString('en-GB') %></span>
+                                </div>
+                                <% if (ticket.closedAt) { %>
+                                    <div class="meta-item">
+                                        <span class="meta-label">Resolved</span>
+                                        <span class="meta-value"><%= new Date(ticket.closedAt).toLocaleString('en-GB') %></span>
+                                    </div>
+                                <% } %>
                             </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Category:</span>
-                                <span class="meta-value"><%= ticket.category %></span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Created:</span>
-                                <span class="meta-value"><%= new Date(ticket.createdAt).toLocaleString() %></span>
-                            </div>
-                            <% if (ticket.closedAt) { %>
-                            <div class="meta-item">
-                                <span class="meta-label">Resolved:</span>
-                                <span class="meta-value"><%= new Date(ticket.closedAt).toLocaleString() %></span>
-                            </div>
-                            <% } %>
                         </div>
                     </div>
 
+                    <!-- User Info -->
                     <div class="card">
                         <div class="card-header">
-                            <h3>User Information</h3>
+                            <h2><i class="fas fa-user"></i> User</h2>
                         </div>
                         <div class="card-body">
                             <% if (ticket.userId) { %>
-                                <div class="user-info">
+                                <div class="user-info-row">
                                     <div class="user-avatar">
                                         <%= ticket.userId.firstName.charAt(0).toUpperCase() %><%= ticket.userId.lastName.charAt(0).toUpperCase() %>
                                     </div>
@@ -242,14 +864,15 @@
                                     </div>
                                 </div>
                             <% } else { %>
-                                <span class="text-muted">User Not Found</span>
+                                <span style="color: var(--text-muted); font-style: italic;">User not found</span>
                             <% } %>
                         </div>
                     </div>
 
+                    <!-- Initial Message -->
                     <div class="card">
                         <div class="card-header">
-                            <h3>Initial Message</h3>
+                            <h2><i class="fas fa-comment"></i> Initial Message</h2>
                         </div>
                         <div class="card-body">
                             <div class="message-content">
@@ -258,37 +881,48 @@
                         </div>
                     </div>
 
+                    <!-- Conversation -->
                     <% if (ticket.messages && ticket.messages.length > 1) { %>
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Conversation History</h3>
-                        </div>
-                        <div class="card-body">
-                            <% ticket.messages.slice(1).forEach(msg => { %>
-                                <div class="conversation-item <%= msg.senderId.role === 'admin' ? 'admin' : '' %>">
-                                    <div class="conversation-header">
-                                        <span class="conversation-sender">
-                                            <%= msg.senderId.role === 'admin' ? 'Admin' : `${msg.senderId.firstName} ${msg.senderId.lastName}` %>
-                                        </span>
-                                        <span class="conversation-date">
-                                            <%= new Date(msg.timestamp).toLocaleString() %>
-                                        </span>
-                                    </div>
-                                    <div class="conversation-message"><%= msg.message %></div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-comments"></i> Conversation</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="conversation-list">
+                                    <% ticket.messages.slice(1).forEach(msg => { %>
+                                        <% if (!msg.isInternal) { %>
+                                            <% const isAdmin = msg.senderId && msg.senderId.role === 'admin'; %>
+                                            <div class="conversation-item <%= isAdmin ? 'admin' : '' %>">
+                                                <div class="conversation-header">
+                                                    <span class="conversation-sender">
+                                                        <% if (isAdmin) { %>
+                                                            <span class="sender-tag">Admin</span>
+                                                            <%= msg.senderId.firstName && msg.senderId.lastName ? msg.senderId.firstName + ' ' + msg.senderId.lastName : '' %>
+                                                        <% } else { %>
+                                                            <%= msg.senderId ? `${msg.senderId.firstName} ${msg.senderId.lastName}` : 'User' %>
+                                                        <% } %>
+                                                    </span>
+                                                    <span><%= new Date(msg.timestamp).toLocaleString('en-GB') %></span>
+                                                </div>
+                                                <div class="conversation-message"><%= msg.message %></div>
+                                            </div>
+                                        <% } %>
+                                    <% }); %>
                                 </div>
-                            <% }); %>
+                            </div>
                         </div>
-                    </div>
                     <% } %>
 
+                    <!-- Admin Response Form -->
                     <div class="card">
                         <div class="card-header">
-                            <h3>Admin Response</h3>
+                            <h2><i class="fas fa-reply"></i> Respond to Ticket</h2>
                         </div>
                         <div class="card-body">
                             <form id="ticketResponseForm" action="/admin/tickets/respond" method="POST">
                                 <input type="hidden" name="ticketId" value="<%= ticket._id %>">
-                                
+                                <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>">
+
                                 <div class="form-group">
                                     <label for="responseStatus">Update Status</label>
                                     <select class="form-control" id="responseStatus" name="status">
@@ -301,11 +935,11 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="adminResponse">Your Response</label>
-                                    <textarea 
-                                        class="form-control" 
-                                        id="adminResponse" 
-                                        name="response" 
+                                    <label for="adminResponse">Response Message</label>
+                                    <textarea
+                                        class="form-control"
+                                        id="adminResponse"
+                                        name="response"
                                         placeholder="Type your response to the user..."
                                         required
                                         rows="5"
@@ -313,58 +947,139 @@
                                 </div>
 
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-primary">
+                                    <a href="/admin/tickets" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary" id="sendResponseBtn">
                                         <i class="fas fa-paper-plane"></i> Send Response
-                                    </button>
-                                    <button type="button" class="btn btn-success" id="resolveTicket">
-                                        <i class="fas fa-check"></i> Mark as Resolved
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
+
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Quick resolve functionality
-        document.getElementById('resolveTicket').addEventListener('click', function() {
-            if (confirm('Are you sure you want to mark this ticket as resolved?')) {
-                fetch('/admin/tickets/resolve', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        ticketId: '<%= ticket._id %>',
-                        response: 'Ticket has been resolved by administrator.'
-                    })
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        alert('Ticket marked as resolved!');
-                        location.reload();
-                    } else {
-                        alert('Failed to resolve ticket: ' + result.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error resolving ticket:', error);
-                    alert('Error resolving ticket');
+        // ============ Theme ============
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (theme === 'dark') {
+                icon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                icon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // ============ Theme ============
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
+
+            document.getElementById('themeToggle').addEventListener('click', function () {
+                const curr = document.documentElement.getAttribute('data-theme');
+                const next = curr === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                updateThemeIcon(next);
+            });
+
+            // ============ Sidebar ============
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const adminSidebar = document.getElementById('adminSidebar');
+            const adminWrapper = document.getElementById('adminWrapper');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            sidebarToggle.addEventListener('click', function () {
+                if (window.innerWidth > 768) {
+                    adminWrapper.classList.toggle('sidebar-collapsed');
+                } else {
+                    adminSidebar.classList.add('sidebar-open');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+
+            function closeSidebar() {
+                adminSidebar.classList.remove('sidebar-open');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            sidebarClose.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeSidebar();
+            });
+
+            // ============ Form Submit ============
+            const form = document.getElementById('ticketResponseForm');
+            if (form) {
+                form.addEventListener('submit', function () {
+                    const btn = document.getElementById('sendResponseBtn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 });
             }
-        });
 
-        // Sidebar functionality
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.getElementById('adminSidebar').classList.toggle('sidebar-open');
-        });
+            // ============ Quick Resolve ============
+            const quickResolveBtn = document.getElementById('quickResolveBtn');
+            if (quickResolveBtn) {
+                quickResolveBtn.addEventListener('click', function () {
+                    if (!confirm('Mark this ticket as resolved?')) return;
 
-        document.getElementById('sidebarClose').addEventListener('click', function() {
-            document.getElementById('adminSidebar').classList.remove('sidebar-open');
+                    const btn = this;
+                    const originalHtml = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+
+                    fetch('/admin/tickets/resolve', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '<%= csrfToken || "" %>'
+                        },
+                        body: JSON.stringify({
+                            ticketId: '<%= ticket._id %>',
+                            response: 'Ticket resolved by administrator.'
+                        })
+                    })
+                    .then(r => {
+                        if (!r.ok) throw new Error('HTTP ' + r.status);
+                        return r.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            throw new Error(data.message || 'Failed to resolve');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Error: ' + err.message);
+                        btn.disabled = false;
+                        btn.innerHTML = originalHtml;
+                    });
+                });
+            }
+
+            // ============ Reveal Animation ============
+            document.querySelectorAll('.card').forEach(function (el, i) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(4px)';
+                setTimeout(function () {
+                    el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, Math.min(i * 40, 300));
+            });
         });
     </script>
 </body>

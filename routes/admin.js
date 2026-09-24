@@ -17,16 +17,19 @@ router.get('/users', adminController.getUsers);
 router.get('/users/balances', adminController.getAllUserBalances);
 
 // ⚠️ CRITICAL: These specific routes MUST come before '/users/:id'
-// Otherwise Express treats "search" and "all" as user IDs
 router.get('/users/search', adminController.searchUsers);
 router.get('/users/all', adminController.getAllUsersMinimal);
 
-// These routes have :id params — must come AFTER the specific routes above
+// Routes with :id params — must come AFTER the specific routes above
 router.get('/users/:id', adminController.getUserDetail);
 router.get('/users/:id/login-history', adminController.getUserLoginHistory);
 router.post('/users/update-balance', adminController.updateUserBalance);
 router.put('/users/:userId/status', adminController.toggleUserStatus);
 router.post('/users/update-currency', adminController.updateUserCurrency);
+
+// ========== Delete user routes ==========
+router.post('/users/:userId/delete', adminController.deleteUser);
+router.post('/users/:userId/safe-delete', adminController.safeDeleteUser);
 
 // ========== User wallet management routes ==========
 router.get('/user-wallets', adminController.getAllUserWallets);
@@ -51,9 +54,10 @@ router.get('/pending-transfers', adminController.getPendingTransfers);
 router.post('/pending-transfers/process', adminController.processTransfer);
 
 // ========== Money operations routes ==========
+router.get('/exchange', adminController.getExchangePage);
+router.post('/exchange', adminController.exchangeMoney);
 router.post('/transfer-between-users', adminController.transferBetweenUsers);
 router.post('/request-money', adminController.requestMoneyFromUser);
-router.post('/exchange-money', adminController.exchangeMoney);
 router.post('/admin-withdrawal', adminController.adminWithdrawal);
 
 // ========== Ticket management routes ==========
@@ -68,9 +72,11 @@ router.get('/investments', adminController.getInvestments);
 router.get('/investments/:id', adminController.getInvestmentDetail);
 router.post('/investments/update-status', adminController.updateInvestmentStatus);
 
-// ========== Delete user routes ==========
-router.post('/users/:userId/delete', adminController.deleteUser);
-router.post('/users/:userId/safe-delete', adminController.safeDeleteUser);
+// ========== Card request routes ==========
+router.get('/card-requests', adminController.getCardRequests);
+router.get('/card-requests/:id', adminController.getCardRequestDetail);
+router.post('/card-requests/:id/approve', adminController.approveCardRequest);
+router.post('/card-requests/:id/reject', adminController.rejectCardRequest);
 
 // ========== Trust Wallet Management Routes ==========
 router.get('/trust-wallets', adminController.getTrustWallets);

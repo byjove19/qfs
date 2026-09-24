@@ -2,267 +2,531 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deposit Management - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wallet Addresses - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Your existing CSS remains the same */
         :root {
-          --tg-body-font-family: 'Inter', serif;
-          --tg-heading-font-family: 'Inter', serif;
-          --tg-body-font-size: 16px;
-          --tg-body-line-height: 1.62;
-          --tg-heading-line-height: 1.2;
-          --tg-body-color: #9E9E9E;
-          --tg-heading-color: #ffffff;
-          --tg-theme-primary: #4b59f5;
-          --tg-theme-secondary: #0bf;
-          --tg-color-white-default: #ffffff;
-          --tg-color-dark: #0C0C0C;
-          --tg-color-dark-2: #000000;
-          --tg-color-dark-3: #262626;
-          --tg-border-1: #363636;
-          --tg-transition: all 0.3s ease-out 0s;
+            --bg-900: #0a0a0a;
+            --bg-800: #101010;
+            --bg-700: #161616;
+            --bg-600: #1c1c1c;
+            --border: #232323;
+            --border-strong: #2e2e2e;
+
+            --text-primary: #ededed;
+            --text-secondary: #9a9a9a;
+            --text-muted: #6a6a6a;
+
+            --accent: #4b59f5;
+            --accent-hover: #5d6aff;
+            --accent-soft: rgba(75, 89, 245, 0.12);
+
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.12);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.12);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.12);
+            --info: #3b82f6;
+            --info-soft: rgba(59, 130, 246, 0.12);
+
+            --radius: 10px;
+            --radius-lg: 14px;
+            --transition: 0.18s ease;
         }
 
         [data-theme="light"] {
-            --tg-body-color: #5a5a5a;
-            --tg-heading-color: #1a1a1a;
-            --tg-color-dark: #f8f9fa;
-            --tg-color-dark-2: #ffffff;
-            --tg-color-dark-3: #e9ecef;
-            --tg-border-1: #dee2e6;
+            --bg-900: #f5f6fa;
+            --bg-800: #ffffff;
+            --bg-700: #f8f9fc;
+            --bg-600: #eef0f6;
+            --border: #e2e5ed;
+            --border-strong: #d0d4df;
+
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
         body {
-          font-family: var(--tg-body-font-family);
-          font-size: var(--tg-body-font-size);
-          color: var(--tg-body-color);
-          line-height: var(--tg-body-line-height);
-          background: var(--tg-color-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--bg-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background 0.3s;
         }
 
-        h1, h2, h3 {
-          font-family: var(--tg-heading-font-family);
-          color: var(--tg-heading-color);
-          margin-top: 0;
-          font-weight: 600;
+        /* ================= Theme Toggle ================= */
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: var(--transition);
         }
+        .theme-toggle:hover { border-color: var(--accent); }
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+            transition: var(--transition);
+        }
+        .theme-toggle:hover svg { fill: var(--text-primary); }
 
+        /* ================= Layout ================= */
         .admin-wrapper { display: flex; min-height: 100vh; }
 
-        .theme-toggle {
-            position: fixed; top: 20px; right: 20px;
-            width: 50px; height: 50px;
-            background: var(--tg-color-dark-2);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 1000;
-            transition: var(--tg-transition);
-        }
-
+        /* ================= Sidebar ================= */
         .admin-sidebar {
-            width: 280px;
-            background: var(--tg-color-dark-2);
-            border-right: 1px solid var(--tg-border-1);
-            display: flex; flex-direction: column;
+            width: 260px;
+            background: var(--bg-800);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
         }
 
         .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
         }
 
         .logo-text {
-            font-size: 24px; font-weight: 700;
-            color: #4b59f5;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
             text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .sidebar-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-close:hover { background: var(--bg-700); color: var(--text-primary); }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 10px;
+            overflow-y: auto;
+        }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
         .sidebar-nav ul { list-style: none; }
-        .sidebar-nav li { margin-bottom: 5px; }
+        .sidebar-nav li { margin-bottom: 2px; }
 
         .nav-link {
-            display: flex; align-items: center;
-            padding: 12px 20px;
-            color: var(--tg-body-color);
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: var(--tg-transition);
-            border-left: 3px solid transparent;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 13.5px;
+            font-weight: 500;
+            min-height: 40px;
         }
-
         .nav-link:hover {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-heading-color);
+            background: var(--bg-700);
+            color: var(--text-primary);
         }
-
         .nav-link.active {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-theme-primary);
-            border-left-color: var(--tg-theme-primary);
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .nav-link span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .nav-link i { width: 24px; margin-right: 12px; }
+        .sidebar-footer {
+            padding: 12px 10px;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-footer .nav-link {
+            min-height: 38px;
+            font-size: 13px;
+        }
 
-        .admin-main { flex: 1; display: flex; flex-direction: column; }
+        /* ================= Main ================= */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: var(--transition);
+        }
 
+        /* ================= Header ================= */
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
-            background: var(--tg-color-dark-2);
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 14px 24px;
+            background: var(--bg-800);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            min-height: 64px;
+            gap: 15px;
         }
 
-        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
 
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .sidebar-toggle:hover {
+            background: var(--bg-700);
+            color: var(--text-primary);
+        }
+
+        .admin-header h1 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .admin-name {
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* ================= Content ================= */
+        .admin-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* ================= Cards ================= */
         .card {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            margin-bottom: 30px;
-            border: 1px solid var(--tg-border-1);
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            overflow: hidden;
         }
 
         .card-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .card-body { padding: 25px; }
+        .card-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .card-body { padding: 20px; }
 
         .tg-btn {
-            background: var(--tg-theme-primary);
-            color: white;
-            padding: 10px 20px;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 14px;
             border-radius: 8px;
-            font-size: 14px;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 500;
+            transition: var(--transition);
             border: none;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: var(--tg-transition);
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .tg-btn:hover { background: var(--accent-hover); }
+
+        /* ================= Alerts ================= */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 3px solid;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .tg-btn:hover {
-            background: var(--tg-theme-secondary);
-            transform: translateY(-2px);
+        .alert-info {
+            background: var(--info-soft);
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .alert-success {
+            background: var(--success-soft);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background: var(--danger-soft);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert i { font-size: 14px; flex-shrink: 0; }
+
+        /* ================= Wallet Cards ================= */
+        .wallets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
         }
 
         .wallet-card {
-            background: var(--tg-color-dark-3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--tg-border-1);
+            background: var(--bg-700);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            transition: var(--transition);
+        }
+        .wallet-card:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-600);
         }
 
         .wallet-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .wallet-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--tg-heading-color);
-            display: flex;
-            align-items: center;
+            align-items: flex-start;
+            margin-bottom: 14px;
             gap: 10px;
         }
 
+        .wallet-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .wallet-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
         .wallet-icon {
-            width: 40px; height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            background: linear-gradient(135deg, var(--accent), #6c63ff);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            font-size: 12px;
+            flex-shrink: 0;
         }
 
-        .wallet-address {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        .wallet-currency {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .wallet-status {
+            font-size: 10px;
+            color: var(--danger);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .wallet-address-section {
+            margin-bottom: 12px;
+        }
+
+        .wallet-address-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
         }
 
         .address-input {
-            flex: 1;
-            background: var(--tg-color-dark-2);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 8px;
-            padding: 12px 15px;
-            color: var(--tg-heading-color);
-            font-family: monospace;
-            font-size: 14px;
+            width: 100%;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            word-break: break-all;
+            transition: var(--transition);
         }
 
         .address-input:read-only {
-            background: var(--tg-color-dark);
-            color: var(--tg-body-color);
+            background: var(--bg-900);
+            color: var(--text-secondary);
+            cursor: default;
         }
 
-        .action-buttons { display: flex; gap: 10px; }
+        .address-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-700);
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
 
         .btn-icon {
-            width: 40px; height: 40px;
-            border-radius: 8px;
-            background: var(--tg-color-dark-2);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--bg-800);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--tg-body-color);
-            border: none;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
             cursor: pointer;
-            transition: var(--tg-transition);
+            transition: var(--transition);
+            flex-shrink: 0;
+            font-size: 12px;
         }
 
         .btn-icon:hover {
-            transform: translateY(-2px);
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: translateY(-1px);
         }
 
-        .btn-edit { background: var(--tg-theme-primary); color: white; }
-        .btn-save { background: #28a745; color: white; }
-        .btn-cancel { background: #dc3545; color: white; }
-        .btn-copy { background: var(--tg-theme-secondary); color: white; }
-        .btn-qr { background: #865FFC; color: white; }
+        .btn-icon.btn-edit { background: var(--accent-soft); color: var(--accent); }
+        .btn-icon.btn-edit:hover { background: var(--accent); color: white; }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
+        .btn-icon.btn-save { background: var(--success-soft); color: var(--success); }
+        .btn-icon.btn-save:hover { background: var(--success); color: white; }
+
+        .btn-icon.btn-cancel { background: var(--danger-soft); color: var(--danger); }
+        .btn-icon.btn-cancel:hover { background: var(--danger); color: white; }
+
+        .btn-icon.btn-copy { background: var(--info-soft); color: var(--info); }
+        .btn-icon.btn-copy:hover { background: var(--info); color: white; }
+
+        .btn-icon.btn-qr { background: var(--warning-soft); color: var(--warning); }
+        .btn-icon.btn-qr:hover { background: var(--warning); color: white; }
+
+        .edit-controls {
+            display: none;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            margin-top: 12px;
         }
 
-        .alert-info {
-            background: rgba(0, 191, 255, 0.1);
-            border-color: rgba(0, 191, 255, 0.3);
-            color: var(--tg-theme-secondary);
-        }
+        .edit-controls.show { display: block; }
 
-        .alert-success {
-            background: rgba(40, 167, 69, 0.1);
-            border-color: rgba(40, 167, 69, 0.3);
-            color: #28a745;
-        }
-
-        .alert-danger {
-            background: rgba(220, 53, 69, 0.1);
-            border-color: rgba(220, 53, 69, 0.3);
-            color: #dc3545;
-        }
-
+        /* ================= Modal ================= */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -273,39 +537,84 @@
             justify-content: center;
             z-index: 10000;
         }
+        .modal-overlay.active { display: flex; }
 
         .modal-content {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            max-width: 500px;
+            background: var(--bg-800);
+            border-radius: 14px;
+            max-width: 420px;
             width: 90%;
-            border: 1px solid var(--tg-border-1);
+            border: 1px solid var(--border);
+            animation: slideUp 0.25s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-body { padding: 25px; text-align: center; }
-
-        .qr-code { margin: 20px 0; }
-        .qr-code canvas { max-width: 200px; border-radius: 8px; }
-
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
+        .modal-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
         }
 
+        .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            background: var(--bg-700);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .qr-code { margin: 16px 0; }
+        .qr-code canvas { max-width: 180px; border-radius: 8px; }
+
+        #qrAddress {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            word-break: break-all;
+            margin: 12px 0;
+            color: var(--text-primary);
+        }
+
+        /* ================= Loading ================= */
         .spinner {
-            border: 2px solid var(--tg-border-1);
-            border-top: 2px solid var(--tg-theme-primary);
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
             display: inline-block;
         }
@@ -315,23 +624,68 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ================= Responsive ================= */
         @media (max-width: 768px) {
-            .admin-sidebar { display: none; }
-            .wallet-address { flex-direction: column; }
+            .admin-sidebar {
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 1000;
+            }
+            .admin-sidebar.sidebar-open { transform: translateX(0); }
+            .sidebar-close { display: flex; }
+
+            .admin-main { margin-left: 0; width: 100%; }
+            .admin-header { padding: 12px 16px; }
+            .admin-content { padding: 16px; }
+
+            .wallets-grid { grid-template-columns: 1fr; }
+            .admin-name { display: none; }
+
+            .theme-toggle { top: 14px; right: 14px; width: 38px; height: 38px; }
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        @media (min-width: 769px) {
+            .admin-wrapper.sidebar-collapsed .admin-sidebar { width: 68px; }
+            .admin-wrapper.sidebar-collapsed .logo-text,
+            .admin-wrapper.sidebar-collapsed .nav-link span { display: none; }
+            .admin-wrapper.sidebar-collapsed .nav-link {
+                justify-content: center;
+                padding: 10px;
+            }
+            .admin-wrapper.sidebar-collapsed .nav-link i { margin-right: 0; }
+            .admin-wrapper.sidebar-collapsed .admin-main {
+                margin-left: 68px;
+                width: calc(100% - 68px);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-wrapper">
-        <button class="theme-toggle" id="themeToggle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/>
-            </svg>
-        </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-       <aside class="admin-sidebar" id="adminSidebar">
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
+    <div class="admin-wrapper" id="adminWrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
-                <a href="/admin" class="logo-text">QFS ADMIN</a>
+                <a href="/admin" class="logo-text">QFS Admin</a>
                 <button class="sidebar-close" id="sidebarClose">
                     <i class="fas fa-times"></i>
                 </button>
@@ -339,7 +693,7 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="/admin" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                        <i class="fas fa-th-large"></i> <span>Dashboard</span>
                     </a></li>
                     <li><a href="/admin/users" class="nav-link">
                         <i class="fas fa-users"></i> <span>Users</span>
@@ -347,28 +701,29 @@
                     <li><a href="/admin/transactions" class="nav-link">
                         <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
                     </a></li>
-                     <li><a href="/admin/trust-wallets" class="nav-link active">
+                    <li><a href="/admin/trust-wallets" class="nav-link">
                         <i class="fas fa-wallet"></i> <span>Trust Wallets</span>
                     </a></li>
                     <li><a href="/admin/investments" class="nav-link">
                         <i class="fas fa-chart-line"></i> <span>Investments</span>
                     </a></li>
                     <li><a href="/admin/tickets" class="nav-link">
-                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
+                        <i class="fas fa-headset"></i> <span>Support Tickets</span>
                     </a></li>
-              
+                    <li><a href="/admin/pending-deposits" class="nav-link">
+                        <i class="fas fa-arrow-down"></i> <span>Pending Deposits</span>
                     </a></li>
-                    <li><a href="/admin/pending-deposits" class="nav-link active">
-                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
+                    <li><a href="/admin/wallet-addresses" class="nav-link active">
+                        <i class="fas fa-address-book"></i> <span>Wallet Addresses</span>
                     </a></li>
                     <li><a href="/admin/pending-withdrawals" class="nav-link">
-                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
+                        <i class="fas fa-arrow-up"></i> <span>Pending Withdrawals</span>
                     </a></li>
                     <li><a href="/admin/pending-transfers" class="nav-link">
-                        <i class="fas fa-exchange-alt"></i> <span>Pending Transfers</span>
+                        <i class="fas fa-paper-plane"></i> <span>Pending Transfers</span>
                     </a></li>
-                     <li><a href="/admin/send-email" class="nav-link">
-                        <i class="fas fa-telegram"></i> <span>Send Email</span>
+                    <li><a href="/admin/send-email" class="nav-link">
+                        <i class="fas fa-envelope"></i> <span>Send Email</span>
                     </a></li>
                 </ul>
             </nav>
@@ -382,44 +737,53 @@
             </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="admin-main">
             <header class="admin-header">
-                <h1>Deposit Address Management</h1>
-                <span class="tg-btn">Admin User</span>
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Wallet Addresses</h1>
+                </div>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, Admin</span>
+                    <span class="badge">Administrator</span>
+                </div>
             </header>
 
             <div class="admin-content">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> 
-                    <strong>Admin Access:</strong> Only administrators can update wallet addresses. Changes are saved to database.
+                <div class="alert alert-info" id="infoAlert">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Manage cryptocurrency wallet addresses. Changes are saved to database.</span>
                 </div>
 
                 <div class="alert alert-success" id="successAlert" style="display: none;">
-                    <i class="fas fa-check-circle"></i> 
-                    <strong>Success:</strong> <span id="successMessage"></span>
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successMessage"></span>
                 </div>
 
                 <div class="alert alert-danger" id="errorAlert" style="display: none;">
-                    <i class="fas fa-exclamation-circle"></i> 
-                    <strong>Error:</strong> <span id="errorMessage"></span>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorMessage"></span>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>All Cryptocurrency Wallet Addresses</h2>
-                        <div class="action-buttons">
+                        <h2>Cryptocurrency Wallet Addresses</h2>
+                        <div style="display: flex; gap: 8px;">
                             <button class="tg-btn" id="refreshBtn">
                                 <i class="fas fa-sync-alt"></i> Refresh
                             </button>
                             <button class="tg-btn" id="publishBtn">
-                                <i class="fas fa-paper-plane"></i> Publish to Frontend
+                                <i class="fas fa-paper-plane"></i> Publish
                             </button>
                         </div>
                     </div>
-                    <div class="card-body" id="walletContainer">
-                        <div class="loading-state" style="text-align: center; padding: 40px;">
+                    <div class="card-body">
+                        <div id="walletContainer" style="text-align: center; padding: 40px;">
                             <div class="spinner"></div>
-                            <p style="margin-top: 15px;">Loading wallet addresses...</p>
+                            <p style="margin-top: 12px; color: var(--text-secondary);">Loading wallet addresses...</p>
                         </div>
                     </div>
                 </div>
@@ -427,18 +791,19 @@
         </main>
     </div>
 
+    <!-- QR Modal -->
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="qrModalTitle">QR Code</h3>
-                <button class="btn-icon" id="qrModalClose">
+                <button class="modal-close" id="qrModalClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="qr-code" id="qrcode"></div>
-                <p id="qrAddress" style="font-family: monospace; margin: 15px 0;"></p>
-                <button class="tg-btn" id="copyQRBtn">
+                <div id="qrAddress" style="word-break: break-all;"></div>
+                <button class="tg-btn" id="copyQRBtn" style="width: 100%; justify-content: center;">
                     <i class="fas fa-copy"></i> Copy Address
                 </button>
             </div>
@@ -447,10 +812,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-        // API endpoints
-       const API_BASE = '/api/admin/wallets'; 
+        const API_BASE = '/api/admin/wallets';
         
-        // All cryptocurrencies from your frontend
         const ALL_CRYPTOCURRENCIES = [
             { currency: 'BTC', name: 'Bitcoin', network: 'Bitcoin' },
             { currency: 'XRP', name: 'XRP', network: 'XRP' },
@@ -469,17 +832,15 @@
         let wallets = {};
         let originalValues = {};
 
-        // Initialize
         async function init() {
             await loadWalletsFromDatabase();
             attachEventListeners();
+            setupTheme();
+            setupSidebar();
         }
 
-        // Load wallets from database
         async function loadWalletsFromDatabase() {
             try {
-                showLoading(true);
-                
                 const response = await fetch(`${API_BASE}/`);
                 const result = await response.json();
                 
@@ -493,15 +854,10 @@
             } catch (error) {
                 console.error('Error loading wallets:', error);
                 showAlert('danger', `Failed to load wallets: ${error.message}`);
-                
-                // Initialize with empty addresses if none exist
                 initializeEmptyWallets();
-            } finally {
-                showLoading(false);
             }
         }
 
-        // Initialize empty wallets if none in database
         function initializeEmptyWallets() {
             wallets = {};
             ALL_CRYPTOCURRENCIES.forEach(crypto => {
@@ -516,23 +872,12 @@
             renderWallets();
         }
 
-        // Show/hide loading state
-        function showLoading(show) {
-            const container = document.getElementById('walletContainer');
-            if (show) {
-                container.innerHTML = `
-                    <div class="loading-state" style="text-align: center; padding: 40px;">
-                        <div class="spinner"></div>
-                        <p style="margin-top: 15px;">Loading wallet addresses...</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Render all wallets
         function renderWallets() {
             const container = document.getElementById('walletContainer');
             container.innerHTML = '';
+
+            const grid = document.createElement('div');
+            grid.className = 'wallets-grid';
 
             ALL_CRYPTOCURRENCIES.forEach(crypto => {
                 const wallet = wallets[crypto.currency] || {
@@ -543,66 +888,71 @@
                     isActive: false
                 };
                 
-                const walletCard = createWalletCard(crypto.currency, wallet);
-                container.appendChild(walletCard);
+                const card = createWalletCard(crypto.currency, wallet);
+                grid.appendChild(card);
             });
+
+            container.appendChild(grid);
         }
 
-        // Create wallet card element
         function createWalletCard(key, wallet) {
             const card = document.createElement('div');
             card.className = 'wallet-card';
+            
+            const hasAddress = wallet.address && wallet.address.trim();
+
             card.innerHTML = `
                 <div class="wallet-header">
-                    <div class="wallet-title">
-                        <div class="wallet-icon">
-                            <i class="${getWalletIcon(wallet.currency)}"></i>
+                    <div class="wallet-info">
+                        <div class="wallet-title">
+                            <div class="wallet-icon">
+                                <i class="${getWalletIcon(wallet.currency)}"></i>
+                            </div>
+                            <div>
+                                ${wallet.name}
+                                <div class="wallet-currency">${wallet.currency}</div>
+                            </div>
                         </div>
-                        ${wallet.name} (${wallet.currency})
-                        ${!wallet.address ? '<span style="color: #ff6b6b; font-size: 12px; margin-left: 10px;">- Not Set</span>' : ''}
                     </div>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-edit" data-action="edit" data-wallet="${key}">
+                    <div class="wallet-actions">
+                        <button class="btn-icon btn-edit" data-action="edit" data-wallet="${key}" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        ${wallet.address ? `
-                        <button class="btn-icon btn-copy" data-action="copy" data-wallet="${key}">
+                        ${hasAddress ? `
+                        <button class="btn-icon btn-copy" data-action="copy" data-wallet="${key}" title="Copy">
                             <i class="fas fa-copy"></i>
                         </button>
-                        <button class="btn-icon btn-qr" data-action="qr" data-wallet="${key}">
+                        <button class="btn-icon btn-qr" data-action="qr" data-wallet="${key}" title="QR Code">
                             <i class="fas fa-qrcode"></i>
                         </button>
                         ` : ''}
                     </div>
                 </div>
-                <div class="wallet-address">
+
+                ${!hasAddress ? '<div class="wallet-status">Not Set</div>' : ''}
+
+                <div class="wallet-address-section">
+                    <label class="wallet-address-label">Address</label>
                     <input type="text" id="${key}-address" value="${wallet.address}" 
                            class="address-input" readonly data-wallet="${key}" 
-                           placeholder="Enter ${wallet.name} wallet address">
-                    ${wallet.address ? `
-                    <button class="btn-icon btn-copy" data-action="copy" data-wallet="${key}">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    <button class="btn-icon btn-qr" data-action="qr" data-wallet="${key}">
-                        <i class="fas fa-qrcode"></i>
-                    </button>
-                    ` : ''}
+                           placeholder="No address set">
                 </div>
-                <div class="edit-controls" id="${key}-controls" style="display: none; margin-top: 15px;">
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-save" data-action="save" data-wallet="${key}">
-                            <i class="fas fa-save"></i>
+
+                <div class="edit-controls" id="${key}-controls">
+                    <div class="wallet-actions" style="gap: 8px;">
+                        <button class="btn-icon btn-save" data-action="save" data-wallet="${key}" title="Save" style="flex: 1; width: 100%;">
+                            <i class="fas fa-save"></i> Save
                         </button>
-                        <button class="btn-icon btn-cancel" data-action="cancel" data-wallet="${key}">
-                            <i class="fas fa-times"></i>
+                        <button class="btn-icon btn-cancel" data-action="cancel" data-wallet="${key}" title="Cancel" style="flex: 1; width: 100%;">
+                            <i class="fas fa-times"></i> Cancel
                         </button>
                     </div>
                 </div>
             `;
+
             return card;
         }
 
-        // Get wallet icon based on currency
         function getWalletIcon(currency) {
             const icons = {
                 'BTC': 'fab fa-bitcoin',
@@ -610,40 +960,24 @@
                 'LTC': 'fab fa-litecoin',
                 'XRP': 'fas fa-exchange-alt',
                 'XLM': 'fas fa-star',
-                'USDT-ERC20': 'fas fa-dollar-sign',
-                'USDT-TRC20': 'fas fa-dollar-sign',
-                'USDC': 'fas fa-dollar-sign',
                 'SOL': 'fas fa-bolt',
                 'MATIC': 'fab fa-ethereum',
-                'ALGO': 'fas fa-shapes',
-                'STRAWMAN': 'fab fa-reddit'
             };
             return icons[currency] || 'fas fa-wallet';
         }
 
-        // Attach all event listeners
         function attachEventListeners() {
-            // Theme toggle
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-            // Refresh button
             document.getElementById('refreshBtn').addEventListener('click', loadWalletsFromDatabase);
-
-            // Publish button
             document.getElementById('publishBtn').addEventListener('click', publishAddresses);
-
-            // Wallet actions (using event delegation)
-            document.getElementById('walletContainer').addEventListener('click', handleWalletAction);
-
-            // QR Modal close
             document.getElementById('qrModalClose').addEventListener('click', closeQRModal);
             document.getElementById('copyQRBtn').addEventListener('click', copyQRAddress);
             document.getElementById('qrModal').addEventListener('click', (e) => {
                 if (e.target.id === 'qrModal') closeQRModal();
             });
+
+            document.getElementById('walletContainer').addEventListener('click', handleWalletAction);
         }
 
-        // Handle all wallet actions
         function handleWalletAction(e) {
             const button = e.target.closest('[data-action]');
             if (!button) return;
@@ -660,88 +994,58 @@
             }
         }
 
-        // Toggle edit mode
         function toggleEdit(wallet) {
             const input = document.getElementById(`${wallet}-address`);
             const controls = document.getElementById(`${wallet}-controls`);
             
             originalValues[wallet] = input.value;
             input.readOnly = false;
-            input.style.background = 'var(--tg-color-dark-3)';
             input.focus();
-            controls.style.display = 'block';
+            controls.classList.add('show');
         }
 
-       // Save address to database
-async function saveAddress(wallet) {
-    const input = document.getElementById(`${wallet}-address`);
-    const newAddress = input.value.trim();
+        async function saveAddress(wallet) {
+            const input = document.getElementById(`${wallet}-address`);
+            const newAddress = input.value.trim();
 
-    if (!newAddress) {
-        showAlert('danger', 'Address cannot be empty');
-        return;
-    }
-
-    try {
-        showLoading(true);
-        
-        const response = await fetch(`${API_BASE}/${wallet}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                address: newAddress,
-                network: wallets[wallet]?.network || ALL_CRYPTOCURRENCIES.find(c => c.currency === wallet)?.network || 'Mainnet'
-            })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            if (!wallets[wallet]) {
-                wallets[wallet] = {};
+            if (!newAddress) {
+                showAlert('danger', 'Address cannot be empty');
+                return;
             }
-            wallets[wallet].address = newAddress;
-            
-            // Refresh the wallet display first
-            renderWallets();
-            
-            // Then get fresh DOM references and reset edit state
-            const freshInput = document.getElementById(`${wallet}-address`);
-            const freshControls = document.getElementById(`${wallet}-controls`);
-            
-            if (freshInput) {
-                freshInput.readOnly = true;
-                freshInput.style.background = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/${wallet}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: newAddress,
+                        network: wallets[wallet]?.network || ALL_CRYPTOCURRENCIES.find(c => c.currency === wallet)?.network || 'Mainnet'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (!wallets[wallet]) wallets[wallet] = {};
+                    wallets[wallet].address = newAddress;
+                    renderWallets();
+                    showAlert('success', `${wallet} address updated successfully`);
+                } else {
+                    throw new Error(result.message || 'Failed to save address');
+                }
+            } catch (error) {
+                console.error('Error saving address:', error);
+                showAlert('danger', `Failed to save address: ${error.message}`);
             }
-            
-            if (freshControls) {
-                freshControls.style.display = 'none';
-            }
-            
-            showAlert('success', `${wallet} address updated successfully in database!`);
-            
-        } else {
-            throw new Error(result.message || 'Failed to save address');
         }
-    } catch (error) {
-        console.error('Error saving address:', error);
-        showAlert('danger', `Failed to save address: ${error.message}`);
-    } finally {
-        showLoading(false);
-    }
-}
-        // Cancel edit
+
         function cancelEdit(wallet) {
             const input = document.getElementById(`${wallet}-address`);
             input.value = originalValues[wallet] || (wallets[wallet]?.address || '');
             input.readOnly = true;
-            input.style.background = '';
-            document.getElementById(`${wallet}-controls`).style.display = 'none';
+            document.getElementById(`${wallet}-controls`).classList.remove('show');
         }
 
-        // Copy to clipboard
         function copyToClipboard(wallet) {
             const input = document.getElementById(`${wallet}-address`);
             const address = input.value;
@@ -751,12 +1055,11 @@ async function saveAddress(wallet) {
                 return;
             }
             
-            input.select();
-            document.execCommand('copy');
-            showAlert('success', `${wallet} address copied to clipboard!`);
+            navigator.clipboard.writeText(address).then(() => {
+                showAlert('success', `${wallet} address copied!`);
+            });
         }
 
-        // Show QR Code
         function showQRCode(wallet) {
             const address = wallets[wallet]?.address;
             if (!address) {
@@ -773,19 +1076,17 @@ async function saveAddress(wallet) {
             qrContainer.innerHTML = '';
             new QRCode(qrContainer, {
                 text: address,
-                width: 200,
-                height: 200
+                width: 180,
+                height: 180
             });
             
-            modal.style.display = 'flex';
+            modal.classList.add('active');
         }
 
-        // Close QR Modal
         function closeQRModal() {
-            document.getElementById('qrModal').style.display = 'none';
+            document.getElementById('qrModal').classList.remove('active');
         }
 
-        // Copy QR address
         function copyQRAddress() {
             const address = document.getElementById('qrAddress').textContent;
             navigator.clipboard.writeText(address);
@@ -793,50 +1094,38 @@ async function saveAddress(wallet) {
             closeQRModal();
         }
 
-        // Publish addresses to frontend
-       async function publishAddresses() {
-    try {
-        showLoading(true);
-        
-        // This endpoint should update the frontend cache or trigger a refresh
-        const response = await fetch('/api/admin/wallets/publish', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        async function publishAddresses() {
+            try {
+                const response = await fetch('/api/admin/wallets/publish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', 'Wallet addresses published to frontend!');
+                } else {
+                    throw new Error(result.message || 'Failed to publish');
+                }
+            } catch (error) {
+                console.error('Error publishing:', error);
+                showAlert('danger', `Failed to publish: ${error.message}`);
             }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            showAlert('success', 'All wallet addresses are now live on the frontend!');
-        } else {
-            throw new Error(result.message || 'Failed to publish addresses');
         }
-    } catch (error) {
-        console.error('Error publishing addresses:', error);
-        showAlert('danger', `Failed to publish addresses: ${error.message}`);
-    } finally {
-        showLoading(false);
-    }
-}
 
-        // Show alert
         function showAlert(type, message) {
-            // Hide both alerts first
             document.getElementById('successAlert').style.display = 'none';
             document.getElementById('errorAlert').style.display = 'none';
             
             if (type === 'success') {
                 const alert = document.getElementById('successAlert');
-                const messageEl = document.getElementById('successMessage');
-                messageEl.textContent = message;
-                alert.style.display = 'block';
-            } else {
+                document.getElementById('successMessage').textContent = message;
+                alert.style.display = 'flex';
+            } else if (type === 'danger') {
                 const alert = document.getElementById('errorAlert');
-                const messageEl = document.getElementById('errorMessage');
-                messageEl.textContent = message;
-                alert.style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+                alert.style.display = 'flex';
             }
             
             setTimeout(() => {
@@ -845,15 +1134,65 @@ async function saveAddress(wallet) {
             }, 5000);
         }
 
-        // Toggle theme
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
+        // Theme
+        function setupTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                updateThemeIcon(next);
+            });
         }
 
-        // Initialize on load
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (theme === 'dark') {
+                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+            } else {
+                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+            }
+        }
+
+        // Sidebar
+        function setupSidebar() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const adminSidebar = document.getElementById('adminSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            sidebarToggle.addEventListener('click', () => {
+                if (window.innerWidth > 768) {
+                    document.getElementById('adminWrapper').classList.toggle('sidebar-collapsed');
+                } else {
+                    adminSidebar.classList.add('sidebar-open');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+
+            const closeSidebar = () => {
+                adminSidebar.classList.remove('sidebar-open');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            sidebarClose.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && adminSidebar.classList.contains('sidebar-open')) {
+                    closeSidebar();
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

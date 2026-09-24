@@ -5,897 +5,955 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
     <style>
-        /* Copy ALL CSS from dashboard template above */
         :root {
-            --tg-body-font-family: 'Inter', sans-serif;
-            --tg-heading-font-family: 'Inter', sans-serif;
-            --tg-body-font-size: 16px;
-            --tg-body-color: #9E9E9E;
-            --tg-heading-color: #ffffff;
-            --tg-theme-primary: #4b59f5;
-            --tg-theme-primary-hover: #3a49e5;
-            --tg-color-dark: #0C0C0C;
-            --tg-color-dark-2: #000000;
-            --tg-color-dark-3: #262626;
-            --tg-border-1: #363636;
-            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --tg-transition: all 0.3s ease;
+            --bg-900: #0a0a0a;
+            --bg-800: #101010;
+            --bg-700: #161616;
+            --bg-600: #1c1c1c;
+            --border: #232323;
+            --border-strong: #2e2e2e;
+
+            --text-primary: #ededed;
+            --text-secondary: #9a9a9a;
+            --text-muted: #6a6a6a;
+
+            --accent: #4b59f5;
+            --accent-hover: #5d6aff;
+            --accent-soft: rgba(75, 89, 245, 0.12);
+
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.12);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.12);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.12);
+            --info: #3b82f6;
+            --info-soft: rgba(59, 130, 246, 0.12);
+
+            --radius: 10px;
+            --radius-lg: 14px;
+            --transition: 0.18s ease;
         }
 
         [data-theme="light"] {
-            --tg-body-color: #5a5a5a;
-            --tg-heading-color: #1a1a1a;
-            --tg-color-dark: #f8f9fa;
-            --tg-color-dark-2: #ffffff;
-            --tg-color-dark-3: #e9ecef;
-            --tg-border-1: #dee2e6;
-            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --bg-900: #f5f6fa;
+            --bg-800: #ffffff;
+            --bg-700: #f8f9fc;
+            --bg-600: #eef0f6;
+            --border: #e2e5ed;
+            --border-strong: #d0d4df;
+
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
         body {
-            font-family: var(--tg-body-font-family);
-            font-size: var(--tg-body-font-size);
-            color: var(--tg-body-color);
-            background: var(--tg-color-dark);
-            transition: var(--tg-transition);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--bg-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s;
         }
 
-        .admin-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Theme Toggle */
+        /* ========= Theme Toggle ========= */
         .theme-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: var(--tg-color-dark-2);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 50%;
+            top: 18px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
-            transition: var(--tg-transition);
-            box-shadow: var(--tg-shadow);
+            z-index: 1001;
+            transition: var(--transition);
         }
+        .theme-toggle:hover { border-color: var(--accent); }
+        .theme-toggle svg { width: 18px; height: 18px; fill: var(--text-secondary); }
+        .theme-toggle:hover svg { fill: var(--text-primary); }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: var(--tg-color-dark-3);
-        }
+        /* ========= Layout ========= */
+        .admin-wrapper { display: flex; min-height: 100vh; }
 
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--tg-heading-color);
-            transition: var(--tg-transition);
-        }
-
-        /* Sidebar Styles */
+        /* ========= Sidebar ========= */
         .admin-sidebar {
-            width: 280px;
-            background: var(--tg-color-dark-2);
-            border-right: 1px solid var(--tg-border-1);
+            width: 260px;
+            background: var(--bg-800);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            transition: var(--tg-transition);
-            position: relative;
+            position: fixed;
+            left: 0; top: 0;
+            height: 100vh;
             z-index: 100;
+            transition: var(--transition);
         }
 
         .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            height: 64px;
         }
 
         .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--tg-heading-color);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
             text-decoration: none;
-            letter-spacing: 2.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
 
         .sidebar-close {
             display: none;
             background: none;
             border: none;
-            color: var(--tg-heading-color);
-            font-size: 18px;
+            color: var(--text-secondary);
             cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            transition: var(--tg-transition);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
         }
+        .sidebar-close:hover { background: var(--bg-700); color: var(--text-primary); }
 
-        .sidebar-close:hover {
-            background: var(--tg-color-dark-3);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 20px 0;
-            overflow-y: auto;
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
-        }
-
-        .sidebar-nav li {
-            margin-bottom: 5px;
-        }
+        .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 2px; }
 
         .nav-link {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: var(--tg-body-color);
+            padding: 10px 12px;
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: var(--tg-transition);
-            border-left: 3px solid transparent;
-            position: relative;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 13.5px;
+            font-weight: 500;
+            min-height: 40px;
         }
-
-        .nav-link:hover {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-heading-color);
-            transform: translateX(5px);
-        }
-
-        .nav-link.active {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-theme-primary);
-            border-left-color: var(--tg-theme-primary);
-        }
-
+        .nav-link:hover { background: var(--bg-700); color: var(--text-primary); }
+        .nav-link.active { background: var(--accent-soft); color: var(--accent); }
         .nav-link i {
-            width: 24px;
-            margin-right: 12px;
-            font-size: 16px;
-            transition: var(--tg-transition);
+            width: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .nav-link span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid var(--tg-border-1);
-        }
+        .sidebar-footer { padding: 12px 10px; border-top: 1px solid var(--border); }
+        .sidebar-footer .nav-link { min-height: 38px; font-size: 13px; }
 
-        .sidebar-footer .nav-link {
-            padding: 10px 0;
-            border-left: none;
-        }
-
-        /* Main Content Styles */
+        /* ========= Main ========= */
         .admin-main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            transition: var(--tg-transition);
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: var(--transition);
         }
 
+        /* ========= Header ========= */
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
-            background: var(--tg-color-dark-2);
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 14px 24px;
+            background: var(--bg-800);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 99;
+            min-height: 64px;
+            gap: 15px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
         }
 
         .sidebar-toggle {
             background: none;
             border: none;
-            color: var(--tg-heading-color);
-            font-size: 18px;
+            color: var(--text-secondary);
             cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-            transition: var(--tg-transition);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
         }
-
-        .sidebar-toggle:hover {
-            background: var(--tg-color-dark-3);
-            transform: rotate(90deg);
-        }
+        .sidebar-toggle:hover { background: var(--bg-700); color: var(--text-primary); }
 
         .admin-header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--tg-heading-color);
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .admin-name {
-            color: var(--tg-heading-color);
-            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .badge {
-            background: var(--tg-theme-primary);
-            color: white;
-            padding: 5px 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 5px 11px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* ========= Content ========= */
+        .admin-content { flex: 1; padding: 24px; overflow-y: auto; }
+
+        /* ========= Stats ========= */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        .stat-card:hover { border-color: var(--border-strong); }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            color: #fff;
+        }
+        .stat-icon i { font-size: 16px; }
+
+        .stat-icon.orange { background: linear-gradient(135deg, #ea580c, #f59e0b); }
+        .stat-icon.blue   { background: linear-gradient(135deg, #4b59f5, #6b7aff); }
+
+        .stat-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        .stat-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .admin-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--tg-shadow);
-            transition: var(--tg-transition);
-            border: 1px solid var(--tg-border-1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--tg-theme-primary);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
-        }
-
-        .stat-icon i {
-            font-size: 28px;
-            color: white;
-        }
-
-        .stat-info h3 {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--tg-heading-color);
-            margin-bottom: 5px;
-            line-height: 1;
-        }
-
-        .stat-info p {
-            font-size: 14px;
-            color: var(--tg-body-color);
-            font-weight: 500;
-        }
-
-        /* Card Styles */
+        /* ========= Card ========= */
         .card {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            box-shadow: var(--tg-shadow);
-            margin-bottom: 30px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
             overflow: hidden;
-            transition: var(--tg-transition);
-            border: 1px solid var(--tg-border-1);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
 
         .card-header h2 {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 600;
-            color: var(--tg-heading-color);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .card-header h2 i { color: var(--text-muted); font-size: 14px; }
 
         .tg-btn {
-            background: var(--tg-theme-primary);
-            color: white;
-            padding: 10px 20px;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 14px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 12.5px;
             font-weight: 500;
-            transition: var(--tg-transition);
+            transition: var(--transition);
             border: none;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .tg-btn:hover { background: var(--accent-hover); }
+
+        .tg-btn-secondary {
+            background: var(--bg-700);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .tg-btn-secondary:hover {
+            background: var(--bg-600);
+            color: var(--text-primary);
+            border-color: var(--border-strong);
         }
 
-        .tg-btn:hover {
-            background: var(--tg-theme-primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
-        }
+        .card-body { padding: 0; }
 
-        .card-body {
-            padding: 25px;
-        }
-
-        /* Table Styles */
+        /* ========= Table ========= */
         .table-responsive {
             overflow-x: auto;
-            border-radius: 8px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .admin-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
+            min-width: 900px;
         }
 
         .admin-table th {
             text-align: left;
-            padding: 15px;
+            padding: 12px 16px;
             font-weight: 600;
-            color: var(--tg-heading-color);
-            border-bottom: 1px solid var(--tg-border-1);
-            background: var(--tg-color-dark-3);
-            font-size: 14px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
+            background: var(--bg-700);
         }
 
         .admin-table td {
-            padding: 15px;
-            border-bottom: 1px solid var(--tg-border-1);
-            transition: var(--tg-transition);
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
         }
 
-        .admin-table tr:last-child td {
-            border-bottom: none;
-        }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table tr:hover { background: var(--bg-700); }
 
-        .admin-table tr:hover {
-            background: var(--tg-color-dark-3);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .user-info { display: flex; align-items: center; gap: 10px; }
 
         .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4b59f5, #6b7aff);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #fff;
             font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            flex-shrink: 0;
         }
 
         .user-details strong {
-            color: var(--tg-heading-color);
+            color: var(--text-primary);
             display: block;
-            font-size: 15px;
-        }
-
-        .user-details span {
-            font-size: 13px;
-            color: var(--tg-body-color);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
             font-weight: 600;
+            font-size: 13px;
+        }
+        .user-details span {
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        .amount-cell {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 13.5px;
+        }
+
+        .currency-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 9px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
+        /* ========= Status Badge ========= */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
         .status-badge.pending {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-            border: 1px solid rgba(255, 193, 7, 0.3);
+            background: var(--warning-soft);
+            color: var(--warning);
         }
-
-        .status-badge.completed {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.3);
+        .status-badge.pending::before { background: var(--warning); }
+        .status-badge.approved {
+            background: var(--success-soft);
+            color: var(--success);
         }
-
+        .status-badge.approved::before { background: var(--success); }
         .status-badge.rejected {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border: 1px solid rgba(220, 53, 69, 0.3);
+            background: var(--danger-soft);
+            color: var(--danger);
         }
+        .status-badge.rejected::before { background: var(--danger); }
 
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
+        /* ========= Actions ========= */
+        .action-buttons { display: flex; gap: 6px; }
 
         .btn-icon {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            background: var(--tg-color-dark-3);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--tg-body-color);
-            text-decoration: none;
-            transition: var(--tg-transition);
-            border: none;
+            transition: var(--transition);
             cursor: pointer;
+            flex-shrink: 0;
+            font-size: 12px;
+            padding: 0;
+            border: 1px solid var(--border);
+            background: var(--bg-700);
+            color: var(--text-secondary);
         }
 
-        .btn-icon:hover {
-            background: var(--tg-theme-primary);
-            color: white;
-            transform: translateY(-2px);
+        .btn-icon.approve {
+            color: var(--success);
+            border-color: rgba(34, 197, 94, 0.3);
+            background: var(--success-soft);
+        }
+        .btn-icon.approve:hover {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
         }
 
-        .btn-success {
-            background: #28a745;
-            color: white;
+        .btn-icon.reject {
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+            background: var(--danger-soft);
+        }
+        .btn-icon.reject:hover {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
         }
 
-        .btn-success:hover {
-            background: #218838;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
+        /* ========= Empty State ========= */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: var(--tg-body-color);
+            padding: 50px 20px;
         }
-
         .empty-state i {
-            font-size: 64px;
-            margin-bottom: 20px;
+            font-size: 40px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
             opacity: 0.5;
         }
-
         .empty-state p {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .admin-note-input {
-            background: var(--tg-color-dark-3);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 6px;
-            padding: 8px 12px;
-            color: var(--tg-heading-color);
             font-size: 14px;
-            width: 200px;
-            margin-right: 8px;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .empty-state small {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
-        .admin-note-input::placeholder {
-            color: var(--tg-body-color);
-        }
-
-        .admin-note-input:focus {
-            outline: none;
-            border-color: var(--tg-theme-primary);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 10000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            border: 1px solid var(--tg-border-1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
+        /* ========= Pagination ========= */
+        .pagination {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--tg-border-1);
+            gap: 10px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .pagination-info {
+            color: var(--text-muted);
+            font-size: 12.5px;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 6px 11px;
+            background: var(--bg-700);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            font-size: 12px;
+            min-width: 32px;
+            justify-content: center;
+        }
+        .pagination-btn:hover {
+            background: var(--bg-600);
+            color: var(--text-primary);
+        }
+        .pagination-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        /* ========= Alerts ========= */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .alert-success {
+            background: var(--success-soft);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+        .alert-error {
+            background: var(--danger-soft);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        /* ========= Modal ========= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--bg-800);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 460px;
+            animation: modalSlideIn 0.2s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .modal-header h3 {
-            color: var(--tg-heading-color);
-            font-size: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-header h3 i { color: var(--accent); font-size: 14px; }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-body { padding: 20px; }
+
+        .modal-body p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 14px;
+            font-size: 13.5px;
+        }
+
+        .modal-body strong {
+            color: var(--text-primary);
             font-weight: 600;
         }
 
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--tg-body-color);
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            transition: var(--tg-transition);
+        .modal-detail {
+            background: var(--bg-700);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            margin-bottom: 14px;
         }
 
-        .modal-close:hover {
-            color: var(--tg-heading-color);
-            background: var(--tg-color-dark-3);
+        .modal-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-detail-row:last-child { border-bottom: none; }
+
+        .modal-detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .modal-detail-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 12.5px;
         }
 
-        .modal-body {
-            margin-bottom: 25px;
+        .modal-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-900);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 13.5px;
+            transition: var(--transition);
+            font-family: inherit;
         }
-
-        .modal-body p {
-            color: var(--tg-body-color);
-            line-height: 1.6;
-            margin-bottom: 15px;
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
         }
+        .modal-input::placeholder { color: var(--text-muted); }
 
         .modal-actions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             justify-content: flex-end;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
         .modal-btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
+            padding: 9px 16px;
+            border-radius: var(--radius);
             font-weight: 500;
-            transition: var(--tg-transition);
-        }
-
-        .modal-btn-confirm {
-            background: var(--tg-theme-primary);
-            color: white;
-        }
-
-        .modal-btn-confirm:hover {
-            background: var(--tg-theme-primary-hover);
-            transform: translateY(-2px);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-family: inherit;
         }
 
         .modal-btn-cancel {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-body-color);
-            border: 1px solid var(--tg-border-1);
+            background: var(--bg-700);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .modal-btn-cancel:hover { background: var(--bg-600); color: var(--text-primary); }
+
+        .modal-btn-confirm {
+            background: var(--accent);
+            color: #fff;
+        }
+        .modal-btn-confirm:hover { background: var(--accent-hover); }
+
+        .modal-btn-approve {
+            background: var(--success);
+            color: #fff;
+        }
+        .modal-btn-approve:hover { filter: brightness(1.1); }
+
+        .modal-btn-reject {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        .modal-btn-reject:hover { background: var(--danger); color: #fff; }
+
+        /* ========= Responsive ========= */
+        @media (max-width: 992px) {
+            .admin-header { padding: 12px 18px; }
+            .admin-content { padding: 18px; }
         }
 
-        .modal-btn-cancel:hover {
-            background: var(--tg-color-dark);
-            color: var(--tg-heading-color);
-        }
-
-        .modal-btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .modal-btn-danger:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-
-        /* Responsive Styles */
         @media (max-width: 768px) {
-            .admin-wrapper {
-                flex-direction: column;
-            }
-            
+            .theme-toggle { top: 14px; right: 14px; width: 38px; height: 38px; }
+
             .admin-sidebar {
-                width: 100%;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                left: -100%;
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
                 z-index: 1000;
-                transition: left 0.3s ease;
             }
-            
-            .admin-sidebar.sidebar-open {
-                left: 0;
-            }
-            
-            .sidebar-close {
-                display: block;
-            }
-            
-            .admin-main {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .admin-header h1 {
-                font-size: 20px;
-            }
-            
-            .admin-content {
-                padding: 20px;
-            }
-            
-            .card-body {
-                padding: 20px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .admin-note-input {
-                width: 100%;
-                margin: 8px 0;
-            }
+            .admin-sidebar.sidebar-open { transform: translateX(0); }
+            .sidebar-close { display: flex; }
 
-            .modal-content {
-                padding: 20px;
-                width: 95%;
-            }
+            .admin-main { margin-left: 0; width: 100%; }
 
-            .modal-actions {
-                flex-direction: column;
-            }
+            .admin-header { padding: 12px 16px; min-height: 58px; }
+            .admin-header h1 { font-size: 15px; }
+            .admin-name { display: none; }
+
+            .admin-content { padding: 16px; }
+
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+
+            .card-header { padding: 14px 16px; }
+            .card-header h2 { font-size: 14px; }
+
+            .pagination { flex-direction: column; align-items: stretch; }
+            .pagination-buttons { justify-content: center; }
         }
 
-        /* Sidebar Collapsed State */
-        .admin-wrapper.sidebar-collapsed .admin-sidebar {
-            width: 70px;
+        @media (max-width: 480px) {
+            .admin-content { padding: 12px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .modal-actions { flex-direction: column-reverse; }
+            .modal-btn { width: 100%; justify-content: center; }
         }
-        
-        .admin-wrapper.sidebar-collapsed .logo-text,
-        .admin-wrapper.sidebar-collapsed .nav-link span,
-        .admin-wrapper.sidebar-collapsed .sidebar-footer .nav-link span {
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
             display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
-        
-        .admin-wrapper.sidebar-collapsed .nav-link {
-            justify-content: center;
-            padding: 12px;
-        }
-        
-        .admin-wrapper.sidebar-collapsed .nav-link i {
-            margin-right: 0;
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        /* Desktop collapsed */
+        @media (min-width: 769px) {
+            .admin-wrapper.sidebar-collapsed .admin-sidebar { width: 68px; }
+            .admin-wrapper.sidebar-collapsed .logo-text,
+            .admin-wrapper.sidebar-collapsed .nav-link span { display: none; }
+            .admin-wrapper.sidebar-collapsed .nav-link {
+                justify-content: center;
+                padding: 10px;
+            }
+            .admin-wrapper.sidebar-collapsed .nav-link i { margin-right: 0; }
+            .admin-wrapper.sidebar-collapsed .admin-main {
+                margin-left: 68px;
+                width: calc(100% - 68px);
+            }
+            .admin-wrapper.sidebar-collapsed .sidebar-header {
+                justify-content: center;
+                padding: 0 10px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="theme-toggle" id="themeToggle">
         <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
         </svg>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div class="modal-overlay" id="confirmationModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Confirm Action</h3>
-                <button class="modal-close" id="modalClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="modalMessage">Are you sure you want to proceed with this action?</p>
-                <input type="text" id="modalAdminNote" class="admin-note-input" placeholder="Add admin note (optional)" style="width: 100%; margin-top: 10px;">
-            </div>
-            <div class="modal-actions">
-                <button class="modal-btn modal-btn-cancel" id="modalCancel">Cancel</button>
-                <button class="modal-btn" id="modalConfirm">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="admin-wrapper">
+    <div class="admin-wrapper" id="adminWrapper">
         <!-- Sidebar -->
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
-                <a href="/admin" class="logo-text">QFS ADMIN</a>
-                <button class="sidebar-close" id="sidebarClose">
+                <a href="/admin" class="logo-text">QFS Admin</a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="/admin" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-                    </a></li>
-                    <li><a href="/admin/users" class="nav-link">
-                        <i class="fas fa-users"></i> <span>Users</span>
-                    </a></li>
-                    <li><a href="/admin/transactions" class="nav-link">
-                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
-                    </a></li>
-                     <li><a href="/admin/trust-wallets" class="nav-link active">
-                        <i class="fas fa-wallet"></i> <span>Trust Wallets</span>
-                    </a></li>
-                    <li><a href="/admin/investments" class="nav-link">
-                        <i class="fas fa-chart-line"></i> <span>Investments</span>
-                    </a></li>
-                    <li><a href="/admin/tickets" class="nav-link">
-                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
-                    </a></li>
-              
-                    </a></li>
-                    <li><a href="/admin/pending-deposits" class="nav-link active">
-                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
-                    </a></li>
-                    <li><a href="/admin/pending-withdrawals" class="nav-link">
-                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
-                    </a></li>
-                    <li><a href="/admin/pending-transfers" class="nav-link">
-                        <i class="fas fa-exchange-alt"></i> <span>Pending Transfers</span>
-                    </a></li>
-                     <li><a href="/admin/send-email" class="nav-link">
-                        <i class="fas fa-telegram"></i> <span>Send Email</span>
-                    </a></li>
+                    <li><a href="/admin" class="nav-link"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="/admin/users" class="nav-link"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="/admin/transactions" class="nav-link"><i class="fas fa-exchange-alt"></i> <span>Transactions</span></a></li>
+                    <li><a href="/admin/trust-wallets" class="nav-link"><i class="fas fa-shield-alt"></i> <span>Trust Wallets</span></a></li>
+                    <li><a href="/admin/investments" class="nav-link"><i class="fas fa-chart-line"></i> <span>Investments</span></a></li>
+                    <li><a href="/admin/tickets" class="nav-link"><i class="fas fa-headset"></i> <span>Support Tickets</span></a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link active"><i class="fas fa-arrow-down"></i> <span>Pending Deposits</span></a></li>
+                    <li><a href="/admin/wallet-addresses" class="nav-link"><i class="fas fa-address-book"></i> <span>Wallet Addresses</span></a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link"><i class="fas fa-arrow-up"></i> <span>Pending Withdrawals</span></a></li>
+                    <li><a href="/admin/pending-transfers" class="nav-link"><i class="fas fa-paper-plane"></i> <span>Pending Transfers</span></a></li>
+                    <li><a href="/admin/send-email" class="nav-link"><i class="fas fa-envelope"></i> <span>Send Email</span></a></li>
+                    <li><a href="/admin/exchange" class="nav-link"><i class="fas fa-dollar-sign"></i> <span>Exchange Rate</span></a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <a href="/dashboard" class="nav-link">
-                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
-                </a>
-                <a href="/auth/logout" class="nav-link">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </a>
+                <a href="/dashboard" class="nav-link"><i class="fas fa-arrow-left"></i> <span>Back to Site</span></a>
+                <a href="/auth/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
             </div>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main -->
         <main class="admin-main">
             <header class="admin-header">
                 <div class="header-left">
-                    <button class="sidebar-toggle" id="sidebarToggle">
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1><%= title %></h1>
                 </div>
                 <div class="header-right">
-                    <span class="admin-name">Welcome,</span>
-                    <span class="admin-role badge"></span>
+                    <span class="admin-name">Welcome, <%= (user && user.firstName) ? user.firstName : 'Admin' %></span>
+                    <span class="badge"><%= (user && user.role) ? user.role : 'admin' %></span>
                 </div>
             </header>
 
             <div class="admin-content">
-                <!-- Flash Messages -->
-                <% if (messages.error && messages.error.length > 0) { %>
-                    <div class="alert alert-error" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
-                        <i class="fas fa-exclamation-circle"></i> <%= messages.error %>
-                    </div>
+
+                <% if (messages && messages.error && messages.error.length > 0) { %>
+                    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= messages.error[0] %></div>
                 <% } %>
-                <% if (messages.success && messages.success.length > 0) { %>
-                    <div class="alert alert-success" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); color: #28a745; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
-                        <i class="fas fa-check-circle"></i> <%= messages.success %>
-                    </div>
+                <% if (messages && messages.success && messages.success.length > 0) { %>
+                    <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= messages.success[0] %></div>
                 <% } %>
 
-                <!-- Stats Overview -->
+                <!-- Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
+                        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
-                            <h3><%= totalDeposits %></h3>
-                            <p>Total Pending Deposits</p>
+                            <h3><%= totalDeposits || 0 %></h3>
+                            <p>Pending Deposits</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                        <div class="stat-icon blue"><i class="fas fa-list"></i></div>
                         <div class="stat-info">
-                            <h3><%= deposits.length %></h3>
-                            <p>Currently Displayed</p>
+                            <h3><%= deposits ? deposits.length : 0 %></h3>
+                            <p>Currently Shown</p>
                         </div>
                     </div>
                 </div>
@@ -903,12 +961,10 @@
                 <!-- Deposits Table -->
                 <div class="card">
                     <div class="card-header">
-                        <h2>Pending Deposits</h2>
-                        <div>
-                            <a href="/admin/transactions" class="tg-btn">
-                                <i class="fas fa-exchange-alt"></i> All Transactions
-                            </a>
-                        </div>
+                        <h2><i class="fas fa-arrow-down"></i> Pending Deposits</h2>
+                        <a href="/admin/transactions" class="tg-btn tg-btn-secondary">
+                            <i class="fas fa-exchange-alt"></i> All Transactions
+                        </a>
                     </div>
                     <div class="card-body">
                         <% if (deposits && deposits.length > 0) { %>
@@ -922,7 +978,7 @@
                                             <th>Method</th>
                                             <th>Requested</th>
                                             <th>Status</th>
-                                            <th>Actions</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -934,54 +990,45 @@
                                                             <% if (deposit.userId && deposit.userId.firstName && deposit.userId.lastName) { %>
                                                                 <%= deposit.userId.firstName.charAt(0) %><%= deposit.userId.lastName.charAt(0) %>
                                                             <% } else { %>
-                                                                <i class="fas fa-user"></i>
+                                                                ?
                                                             <% } %>
                                                         </div>
                                                         <div class="user-details">
                                                             <strong>
-                                                                <% if (deposit.userId && deposit.userId.firstName && deposit.userId.lastName) { %>
+                                                                <% if (deposit.userId && deposit.userId.firstName) { %>
                                                                     <%= deposit.userId.firstName %> <%= deposit.userId.lastName %>
                                                                 <% } else { %>
-                                                                    User Not Found
+                                                                    User not found
                                                                 <% } %>
                                                             </strong>
                                                             <span>
-                                                                <% if (deposit.userId && deposit.userId.email) { %>
-                                                                    <%= deposit.userId.email %>
-                                                                <% } else { %>
-                                                                    N/A
-                                                                <% } %>
+                                                                <%= deposit.userId && deposit.userId.email ? deposit.userId.email : 'N/A' %>
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td style="font-weight: 600; color: var(--tg-heading-color);">
-                                                    <%= deposit.amount.toLocaleString() %>
+                                                <td>
+                                                    <span class="amount-cell"><%= deposit.amount.toLocaleString() %></span>
                                                 </td>
                                                 <td>
-                                                    <span class="status-badge" style="background: rgba(75, 89, 245, 0.1); color: var(--tg-theme-primary); border: 1px solid rgba(75, 89, 245, 0.3);">
-                                                        <%= deposit.currency %>
-                                                    </span>
+                                                    <span class="currency-badge"><%= deposit.currency %></span>
                                                 </td>
-                                                <td>
-                                                    <%= deposit.method ? deposit.method.charAt(0).toUpperCase() + deposit.method.slice(1) : 'N/A' %>
+                                                <td style="color: var(--text-secondary); text-transform: capitalize;">
+                                                    <%= deposit.method || 'Manual' %>
                                                 </td>
-                                                <td>
-                                                    <%= new Date(deposit.createdAt).toLocaleDateString() %>
+                                                <td style="color: var(--text-muted); font-size: 12px; white-space: nowrap;">
+                                                    <%= new Date(deposit.createdAt).toLocaleDateString('en-GB') %>
                                                     <br>
-                                                    <small style="color: var(--tg-body-color);">
-                                                        <%= new Date(deposit.createdAt).toLocaleTimeString() %>
-                                                    </small>
+                                                    <small><%= new Date(deposit.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) %></small>
                                                 </td>
                                                 <td>
                                                     <span class="status-badge pending">Pending</span>
                                                 </td>
                                                 <td>
                                                     <div class="action-buttons">
-                                                        <!-- Approve Button -->
-                                                        <button type="button" 
-                                                                class="btn-icon btn-success" 
-                                                                title="Approve Deposit"
+                                                        <button type="button"
+                                                                class="btn-icon approve"
+                                                                title="Approve deposit"
                                                                 data-deposit-id="<%= deposit._id %>"
                                                                 data-action="approve"
                                                                 data-user-name="<%= deposit.userId && deposit.userId.firstName ? deposit.userId.firstName : 'User' %>"
@@ -989,11 +1036,9 @@
                                                                 data-currency="<%= deposit.currency %>">
                                                             <i class="fas fa-check"></i>
                                                         </button>
-                                                        
-                                                        <!-- Reject Button -->
-                                                        <button type="button" 
-                                                                class="btn-icon btn-danger" 
-                                                                title="Reject Deposit"
+                                                        <button type="button"
+                                                                class="btn-icon reject"
+                                                                title="Reject deposit"
                                                                 data-deposit-id="<%= deposit._id %>"
                                                                 data-action="reject"
                                                                 data-user-name="<%= deposit.userId && deposit.userId.firstName ? deposit.userId.firstName : 'User' %>"
@@ -1011,51 +1056,83 @@
 
                             <!-- Pagination -->
                             <% if (totalPages > 1) { %>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--tg-border-1);">
-                                    <div style="color: var(--tg-body-color); font-size: 14px;">
+                                <div class="pagination">
+                                    <div class="pagination-info">
                                         Showing <%= deposits.length %> of <%= totalDeposits %> deposits
                                     </div>
-                                    <div style="display: flex; gap: 8px;">
+                                    <div class="pagination-buttons">
                                         <% if (currentPage > 1) { %>
-                                            <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="tg-btn" style="padding: 8px 16px;">
-                                                <i class="fas fa-chevron-left"></i> Previous
+                                            <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="pagination-btn">
+                                                <i class="fas fa-chevron-left"></i>
                                             </a>
                                         <% } %>
-                                        
                                         <% for (let i = 1; i <= totalPages; i++) { %>
                                             <% if (i === currentPage) { %>
-                                                <span class="tg-btn" style="background: var(--tg-theme-primary-hover); padding: 8px 16px;">
-                                                    <%= i %>
-                                                </span>
+                                                <span class="pagination-btn active"><%= i %></span>
                                             <% } else { %>
-                                                <a href="?page=<%= i %>&limit=<%= limit %>" class="tg-btn" style="padding: 8px 16px;">
-                                                    <%= i %>
-                                                </a>
+                                                <a href="?page=<%= i %>&limit=<%= limit %>" class="pagination-btn"><%= i %></a>
                                             <% } %>
                                         <% } %>
-
                                         <% if (currentPage < totalPages) { %>
-                                            <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="tg-btn" style="padding: 8px 16px;">
-                                                Next <i class="fas fa-chevron-right"></i>
+                                            <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="pagination-btn">
+                                                <i class="fas fa-chevron-right"></i>
                                             </a>
                                         <% } %>
                                     </div>
                                 </div>
                             <% } %>
+
                         <% } else { %>
                             <div class="empty-state">
-                                <i class="fas fa-money-bill-wave"></i>
+                                <i class="fas fa-check-circle"></i>
                                 <p>No pending deposits</p>
                                 <small>All deposits have been processed</small>
                             </div>
                         <% } %>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
 
-    <!-- Hidden Form for Submission -->
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-question-circle"></i> Confirm Action</h3>
+                <button class="modal-close" id="modalClose" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Are you sure?</p>
+
+                <div class="modal-detail" id="modalDetailBox">
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">User</span>
+                        <span class="modal-detail-value" id="modalUserName">—</span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Amount</span>
+                        <span class="modal-detail-value" id="modalAmount">—</span>
+                    </div>
+                </div>
+
+                <input type="text" id="modalAdminNote" class="modal-input" placeholder="Add admin note (optional)">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn" id="modalConfirm">
+                    <i class="fas fa-check"></i> Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Form -->
     <form id="actionForm" method="POST" action="/admin/pending-deposits/process" style="display: none;">
         <input type="hidden" name="depositId" id="formDepositId">
         <input type="hidden" name="action" id="formAction">
@@ -1063,190 +1140,151 @@
     </form>
 
     <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        
-        // Initialize theme
-        const currentTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-        
-        themeToggle.addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-            
-            // Add click animation
-            themeToggle.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                themeToggle.style.transform = 'scale(1)';
-            }, 150);
-        });
-        
+        // ============ Theme ============
         function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
             if (theme === 'dark') {
-                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+                icon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
             } else {
-                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+                icon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
             }
         }
 
-        // Sidebar functionality
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarClose = document.getElementById('sidebarClose');
-        const adminSidebar = document.getElementById('adminSidebar');
-        const adminWrapper = document.querySelector('.admin-wrapper');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Theme
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
 
-        // Desktop sidebar toggle (collapse/expand)
-        sidebarToggle.addEventListener('click', function() {
-            if (window.innerWidth > 768) {
-                adminWrapper.classList.toggle('sidebar-collapsed');
-            } else {
-                // Mobile sidebar open
-                adminSidebar.classList.add('sidebar-open');
-            }
-        });
-
-        // Mobile sidebar close
-        sidebarClose.addEventListener('click', function() {
-            adminSidebar.classList.remove('sidebar-open');
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            if (window.innerWidth <= 768 && 
-                adminSidebar.classList.contains('sidebar-open') &&
-                !adminSidebar.contains(event.target) &&
-                !sidebarToggle.contains(event.target)) {
-                adminSidebar.classList.remove('sidebar-open');
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                adminSidebar.classList.remove('sidebar-open');
-                adminWrapper.classList.remove('sidebar-collapsed');
-            }
-        });
-
-        // Add loading animation for cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.stat-card, .card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    card.style.transition = 'all 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
+            document.getElementById('themeToggle').addEventListener('click', function () {
+                const curr = document.documentElement.getAttribute('data-theme');
+                const next = curr === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                updateThemeIcon(next);
             });
-        });
 
-        // Auto-hide alerts after 5 seconds
-        setTimeout(() => {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                alert.style.transition = 'opacity 0.5s ease';
-                alert.style.opacity = '0';
-                setTimeout(() => {
-                    alert.remove();
-                }, 500);
-            });
-        }, 5000);
+            // Sidebar
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const adminSidebar = document.getElementById('adminSidebar');
+            const adminWrapper = document.getElementById('adminWrapper');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-        // Modal functionality for deposit actions
-        const confirmationModal = document.getElementById('confirmationModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalAdminNote = document.getElementById('modalAdminNote');
-        const modalConfirm = document.getElementById('modalConfirm');
-        const modalCancel = document.getElementById('modalCancel');
-        const modalClose = document.getElementById('modalClose');
-        
-        const actionForm = document.getElementById('actionForm');
-        const formDepositId = document.getElementById('formDepositId');
-        const formAction = document.getElementById('formAction');
-        const formAdminNote = document.getElementById('formAdminNote');
-
-        let currentDepositId = '';
-        let currentAction = '';
-
-        // Add event listeners to all action buttons
-        document.querySelectorAll('.btn-icon[data-deposit-id]').forEach(button => {
-            button.addEventListener('click', function() {
-                currentDepositId = this.getAttribute('data-deposit-id');
-                currentAction = this.getAttribute('data-action');
-                const userName = this.getAttribute('data-user-name');
-                const amount = this.getAttribute('data-amount');
-                const currency = this.getAttribute('data-currency');
-
-                // Set modal content based on action
-                if (currentAction === 'approve') {
-                    modalTitle.textContent = 'Approve Deposit';
-                    modalMessage.innerHTML = `Are you sure you want to <strong>APPROVE</strong> this deposit?<br><br>
-                                            <strong>User:</strong> ${userName}<br>
-                                            <strong>Amount:</strong> ${amount} ${currency}<br><br>
-                                            This will add the funds to the user's wallet.`;
-                    modalConfirm.textContent = 'Approve';
-                    modalConfirm.className = 'modal-btn modal-btn-confirm';
+            sidebarToggle.addEventListener('click', function () {
+                if (window.innerWidth > 768) {
+                    adminWrapper.classList.toggle('sidebar-collapsed');
                 } else {
-                    modalTitle.textContent = 'Reject Deposit';
-                    modalMessage.innerHTML = `Are you sure you want to <strong>REJECT</strong> this deposit?<br><br>
-                                            <strong>User:</strong> ${userName}<br>
-                                            <strong>Amount:</strong> ${amount} ${currency}<br><br>
-                                            This will mark the deposit as rejected.`;
-                    modalConfirm.textContent = 'Reject';
-                    modalConfirm.className = 'modal-btn modal-btn-danger';
+                    adminSidebar.classList.add('sidebar-open');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
                 }
-
-                // Reset admin note
-                modalAdminNote.value = '';
-
-                // Show modal
-                confirmationModal.style.display = 'block';
             });
-        });
 
-        // Modal close functionality
-        modalClose.addEventListener('click', closeModal);
-        modalCancel.addEventListener('click', closeModal);
-
-        // Close modal when clicking outside
-        confirmationModal.addEventListener('click', function(e) {
-            if (e.target === confirmationModal) {
-                closeModal();
+            function closeSidebar() {
+                adminSidebar.classList.remove('sidebar-open');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
             }
-        });
 
-        // Confirm action
-        modalConfirm.addEventListener('click', function() {
-            // Set form values
-            formDepositId.value = currentDepositId;
-            formAction.value = currentAction;
-            formAdminNote.value = modalAdminNote.value;
+            sidebarClose.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
 
-            // Submit the form
-            actionForm.submit();
-        });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeSidebar();
+                    closeModal();
+                }
+            });
 
-        function closeModal() {
-            confirmationModal.style.display = 'none';
-            currentDepositId = '';
-            currentAction = '';
-        }
+            // ============ Modal ============
+            const modal = document.getElementById('confirmationModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalUserName = document.getElementById('modalUserName');
+            const modalAmount = document.getElementById('modalAmount');
+            const modalAdminNote = document.getElementById('modalAdminNote');
+            const modalConfirm = document.getElementById('modalConfirm');
+            const modalCancel = document.getElementById('modalCancel');
+            const modalClose = document.getElementById('modalClose');
 
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && confirmationModal.style.display === 'block') {
-                closeModal();
+            const actionForm = document.getElementById('actionForm');
+            const formDepositId = document.getElementById('formDepositId');
+            const formAction = document.getElementById('formAction');
+            const formAdminNote = document.getElementById('formAdminNote');
+
+            let currentDepositId = '';
+            let currentAction = '';
+
+            document.querySelectorAll('.btn-icon[data-deposit-id]').forEach(button => {
+                button.addEventListener('click', function () {
+                    currentDepositId = this.getAttribute('data-deposit-id');
+                    currentAction = this.getAttribute('data-action');
+                    const userName = this.getAttribute('data-user-name');
+                    const amount = this.getAttribute('data-amount');
+                    const currency = this.getAttribute('data-currency');
+
+                    modalUserName.textContent = userName;
+                    modalAmount.textContent = amount + ' ' + currency;
+
+                    if (currentAction === 'approve') {
+                        modalTitle.innerHTML = '<i class="fas fa-check-circle"></i> Approve Deposit';
+                        modalMessage.innerHTML = 'Are you sure you want to <strong style="color: var(--success);">approve</strong> this deposit? The funds will be credited to the user\'s wallet.';
+                        modalConfirm.innerHTML = '<i class="fas fa-check"></i> Approve';
+                        modalConfirm.className = 'modal-btn modal-btn-approve';
+                    } else {
+                        modalTitle.innerHTML = '<i class="fas fa-times-circle"></i> Reject Deposit';
+                        modalMessage.innerHTML = 'Are you sure you want to <strong style="color: var(--danger);">reject</strong> this deposit? This action cannot be undone.';
+                        modalConfirm.innerHTML = '<i class="fas fa-times"></i> Reject';
+                        modalConfirm.className = 'modal-btn modal-btn-reject';
+                    }
+
+                    modalAdminNote.value = '';
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                currentDepositId = '';
+                currentAction = '';
             }
+
+            modalClose.addEventListener('click', closeModal);
+            modalCancel.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+
+            modalConfirm.addEventListener('click', function () {
+                formDepositId.value = currentDepositId;
+                formAction.value = currentAction;
+                formAdminNote.value = modalAdminNote.value;
+                actionForm.submit();
+            });
+
+            // Auto-hide alerts
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 5000);
+
+            // Reveal animation
+            document.querySelectorAll('.stat-card, .admin-table tbody tr').forEach(function (el, i) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(4px)';
+                setTimeout(function () {
+                    el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, Math.min(i * 20, 300));
+            });
         });
     </script>
 </body>

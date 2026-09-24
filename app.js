@@ -231,11 +231,10 @@ app.use('/', investmentRoutes);
 app.use('/', depositRoutes);
 app.use('/', ticketRoutes);
 
-// ⚠️ FIXED: Removed `app.use('/admin', adminWalletRoutes)` — it was shadowing /admin/send-email.
-// adminWalletRoutes now mounts ONLY at /api/admin and /api.
 app.use('/api/admin', adminWalletRoutes);
 app.use('/api', adminWalletRoutes);
 app.use('/api', apiRoutes);
+app.use('/admin', adminWalletRoutes);
 
 // ========== PROTECTED PAGE ROUTES ==========
 app.get('/wallet', isAuthenticated, walletController.getWalletPage);

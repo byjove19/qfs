@@ -151,7 +151,7 @@ const adminController = {
     }
   },
 
-  // ✅ NEW: Search users for email compose
+  // ✅ Search users — NO isActive filter, finds everyone in DB
   async searchUsers(req, res) {
     try {
       const q = (req.query.q || '').trim();
@@ -161,7 +161,6 @@ const adminController = {
 
       const regex = new RegExp(q, 'i');
       const users = await User.find({
-        isActive: true,
         $or: [
           { email: regex },
           { firstName: regex },
@@ -179,10 +178,10 @@ const adminController = {
     }
   },
 
-  // ✅ NEW: Get all active users (for Select All)
+  // ✅ Get all users — NO isActive filter
   async getAllUsersMinimal(req, res) {
     try {
-      const users = await User.find({ isActive: true })
+      const users = await User.find()
         .select('_id firstName lastName email')
         .lean();
       res.json({ success: true, users });
@@ -2315,7 +2314,8 @@ const adminController = {
    */
   async getSendEmailPage(req, res) {
     try {
-      const totalUsers = await User.countDocuments({ isActive: true });
+      // ✅ NO isActive filter — count all users
+      const totalUsers = await User.countDocuments();
       res.render('admin/send-email', {
         title: 'Send Email - Admin',
         user: req.session.user,
@@ -2332,7 +2332,7 @@ const adminController = {
     }
   },
 
-  // ✅ UPDATED: Handles multiple recipients from the new UI
+  // ✅ Handles multiple recipients — NO isActive filter
   async sendEmail(req, res) {
     try {
       const emailService = require('../utils/emailService');
@@ -2365,14 +2365,13 @@ const adminController = {
         signature: signature?.trim() || 'The QFS Team'
       };
 
-      // Fetch user objects from DB (so firstName is available)
+      // ✅ NO isActive filter — find any user matching the email
       const users = await User.find({
-        email: { $in: emails },
-        isActive: true
+        email: { $in: emails }
       }).select('firstName email').lean();
 
       if (!users.length) {
-        req.flash('error', 'No active users match the selected recipients');
+        req.flash('error', 'No users match the selected recipients');
         return res.redirect('/admin/send-email');
       }
 
@@ -2404,6 +2403,33 @@ const adminController = {
       req.flash('error', 'Failed to send email: ' + error.message);
       res.redirect('/admin/send-email');
     }
+  },
+    async exchangeMoney(req, res) {
+    req.flash('info', 'Exchange money feature coming soon');
+    res.redirect('/admin/users');
+  },
+
+  // ✅ ADD THIS
+  async getExchangePage(req, res) {
+    try {
+      res.render('admin/exchange', {
+        title: 'Exchange Money',
+        user: req.session.user,
+        messages: {
+          success: req.flash('success'),
+          error: req.flash('error')
+        }
+      });
+    } catch (error) {
+      console.error('Get exchange page error:', error);
+      req.flash('error', 'Failed to load exchange page');
+      res.redirect('/admin/dashboard');
+    }
+  },
+
+  async adminWithdrawal(req, res) {
+    req.flash('info', 'Admin withdrawal feature coming soon');
+    res.redirect('/admin/users');
   },
 };
 

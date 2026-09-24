@@ -5,998 +5,878 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
     <style>
         :root {
-            --tg-body-font-family: 'Inter', sans-serif;
-            --tg-heading-font-family: 'Inter', sans-serif;
-            --tg-body-font-size: 16px;
-            --tg-body-color: #9E9E9E;
-            --tg-heading-color: #ffffff;
-            --tg-theme-primary: #4b59f5;
-            --tg-theme-primary-hover: #3a49e5;
-            --tg-color-dark: #0C0C0C;
-            --tg-color-dark-2: #000000;
-            --tg-color-dark-3: #262626;
-            --tg-border-1: #363636;
-            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --tg-transition: all 0.3s ease;
+            --bg-900: #0a0a0a;
+            --bg-800: #101010;
+            --bg-700: #161616;
+            --bg-600: #1c1c1c;
+            --border: #232323;
+            --border-strong: #2e2e2e;
+
+            --text-primary: #ededed;
+            --text-secondary: #9a9a9a;
+            --text-muted: #6a6a6a;
+
+            --accent: #4b59f5;
+            --accent-hover: #5d6aff;
+            --accent-soft: rgba(75, 89, 245, 0.12);
+
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.12);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.12);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.12);
+            --info: #3b82f6;
+            --info-soft: rgba(59, 130, 246, 0.12);
+
+            --radius: 10px;
+            --radius-lg: 14px;
+            --transition: 0.18s ease;
         }
 
         [data-theme="light"] {
-            --tg-body-color: #5a5a5a;
-            --tg-heading-color: #1a1a1a;
-            --tg-color-dark: #f8f9fa;
-            --tg-color-dark-2: #ffffff;
-            --tg-color-dark-3: #e9ecef;
-            --tg-border-1: #dee2e6;
-            --tg-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --bg-900: #f5f6fa;
+            --bg-800: #ffffff;
+            --bg-700: #f8f9fc;
+            --bg-600: #eef0f6;
+            --border: #e2e5ed;
+            --border-strong: #d0d4df;
+
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
         body {
-            font-family: var(--tg-body-font-family);
-            font-size: var(--tg-body-font-size);
-            color: var(--tg-body-color);
-            background: var(--tg-color-dark);
-            transition: var(--tg-transition);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--bg-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s;
         }
 
-        .admin-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Theme Toggle */
+        /* ========= Theme Toggle ========= */
         .theme-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: var(--tg-color-dark-2);
-            border: 1px solid var(--tg-border-1);
-            border-radius: 50%;
+            top: 18px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
-            transition: var(--tg-transition);
-            box-shadow: var(--tg-shadow);
+            z-index: 1001;
+            transition: var(--transition);
         }
+        .theme-toggle:hover { border-color: var(--accent); }
+        .theme-toggle svg { width: 18px; height: 18px; fill: var(--text-secondary); }
+        .theme-toggle:hover svg { fill: var(--text-primary); }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: var(--tg-color-dark-3);
-        }
+        /* ========= Layout ========= */
+        .admin-wrapper { display: flex; min-height: 100vh; }
 
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--tg-heading-color);
-            transition: var(--tg-transition);
-        }
-
-        /* Sidebar Styles */
+        /* ========= Sidebar ========= */
         .admin-sidebar {
-            width: 280px;
-            background: var(--tg-color-dark-2);
-            border-right: 1px solid var(--tg-border-1);
+            width: 260px;
+            background: var(--bg-800);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            transition: var(--tg-transition);
-            position: relative;
+            position: fixed;
+            left: 0; top: 0;
+            height: 100vh;
             z-index: 100;
+            transition: var(--transition);
         }
 
         .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            height: 64px;
         }
 
         .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--tg-heading-color);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
             text-decoration: none;
-            letter-spacing: 2.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
 
         .sidebar-close {
             display: none;
             background: none;
             border: none;
-            color: var(--tg-heading-color);
-            font-size: 18px;
+            color: var(--text-secondary);
             cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            transition: var(--tg-transition);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
         }
+        .sidebar-close:hover { background: var(--bg-700); color: var(--text-primary); }
 
-        .sidebar-close:hover {
-            background: var(--tg-color-dark-3);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 20px 0;
-            overflow-y: auto;
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
-        }
-
-        .sidebar-nav li {
-            margin-bottom: 5px;
-        }
+        .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 2px; }
 
         .nav-link {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: var(--tg-body-color);
+            padding: 10px 12px;
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: var(--tg-transition);
-            border-left: 3px solid transparent;
-            position: relative;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 13.5px;
+            font-weight: 500;
+            min-height: 40px;
         }
-
-        .nav-link:hover {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-heading-color);
-            transform: translateX(5px);
-        }
-
-        .nav-link.active {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-theme-primary);
-            border-left-color: var(--tg-theme-primary);
-        }
-
+        .nav-link:hover { background: var(--bg-700); color: var(--text-primary); }
+        .nav-link.active { background: var(--accent-soft); color: var(--accent); }
         .nav-link i {
-            width: 24px;
-            margin-right: 12px;
-            font-size: 16px;
-            transition: var(--tg-transition);
+            width: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .nav-link span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid var(--tg-border-1);
-        }
+        .sidebar-footer { padding: 12px 10px; border-top: 1px solid var(--border); }
+        .sidebar-footer .nav-link { min-height: 38px; font-size: 13px; }
 
-        .sidebar-footer .nav-link {
-            padding: 10px 0;
-            border-left: none;
-        }
-
-        /* Main Content Styles */
+        /* ========= Main ========= */
         .admin-main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            transition: var(--tg-transition);
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: var(--transition);
         }
 
+        /* ========= Header ========= */
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
-            background: var(--tg-color-dark-2);
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 14px 24px;
+            background: var(--bg-800);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 99;
+            min-height: 64px;
+            gap: 15px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
         }
 
         .sidebar-toggle {
             background: none;
             border: none;
-            color: var(--tg-heading-color);
-            font-size: 18px;
+            color: var(--text-secondary);
             cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-            transition: var(--tg-transition);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
         }
-
-        .sidebar-toggle:hover {
-            background: var(--tg-color-dark-3);
-            transform: rotate(90deg);
-        }
+        .sidebar-toggle:hover { background: var(--bg-700); color: var(--text-primary); }
 
         .admin-header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--tg-heading-color);
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .admin-name {
-            color: var(--tg-heading-color);
-            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .badge {
-            background: var(--tg-theme-primary);
-            color: white;
-            padding: 5px 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 5px 11px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* ========= Content ========= */
+        .admin-content { flex: 1; padding: 24px; overflow-y: auto; }
+
+        /* ========= Stats ========= */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        .stat-card:hover { border-color: var(--border-strong); }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            color: #fff;
+        }
+        .stat-icon i { font-size: 16px; }
+
+        .stat-icon.blue   { background: linear-gradient(135deg, #4b59f5, #6b7aff); }
+        .stat-icon.green  { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .stat-icon.orange { background: linear-gradient(135deg, #ea580c, #f59e0b); }
+        .stat-icon.red    { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .stat-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        .stat-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .admin-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--tg-shadow);
-            transition: var(--tg-transition);
-            border: 1px solid var(--tg-border-1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--tg-theme-primary);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
-        }
-
-        .stat-icon i {
-            font-size: 28px;
-            color: white;
-        }
-
-        .stat-info h3 {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--tg-heading-color);
-            margin-bottom: 5px;
-            line-height: 1;
-        }
-
-        .stat-info p {
-            font-size: 14px;
-            color: var(--tg-body-color);
-            font-weight: 500;
-        }
-
-        .stat-trend {
-            font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 12px;
-            margin-left: 8px;
-            font-weight: 600;
-        }
-
-        .trend-up {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .trend-down {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        /* Card Styles */
+        /* ========= Card ========= */
         .card {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            box-shadow: var(--tg-shadow);
-            margin-bottom: 30px;
+            background: var(--bg-800);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
             overflow: hidden;
-            transition: var(--tg-transition);
-            border: 1px solid var(--tg-border-1);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
 
         .card-header h2 {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 600;
-            color: var(--tg-heading-color);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .card-header h2 i { color: var(--text-muted); font-size: 14px; }
 
         .tg-btn {
-            background: var(--tg-theme-primary);
-            color: white;
-            padding: 10px 20px;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 14px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 12.5px;
             font-weight: 500;
-            transition: var(--tg-transition);
+            transition: var(--transition);
             border: none;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .tg-btn:hover { background: var(--accent-hover); }
+
+        .tg-btn-secondary {
+            background: var(--bg-700);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .tg-btn-secondary:hover {
+            background: var(--bg-600);
+            color: var(--text-primary);
+            border-color: var(--border-strong);
+        }
+
+        .card-body { padding: 20px; }
+
+        /* ========= Transactions List ========= */
+        .transactions-list {
+            display: flex;
+            flex-direction: column;
             gap: 8px;
         }
 
-        .tg-btn:hover {
-            background: var(--tg-theme-primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--bg-700);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .transaction-item:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-600);
         }
 
-        .card-body {
-            padding: 25px;
-        }
-
-        /* Table Styles */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: 8px;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-
-        .admin-table th {
-            text-align: left;
-            padding: 15px;
-            font-weight: 600;
-            color: var(--tg-heading-color);
-            border-bottom: 1px solid var(--tg-border-1);
-            background: var(--tg-color-dark-3);
+        .tx-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
             font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
+        .tx-icon.deposit    { background: var(--success-soft); color: var(--success); }
+        .tx-icon.withdrawal { background: var(--danger-soft); color: var(--danger); }
+        .tx-icon.transfer,
+        .tx-icon.send       { background: var(--info-soft); color: var(--info); }
+        .tx-icon.system,
+        .tx-icon.admin_credit,
+        .tx-icon.admin_debit { background: var(--accent-soft); color: var(--accent); }
+        .tx-icon.refund     { background: var(--warning-soft); color: var(--warning); }
 
-        .admin-table td {
-            padding: 15px;
-            border-bottom: 1px solid var(--tg-border-1);
-            transition: var(--tg-transition);
-        }
+        .tx-content { flex: 1; min-width: 0; }
 
-        .admin-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .admin-table tr:hover {
-            background: var(--tg-color-dark-3);
-            transform: scale(1.01);
-        }
-
-        .user-info {
+        .tx-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: capitalize;
+            margin-bottom: 3px;
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .user-details strong {
-            color: var(--tg-heading-color);
-            display: block;
-            font-size: 15px;
-        }
-
-        .user-details span {
-            font-size: 13px;
-            color: var(--tg-body-color);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-badge.active {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
-
-        .status-badge.inactive {
-            background: rgba(108, 117, 125, 0.1);
-            color: #6c757d;
-            border: 1px solid rgba(108, 117, 125, 0.3);
-        }
-
-        .action-buttons {
-            display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: var(--tg-color-dark-3);
+        .tx-meta {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: var(--tg-body-color);
-            text-decoration: none;
-            transition: var(--tg-transition);
-            border: none;
-            cursor: pointer;
+            gap: 10px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
         }
+        .tx-meta i { font-size: 10px; }
 
-        .btn-icon:hover {
-            background: var(--tg-theme-primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* Transaction Card Styles */
-        .transaction-card {
-            background: var(--tg-color-dark-2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid var(--tg-border-1);
-            transition: var(--tg-transition);
-            cursor: pointer;
-        }
-
-        .transaction-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            background: var(--tg-color-dark-3);
-        }
-
-        .transaction-header {
+        .tx-right {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
         }
 
-        .transaction-type {
-            font-weight: 600;
-            color: var(--tg-heading-color);
-            font-size: 16px;
-        }
-
-        .transaction-amount {
+        .tx-amount {
+            font-size: 14px;
             font-weight: 700;
-            font-size: 18px;
+            color: var(--text-primary);
+            white-space: nowrap;
         }
+        .tx-amount.positive { color: var(--success); }
+        .tx-amount.negative { color: var(--danger); }
 
-        .transaction-details {
-            display: flex;
-            justify-content: space-between;
+        /* ========= Status Badge ========= */
+        .status-badge {
+            display: inline-flex;
             align-items: center;
-            font-size: 14px;
-            color: var(--tg-body-color);
-        }
-
-        .transaction-date {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .transaction-status {
+            gap: 6px;
             padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
+            border-radius: 20px;
+            font-size: 10.5px;
             font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+        .status-badge::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+        .status-badge.completed {
+            background: var(--success-soft);
+            color: var(--success);
+        }
+        .status-badge.completed::before { background: var(--success); }
+        .status-badge.pending {
+            background: var(--warning-soft);
+            color: var(--warning);
+        }
+        .status-badge.pending::before { background: var(--warning); }
+        .status-badge.failed,
+        .status-badge.rejected {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+        .status-badge.failed::before,
+        .status-badge.rejected::before { background: var(--danger); }
+
+        .status-badge.admin {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        .status-badge.admin::before { background: var(--accent); }
+
+        /* ========= Empty State ========= */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .empty-state small {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
-        .status-completed {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .status-pending {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-        }
-
-        .status-failed {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .amount-positive {
-            color: #28a745;
-        }
-
-        .amount-negative {
-            color: #dc3545;
-        }
-
-        .amount-neutral {
-            color: var(--tg-heading-color);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+        /* ========= Pagination ========= */
+        .pagination {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 8px 14px;
+            background: var(--bg-700);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            font-size: 12.5px;
+        }
+        .pagination-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .pagination-info {
+            color: var(--text-muted);
+            font-size: 12.5px;
+            padding: 0 12px;
+        }
+
+        /* ========= Modal ========= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
             padding: 20px;
         }
+        .modal-overlay.active { display: flex; }
 
         .modal-content {
-            background: var(--tg-color-dark-2);
-            border-radius: 16px;
-            max-width: 600px;
+            background: var(--bg-800);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             width: 100%;
+            max-width: 560px;
             max-height: 90vh;
             overflow-y: auto;
-            border: 1px solid var(--tg-border-1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.2s ease-out;
+        }
+        .modal-content::-webkit-scrollbar { width: 4px; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--tg-border-1);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .modal-title {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 600;
-            color: var(--tg-heading-color);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .modal-title i { color: var(--accent); font-size: 14px; }
 
         .modal-close {
             background: none;
             border: none;
-            color: var(--tg-body-color);
-            font-size: 18px;
+            color: var(--text-secondary);
             cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            transition: var(--tg-transition);
-        }
-
-        .modal-close:hover {
-            background: var(--tg-color-dark-3);
-            color: var(--tg-heading-color);
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        .transaction-summary {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid var(--tg-border-1);
-        }
-
-        .transaction-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--tg-theme-primary), #6c63ff);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 4px 12px rgba(75, 89, 245, 0.3);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+        .modal-close:hover { background: var(--bg-700); color: var(--text-primary); }
+
+        .modal-body { padding: 20px; }
+
+        .tx-summary {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .transaction-icon i {
-            font-size: 32px;
-            color: white;
+        .tx-summary-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: var(--accent-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            color: var(--accent);
+            font-size: 22px;
         }
 
-        .transaction-amount-large {
-            font-size: 32px;
+        .tx-summary-amount {
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+        .tx-summary-amount.positive { color: var(--success); }
+        .tx-summary-amount.negative { color: var(--danger); }
+
+        .tx-summary-type {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            text-transform: capitalize;
+            margin-bottom: 4px;
         }
 
-        .transaction-detail-grid {
+        .tx-summary-date {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 25px;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
         .detail-item {
-            margin-bottom: 15px;
+            padding: 12px;
+            background: var(--bg-700);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
         }
 
         .detail-label {
-            font-size: 14px;
-            color: var(--tg-body-color);
-            margin-bottom: 5px;
+            font-size: 10.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .detail-value {
-            font-size: 16px;
-            color: var(--tg-heading-color);
-            font-weight: 500;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+            word-break: break-word;
         }
 
         .modal-actions {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
+        .modal-actions .tg-btn { flex: 1; justify-content: center; }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--tg-body-color);
+        .tg-btn-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
+        .tg-btn-danger:hover { background: var(--danger); color: #fff; }
 
-        .empty-state i {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 1200px) {
-            .admin-sidebar {
-                width: 250px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
+        /* ========= Responsive ========= */
         @media (max-width: 992px) {
-            .admin-sidebar {
-                width: 220px;
-            }
-            
-            .admin-header {
-                padding: 15px 20px;
-            }
-            
-            .admin-content {
-                padding: 20px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .admin-header { padding: 12px 18px; }
+            .admin-content { padding: 18px; }
         }
 
         @media (max-width: 768px) {
-            .admin-wrapper {
-                flex-direction: column;
-            }
-            
+            .theme-toggle { top: 14px; right: 14px; width: 38px; height: 38px; }
+
             .admin-sidebar {
-                width: 100%;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                left: -100%;
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
                 z-index: 1000;
-                transition: left 0.3s ease;
             }
-            
-            .admin-sidebar.sidebar-open {
-                left: 0;
-            }
-            
-            .sidebar-close {
-                display: block;
-            }
-            
-            .admin-main {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .admin-header h1 {
-                font-size: 20px;
-            }
-            
-            .header-right {
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 8px;
-            }
-            
-            .admin-name {
-                font-size: 14px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .theme-toggle {
-                top: 15px;
-                right: 15px;
-                width: 45px;
-                height: 45px;
-            }
+            .admin-sidebar.sidebar-open { transform: translateX(0); }
+            .sidebar-close { display: flex; }
 
-            .transaction-detail-grid {
-                grid-template-columns: 1fr;
-            }
+            .admin-main { margin-left: 0; width: 100%; }
 
-            .modal-actions {
-                flex-direction: column;
-            }
+            .admin-header { padding: 12px 16px; min-height: 58px; }
+            .admin-header h1 { font-size: 15px; }
+            .admin-name { display: none; }
+
+            .admin-content { padding: 16px; }
+
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+
+            .transaction-item { padding: 12px; gap: 10px; }
+            .tx-icon { width: 34px; height: 34px; font-size: 13px; }
+            .tx-title { font-size: 13px; }
+            .tx-amount { font-size: 13px; }
+
+            .detail-grid { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 576px) {
-            .admin-content {
-                padding: 15px;
-            }
-            
-            .card-body {
-                padding: 20px 15px;
-            }
-            
-            .stat-card {
-                padding: 20px;
-            }
-            
-            .stat-icon {
-                width: 60px;
-                height: 60px;
-                margin-right: 15px;
-            }
-            
-            .stat-icon i {
-                font-size: 24px;
-            }
-            
-            .stat-info h3 {
-                font-size: 28px;
-            }
+        @media (max-width: 480px) {
+            .admin-content { padding: 12px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .card-body { padding: 16px; }
+            .card-header { padding: 14px 16px; }
+
+            .transaction-item { flex-wrap: wrap; }
+            .tx-right { width: 100%; align-items: flex-start; flex-direction: row; gap: 10px; }
         }
 
-        /* Sidebar Collapsed State */
-        .admin-wrapper.sidebar-collapsed .admin-sidebar {
-            width: 70px;
-        }
-        
-        .admin-wrapper.sidebar-collapsed .logo-text,
-        .admin-wrapper.sidebar-collapsed .nav-link span,
-        .admin-wrapper.sidebar-collapsed .sidebar-footer .nav-link span {
+        /* Sidebar Overlay */
+        .sidebar-overlay {
             display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
-        
-        .admin-wrapper.sidebar-collapsed .nav-link {
-            justify-content: center;
-            padding: 12px;
-        }
-        
-        .admin-wrapper.sidebar-collapsed .nav-link i {
-            margin-right: 0;
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        /* Desktop collapsed */
+        @media (min-width: 769px) {
+            .admin-wrapper.sidebar-collapsed .admin-sidebar { width: 68px; }
+            .admin-wrapper.sidebar-collapsed .logo-text,
+            .admin-wrapper.sidebar-collapsed .nav-link span { display: none; }
+            .admin-wrapper.sidebar-collapsed .nav-link {
+                justify-content: center;
+                padding: 10px;
+            }
+            .admin-wrapper.sidebar-collapsed .nav-link i { margin-right: 0; }
+            .admin-wrapper.sidebar-collapsed .admin-main {
+                margin-left: 68px;
+                width: calc(100% - 68px);
+            }
+            .admin-wrapper.sidebar-collapsed .sidebar-header {
+                justify-content: center;
+                padding: 0 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-wrapper">
-        <!-- Theme Toggle -->
-        <button class="theme-toggle" id="themeToggle">
-            <svg id="themeIcon" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/>
-            </svg>
-        </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <div class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+        </svg>
+    </div>
+
+    <div class="admin-wrapper" id="adminWrapper">
         <!-- Sidebar -->
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
-                <a href="/admin" class="logo-text">QFS ADMIN</a>
-                <button class="sidebar-close" id="sidebarClose">
+                <a href="/admin" class="logo-text">QFS Admin</a>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="/admin" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-                    </a></li>
-                    <li><a href="/admin/users" class="nav-link">
-                        <i class="fas fa-users"></i> <span>Users</span>
-                    </a></li>
-                    <li><a href="/admin/transactions" class="nav-link active">
-                        <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
-                    </a></li>
-                     <li><a href="/admin/trust-wallets" class="nav-link active">
-                        <i class="fas fa-wallet"></i> <span>Trust Wallets</span>
-                    </a></li>
-                    <li><a href="/admin/investments" class="nav-link">
-                        <i class="fas fa-chart-line"></i> <span>Investments</span>
-                    </a></li>
-                    <li><a href="/admin/tickets" class="nav-link">
-                        <i class="fas fa-ticket-alt"></i> <span>Support Tickets</span>
-                    </a></li>
-                    
-                    <li><a href="/admin/pending-deposits" class="nav-link">
-                        <i class="fas fa-money-bill-wave"></i> <span>Pending Deposits</span>
-                    </a></li>
-                    <li><a href="/admin/pending-withdrawals" class="nav-link">
-                        <i class="fas fa-hand-holding-usd"></i> <span>Pending Withdrawals</span>
-                    </a></li>
-                     <li><a href="/admin/send-email" class="nav-link">
-                        <i class="fas fa-telegram"></i> <span>Send Email</span>
-                    </a></li>
+                    <li><a href="/admin" class="nav-link"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="/admin/users" class="nav-link"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="/admin/transactions" class="nav-link active"><i class="fas fa-exchange-alt"></i> <span>Transactions</span></a></li>
+                    <li><a href="/admin/trust-wallets" class="nav-link"><i class="fas fa-wallet"></i> <span>Trust Wallets</span></a></li>
+                    <li><a href="/admin/investments" class="nav-link"><i class="fas fa-chart-line"></i> <span>Investments</span></a></li>
+                    <li><a href="/admin/tickets" class="nav-link"><i class="fas fa-headset"></i> <span>Support Tickets</span></a></li>
+                    <li><a href="/admin/pending-deposits" class="nav-link"><i class="fas fa-arrow-down"></i> <span>Pending Deposits</span></a></li>
+                    <li><a href="/admin/wallet-addresses" class="nav-link"><i class="fas fa-address-book"></i> <span>Wallet Addresses</span></a></li>
+                    <li><a href="/admin/pending-withdrawals" class="nav-link"><i class="fas fa-arrow-up"></i> <span>Pending Withdrawals</span></a></li>
+                    <li><a href="/admin/pending-transfers" class="nav-link"><i class="fas fa-paper-plane"></i> <span>Pending Transfers</span></a></li>
+                    <li><a href="/admin/send-email" class="nav-link"><i class="fas fa-envelope"></i> <span>Send Email</span></a></li>
+                    <li><a href="/admin/exchange" class="nav-link"><i class="fas fa-dollar-sign"></i> <span>Exchange Rate</span></a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <a href="/dashboard" class="nav-link">
-                    <i class="fas fa-arrow-left"></i> <span>Back to Site</span>
-                </a>
-                <a href="/auth/logout" class="nav-link">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </a>
+                <a href="/dashboard" class="nav-link"><i class="fas fa-arrow-left"></i> <span>Back to Site</span></a>
+                <a href="/auth/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
             </div>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main -->
         <main class="admin-main">
             <header class="admin-header">
                 <div class="header-left">
-                    <button class="sidebar-toggle" id="sidebarToggle">
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1><%= title %></h1>
                 </div>
                 <div class="header-right">
-                    <span class="admin-name">Welcome, <%= user.firstName %> <%= user.lastName %></span>
-                    <span class="admin-role badge"><%= user.role %></span>
+                    <span class="admin-name">Welcome, <%= (user && user.firstName) ? user.firstName : 'Admin' %></span>
+                    <span class="badge"><%= (user && user.role) ? user.role : 'admin' %></span>
                 </div>
             </header>
 
             <div class="admin-content">
-                <!-- Stats Overview -->
+
+                <!-- Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
+                        <div class="stat-icon blue"><i class="fas fa-exchange-alt"></i></div>
                         <div class="stat-info">
                             <h3><%= totalTransactions || 0 %></h3>
-                            <p>Total Transactions</p>
+                            <p>Total</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
+                        <div class="stat-icon green"><i class="fas fa-check"></i></div>
                         <div class="stat-info">
                             <h3><%= completedTransactions || 0 %></h3>
                             <p>Completed</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
                             <h3><%= pendingTransactions || 0 %></h3>
                             <p>Pending</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
+                        <div class="stat-icon red"><i class="fas fa-times"></i></div>
                         <div class="stat-info">
                             <h3><%= failedTransactions || 0 %></h3>
                             <p>Failed</p>
@@ -1004,289 +884,329 @@
                     </div>
                 </div>
 
-                <!-- Transactions Card -->
+                <!-- Transactions -->
                 <div class="card">
                     <div class="card-header">
-                        <h2>Transaction History</h2>
-                        <div class="action-buttons">
-                            <button class="tg-btn" id="exportBtn">
-                                <i class="fas fa-download"></i> Export
-                            </button>
-                            <button class="tg-btn" id="filterBtn">
+                        <h2><i class="fas fa-list"></i> Transaction History</h2>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <button class="tg-btn tg-btn-secondary" id="filterBtn">
                                 <i class="fas fa-filter"></i> Filter
+                            </button>
+                            <button class="tg-btn tg-btn-secondary" id="exportBtn">
+                                <i class="fas fa-download"></i> Export
                             </button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Transactions Container -->
-                        <div id="transactionsContainer">
-                            <% if (transactions && transactions.length > 0) { %>
-                                <% transactions.forEach((transaction, index) => { %>
-                                    <div class="transaction-card" data-transaction-id="<%= transaction._id %>">
-                                        <div class="transaction-header">
-                                            <div class="transaction-type">
-                                                <%= transaction.type.toUpperCase() %>
-                                                <% if (['admin_credit', 'admin_debit', 'system'].includes(transaction.type)) { %>
-                                                    <span class="status-badge active" style="margin-left: 8px;">Admin</span>
+                        <% if (transactions && transactions.length > 0) { %>
+                            <div class="transactions-list">
+                                <% transactions.forEach(function(transaction) { %>
+                                    <%
+                                        // Determine icon class by type
+                                        let iconClass = 'system';
+                                        let iconFa = 'fa-circle';
+                                        const type = (transaction.type || '').toLowerCase();
+                                        if (type === 'deposit') { iconClass = 'deposit'; iconFa = 'fa-arrow-down'; }
+                                        else if (type === 'withdrawal') { iconClass = 'withdrawal'; iconFa = 'fa-arrow-up'; }
+                                        else if (type === 'transfer' || type === 'send') { iconClass = 'transfer'; iconFa = 'fa-paper-plane'; }
+                                        else if (type === 'refund') { iconClass = 'refund'; iconFa = 'fa-undo'; }
+                                        else if (type === 'admin_credit') { iconClass = 'admin_credit'; iconFa = 'fa-plus'; }
+                                        else if (type === 'admin_debit') { iconClass = 'admin_debit'; iconFa = 'fa-minus'; }
+                                        else { iconClass = 'system'; iconFa = 'fa-cog'; }
+
+                                        const isDebit = ['withdrawal', 'admin_debit', 'send'].includes(type);
+                                        const amountClass = isDebit ? 'negative' : (type === 'deposit' || type === 'admin_credit' ? 'positive' : '');
+                                        const sign = isDebit ? '−' : (type === 'deposit' || type === 'admin_credit' ? '+' : '');
+                                    %>
+                                    <div class="transaction-item"
+                                         data-transaction-id="<%= transaction._id %>"
+                                         data-type="<%= transaction.type %>"
+                                         data-amount="<%= transaction.amount %>"
+                                         data-currency="<%= transaction.currency || 'USD' %>"
+                                         data-status="<%= transaction.status %>"
+                                         data-date="<%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleString('en-GB') : 'N/A' %>"
+                                         data-user="<%= transaction.userId ? (transaction.userId.firstName + ' ' + transaction.userId.lastName) : 'System' %>"
+                                         data-user-email="<%= transaction.userId ? transaction.userId.email : '' %>"
+                                         data-method="<%= transaction.method || 'Manual' %>"
+                                         data-fee="<%= transaction.fee || 0 %>"
+                                         data-description="<%= transaction.description || '' %>"
+                                         data-tx-id="<%= transaction.transactionId || transaction._id %>">
+
+                                        <div class="tx-icon <%= iconClass %>">
+                                            <i class="fas <%= iconFa %>"></i>
+                                        </div>
+
+                                        <div class="tx-content">
+                                            <div class="tx-title">
+                                                <%= transaction.type.replace(/_/g, ' ') %>
+                                                <% if (['admin_credit', 'admin_debit', 'system'].includes(type)) { %>
+                                                    <span class="status-badge admin">Admin</span>
                                                 <% } %>
                                             </div>
-                                            <div class="transaction-amount <%= 
-                                                transaction.type === 'admin_debit' || transaction.type === 'withdrawal' ? 'amount-negative' : 
-                                                transaction.type === 'admin_credit' || transaction.type === 'deposit' ? 'amount-positive' : 'amount-neutral'
-                                            %>">
-                                                <%= transaction.type === 'admin_debit' || transaction.type === 'withdrawal' ? '-' : '+' %>
-                                                <%= transaction.currency %> <%= transaction.amount.toLocaleString() %>
+                                            <div class="tx-meta">
+                                                <span><i class="far fa-calendar"></i> <%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleDateString('en-GB') : 'N/A' %></span>
+                                                <% if (transaction.userId) { %>
+                                                    <span><i class="far fa-user"></i> <%= transaction.userId.firstName %> <%= transaction.userId.lastName %></span>
+                                                <% } %>
+                                                <% if (transaction.method) { %>
+                                                    <span><i class="far fa-credit-card"></i> <%= transaction.method %></span>
+                                                <% } %>
                                             </div>
                                         </div>
-                                        <div class="transaction-details">
-                                            <div class="transaction-date">
-                                                <i class="far fa-calendar"></i>
-                                                <%= transaction.createdAt ? new Date(transaction.createdAt).toLocaleDateString() : 'Unknown Date' %>
+
+                                        <div class="tx-right">
+                                            <div class="tx-amount <%= amountClass %>">
+                                                <%= sign %> <%= transaction.currency || 'USD' %> <%= parseFloat(transaction.amount).toLocaleString() %>
                                             </div>
-                                            <div class="transaction-status <%= 
-                                                transaction.status === 'completed' ? 'status-completed' : 
-                                                transaction.status === 'pending' ? 'status-pending' : 'status-failed'
-                                            %>">
-                                                <%= transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) %>
-                                            </div>
+                                            <span class="status-badge <%= transaction.status %>">
+                                                <%= transaction.status %>
+                                            </span>
                                         </div>
                                     </div>
-                                <% }) %>
-                            <% } else { %>
-                                <div class="empty-state">
-                                    <i class="fas fa-exchange-alt"></i>
-                                    <p>No transactions found</p>
-                                    <p class="text-muted">Transactions will appear here once they are processed.</p>
+                                <% }); %>
+                            </div>
+
+                            <!-- Pagination -->
+                            <% if (totalPages > 1) { %>
+                                <div class="pagination">
+                                    <% if (currentPage > 1) { %>
+                                        <a href="?page=<%= currentPage - 1 %>" class="pagination-btn">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </a>
+                                    <% } %>
+                                    <span class="pagination-info">Page <%= currentPage %> of <%= totalPages %></span>
+                                    <% if (currentPage < totalPages) { %>
+                                        <a href="?page=<%= currentPage + 1 %>" class="pagination-btn">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    <% } %>
                                 </div>
                             <% } %>
-                        </div>
 
-                        <!-- Load More Button -->
-                        <% if (transactions && transactions.length > 5) { %>
-                            <div class="text-center mt-4">
-                                <button id="loadMoreBtn" class="tg-btn">
-                                    <i class="fas fa-plus"></i> Load More Transactions
-                                </button>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <i class="fas fa-exchange-alt"></i>
+                                <p>No transactions found</p>
+                                <small>Transactions will appear here once they are processed</small>
                             </div>
                         <% } %>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
 
-    <!-- Transaction Modal -->
-    <div class="modal-overlay" id="transactionModal" style="display: none;">
+    <!-- ===== Transaction Details Modal ===== -->
+    <div class="modal-overlay" id="transactionModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Transaction Details</h3>
-                <button class="modal-close" id="modalClose">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="modal-title"><i class="fas fa-receipt"></i> Transaction Details</div>
+                <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="transaction-summary">
-                    <div class="transaction-icon">
+
+                <div class="tx-summary">
+                    <div class="tx-summary-icon" id="modalIcon">
                         <i class="fas fa-exchange-alt"></i>
                     </div>
-                    <div class="transaction-amount-large" id="modalAmount">
-                        <!-- Amount will be populated by JavaScript -->
-                    </div>
-                    <div class="transaction-type" id="modalType">
-                        <!-- Type will be populated by JavaScript -->
-                    </div>
-                    <div class="transaction-date" id="modalDate">
-                        <!-- Date will be populated by JavaScript -->
-                    </div>
-                </div>
-                
-                <div class="transaction-detail-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">Transaction ID</div>
-                        <div class="detail-value" id="modalId"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Status</div>
-                        <div class="detail-value" id="modalStatus"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Currency</div>
-                        <div class="detail-value" id="modalCurrency"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Fee</div>
-                        <div class="detail-value" id="modalFee"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Payment Method</div>
-                        <div class="detail-value" id="modalMethod"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">User</div>
-                        <div class="detail-value" id="modalUser"></div>
+                    <div class="tx-summary-amount" id="modalAmount">—</div>
+                    <div class="tx-summary-type" id="modalType">—</div>
+                    <div class="tx-summary-date" id="modalDate">
+                        <i class="far fa-calendar"></i> —
                     </div>
                 </div>
 
-                <% if (user.role === 'admin' || user.role === 'superadmin') { %>
-                    <div class="modal-actions">
-                        <button class="tg-btn" id="editBtn">
-                            <i class="fas fa-edit"></i> Edit Transaction
-                        </button>
-                        <button class="tg-btn" style="background: #dc3545;" id="deleteBtn">
-                            <i class="fas fa-trash"></i> Delete Transaction
-                        </button>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Transaction ID</div>
+                        <div class="detail-value" id="modalId">—</div>
                     </div>
-                <% } %>
+                    <div class="detail-item">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value" id="modalStatus">—</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Currency</div>
+                        <div class="detail-value" id="modalCurrency">—</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Method</div>
+                        <div class="detail-value" id="modalMethod">—</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Fee</div>
+                        <div class="detail-value" id="modalFee">—</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">User</div>
+                        <div class="detail-value" id="modalUser">—</div>
+                    </div>
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value" id="modalDescription">—</div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <a href="#" class="tg-btn" id="viewUserBtn" style="display:none;">
+                        <i class="fas fa-user"></i> View User
+                    </a>
+                    <button class="tg-btn tg-btn-secondary" id="copyTxIdBtn">
+                        <i class="fas fa-copy"></i> Copy ID
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        
-        // Initialize theme
-        const currentTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-        
-        themeToggle.addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-            
-            // Add click animation
-            themeToggle.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                themeToggle.style.transform = 'scale(1)';
-            }, 150);
-        });
-        
+        // ============ Theme ============
         function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
             if (theme === 'dark') {
-                themeIcon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
+                icon.innerHTML = '<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />';
             } else {
-                themeIcon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
+                icon.innerHTML = '<path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" />';
             }
         }
 
-        // Sidebar functionality
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarClose = document.getElementById('sidebarClose');
-        const adminSidebar = document.getElementById('adminSidebar');
-        const adminWrapper = document.querySelector('.admin-wrapper');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Theme
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
 
-        // Desktop sidebar toggle (collapse/expand)
-        sidebarToggle.addEventListener('click', function() {
-            if (window.innerWidth > 768) {
-                adminWrapper.classList.toggle('sidebar-collapsed');
-            } else {
-                // Mobile sidebar open
-                adminSidebar.classList.add('sidebar-open');
-            }
-        });
-
-        // Mobile sidebar close
-        sidebarClose.addEventListener('click', function() {
-            adminSidebar.classList.remove('sidebar-open');
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            if (window.innerWidth <= 768 && 
-                adminSidebar.classList.contains('sidebar-open') &&
-                !adminSidebar.contains(event.target) &&
-                !sidebarToggle.contains(event.target)) {
-                adminSidebar.classList.remove('sidebar-open');
-            }
-        });
-
-        // Transaction Modal Functionality
-        const transactionCards = document.querySelectorAll('.transaction-card');
-        const transactionModal = document.getElementById('transactionModal');
-        const modalClose = document.getElementById('modalClose');
-
-        transactionCards.forEach(card => {
-            card.addEventListener('click', function() {
-                const transactionId = this.getAttribute('data-transaction-id');
-                // In a real application, you would fetch detailed transaction data here
-                // For now, we'll use the data from the card
-                
-                const type = this.querySelector('.transaction-type').textContent.trim();
-                const amount = this.querySelector('.transaction-amount').textContent.trim();
-                const date = this.querySelector('.transaction-date').textContent.trim();
-                const status = this.querySelector('.transaction-status').textContent.trim();
-                
-                // Populate modal with data
-                document.getElementById('modalAmount').textContent = amount;
-                document.getElementById('modalType').textContent = type;
-                document.getElementById('modalDate').textContent = date;
-                document.getElementById('modalId').textContent = transactionId;
-                document.getElementById('modalStatus').textContent = status;
-                document.getElementById('modalCurrency').textContent = 'USD'; // Default, would come from data
-                document.getElementById('modalFee').textContent = '0.00'; // Default, would come from data
-                document.getElementById('modalMethod').textContent = 'Bank Transfer'; // Default
-                document.getElementById('modalUser').textContent = 'User Name'; // Default
-                
-                // Show modal
-                transactionModal.style.display = 'flex';
+            document.getElementById('themeToggle').addEventListener('click', function () {
+                const curr = document.documentElement.getAttribute('data-theme');
+                const next = curr === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                updateThemeIcon(next);
             });
-        });
 
-        // Close modal
-        modalClose.addEventListener('click', function() {
-            transactionModal.style.display = 'none';
-        });
+            // Sidebar
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const adminSidebar = document.getElementById('adminSidebar');
+            const adminWrapper = document.getElementById('adminWrapper');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-        // Close modal when clicking outside
-        transactionModal.addEventListener('click', function(event) {
-            if (event.target === transactionModal) {
-                transactionModal.style.display = 'none';
+            sidebarToggle.addEventListener('click', function () {
+                if (window.innerWidth > 768) {
+                    adminWrapper.classList.toggle('sidebar-collapsed');
+                } else {
+                    adminSidebar.classList.add('sidebar-open');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+
+            function closeSidebar() {
+                adminSidebar.classList.remove('sidebar-open');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
             }
-        });
 
-        // Export functionality
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            alert('Export functionality would be implemented here');
-        });
+            sidebarClose.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // Filter functionality
-        document.getElementById('filterBtn').addEventListener('click', function() {
-            alert('Filter functionality would be implemented here');
-        });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeSidebar();
+                    closeTransactionModal();
+                }
+            });
 
-        // Load more functionality
-        document.getElementById('loadMoreBtn')?.addEventListener('click', function() {
-            alert('Load more functionality would be implemented here');
-        });
+            // ============ Transaction Modal ============
+            const modal = document.getElementById('transactionModal');
+            const modalClose = document.getElementById('modalClose');
+            const viewUserBtn = document.getElementById('viewUserBtn');
 
-        // Admin actions
-        document.getElementById('editBtn')?.addEventListener('click', function() {
-            alert('Edit transaction functionality would be implemented here');
-        });
+            function openTransactionModal(el) {
+                const data = el.dataset;
+                const isDebit = ['withdrawal', 'admin_debit', 'send'].includes(data.type.toLowerCase());
+                const isCredit = ['deposit', 'admin_credit'].includes(data.type.toLowerCase());
 
-        document.getElementById('deleteBtn')?.addEventListener('click', function() {
-            if (confirm('Are you sure you want to delete this transaction?')) {
-                alert('Delete transaction functionality would be implemented here');
+                // Amount
+                const amountEl = document.getElementById('modalAmount');
+                const sign = isDebit ? '−' : (isCredit ? '+' : '');
+                amountEl.textContent = sign + ' ' + data.currency + ' ' + parseFloat(data.amount).toLocaleString();
+                amountEl.className = 'tx-summary-amount ' + (isDebit ? 'negative' : (isCredit ? 'positive' : ''));
+
+                document.getElementById('modalType').textContent = data.type.replace(/_/g, ' ');
+                document.getElementById('modalDate').innerHTML = '<i class="far fa-calendar"></i> ' + data.date;
+                document.getElementById('modalId').textContent = (data.txId || '').toString().slice(-16);
+                document.getElementById('modalCurrency').textContent = data.currency;
+                document.getElementById('modalMethod').textContent = data.method;
+                document.getElementById('modalFee').textContent = data.fee ? ('$' + parseFloat(data.fee).toFixed(2)) : '—';
+                document.getElementById('modalUser').textContent = data.user || 'System';
+                document.getElementById('modalDescription').textContent = data.description || 'No description';
+
+                // Status (with badge styles)
+                const statusEl = document.getElementById('modalStatus');
+                statusEl.innerHTML = '<span class="status-badge ' + data.status + '">' + data.status + '</span>';
+
+                // View user button
+                if (data.user && data.user !== 'System') {
+                    // Best-effort: link to users page (search would be better but not available here)
+                    viewUserBtn.href = '/admin/users';
+                    viewUserBtn.style.display = 'inline-flex';
+                } else {
+                    viewUserBtn.style.display = 'none';
+                }
+
+                modal.classList.add('active');
             }
-        });
 
-        // Add loading animation for cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.stat-card, .transaction-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    card.style.transition = 'all 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
+            function closeTransactionModal() {
+                modal.classList.remove('active');
+            }
+
+            document.querySelectorAll('.transaction-item').forEach(function (item) {
+                item.addEventListener('click', function () {
+                    openTransactionModal(this);
+                });
+            });
+
+            modalClose.addEventListener('click', closeTransactionModal);
+
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeTransactionModal();
+            });
+
+            // Copy transaction ID
+            document.getElementById('copyTxIdBtn').addEventListener('click', function () {
+                const id = document.getElementById('modalId').textContent;
+                if (!id || id === '—') return;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(id).then(function () {
+                        const btn = document.getElementById('copyTxIdBtn');
+                        const old = btn.innerHTML;
+                        btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                        setTimeout(() => btn.innerHTML = old, 1500);
+                    });
+                }
+            });
+
+            // Filter / Export placeholders
+            document.getElementById('filterBtn').addEventListener('click', function () {
+                alert('Filter functionality coming soon');
+            });
+            document.getElementById('exportBtn').addEventListener('click', function () {
+                alert('Export functionality coming soon');
+            });
+
+            // Reveal animation
+            document.querySelectorAll('.stat-card, .transaction-item').forEach(function (el, i) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(4px)';
+                setTimeout(function () {
+                    el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, Math.min(i * 20, 300));
             });
         });
     </script>
