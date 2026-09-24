@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send Email - Admin | QFS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ===== Topbar ===== */
+    .topbar {
+      background: #141414;
+      border-bottom: 1px solid #262626;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar h2 { margin: 0; font-size: 18px; color: #fff; font-weight: 700; }
+    .topbar p { margin: 2px 0 0; font-size: 12px; color: #888; display: none; }
+    @media (min-width: 576px) { .topbar p { display: block; } }
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid #363636;
+      color: #b0b0b0;
+      padding: 8px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .btn-back:hover { background: #262626; color: #fff; border-color: #4b59f5; }
+
+    /* ===== Workspace ===== */
+    .workspace {
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 992px) {
+      .layout { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ===== Cards ===== */
+    .card {
+      background: #141414;
+      border: 1px solid #262626;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #262626;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card-header h5 {
+      margin: 0;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-header .chevron {
+      color: #666;
+      transition: transform 0.2s;
+      font-size: 12px;
+    }
+    .card.collapsed .card-header .chevron { transform: rotate(-90deg); }
+    .card.collapsed .card-body { display: none; }
+
+    .card-body { padding: 20px; }
+
+    /* ===== Form fields ===== */
+    .form-label {
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .form-label .hint {
+      color: #666;
+      font-weight: 400;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #0a0a0a;
+      border: 1px solid #363636;
+      color: #fff;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .form-control:focus {
+      background: #0a0a0a;
+      color: #fff;
+      border-color: #4b59f5;
+      box-shadow: 0 0 0 3px rgba(75, 89, 245, 0.15);
+      outline: none;
+    }
+    .form-control::placeholder { color: #555; }
+
+    .form-group { margin-bottom: 16px; }
+
+    /* ===== Recipient search ===== */
+    .search-wrapper {
+      position: relative;
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .search-input {
+      padding-left: 40px;
+    }
+    .search-results {
+      background: #0a0a0a;
+      border: 1px solid #363636;
+      border-radius: 10px;
+      margin-top: 6px;
+      max-height: 240px;
+      overflow-y: auto;
+      display: none;
+    }
+    .search-results.show { display: block; }
+    .search-results .result {
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #1a1a1a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+    .search-results .result:last-child { border-bottom: none; }
+    .search-results .result:hover { background: #1a1a1a; }
+    .search-results .result .name { color: #fff; font-size: 13px; font-weight: 600; }
+    .search-results .result .email { color: #888; font-size: 12px; margin-top: 2px; }
+    .search-results .result .add-btn {
+      background: rgba(75, 89, 245, 0.15);
+      color: #6b7aff;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .search-results .result.added { opacity: 0.5; pointer-events: none; }
+
+    /* ===== Recipient chips ===== */
+    .chips-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      min-height: 10px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #4b59f5 0%, #6b7aff 100%);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      max-width: 100%;
+    }
+    .chip .email {
+      font-weight: 400;
+      opacity: 0.85;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 180px;
+    }
+    .chip .remove {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .chip .remove:hover { background: rgba(255,255,255,0.35); }
+
+    .chips-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-mini {
+      background: #1a1a1a;
+      border: 1px solid #363636;
+      color: #b0b0b0;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-mini:hover { background: #262626; color: #fff; border-color: #4b59f5; }
+    .btn-mini.danger { color: #f87171; border-color: rgba(220, 53, 69, 0.4); }
+    .btn-mini.danger:hover { background: rgba(220, 53, 69, 0.15); }
+
+    /* ===== Quill ===== */
+    .editor-wrapper {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .ql-toolbar.ql-snow {
+      background: #f8f9fa;
+      border: 1px solid #363636 !important;
+      border-bottom: none !important;
+      border-radius: 10px 10px 0 0;
+      padding: 8px;
+      flex-wrap: wrap;
+    }
+    .ql-container.ql-snow {
+      border: 1px solid #363636 !important;
+      border-radius: 0 0 10px 10px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 15px;
+      min-height: 220px;
+    }
+    .ql-editor {
+      min-height: 220px;
+      padding: 16px;
+      color: #333;
+    }
+    .ql-editor.ql-blank::before { color: #999; font-style: normal; }
+    .ql-snow .ql-stroke { stroke: #444 !important; }
+    .ql-snow .ql-fill { fill: #444 !important; }
+    .ql-snow .ql-picker-label { color: #444 !important; }
+
+    /* ===== Send button ===== */
+    .btn-send {
+      background: linear-gradient(135deg, #4b59f5 0%, #6b7aff 100%);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-send:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(75, 89, 245, 0.4); }
+    .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== Preview ===== */
+    .preview-frame {
+      background: #f4f6fb;
+      padding: 16px;
+      border-radius: 12px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .email-preview {
+      background: #fff;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .email-head {
+      background: linear-gradient(135deg, #4b59f5 0%, #6b7aff 100%);
+      padding: 24px;
+      text-align: center;
+    }
+    .email-head h1 { color: #fff; margin: 0; font-size: 20px; letter-spacing: 2px; font-weight: 800; }
+    .email-head p { color: rgba(255,255,255,0.9); margin: 4px 0 0; font-size: 11px; }
+    .email-body { padding: 24px 20px; color: #333; font-size: 14px; line-height: 1.6; }
+    .email-body h2 { color: #0044ff; font-size: 20px; margin: 0 0 12px; font-weight: 700; }
+    .email-body p { margin: 0 0 14px; color: #444; }
+    .email-body a { color: #0044ff; }
+    .email-body img { max-width: 100%; border-radius: 8px; margin: 8px 0; }
+    .email-body .cta-box { text-align: center; margin: 24px 0; }
+    .email-body .cta-btn {
+      display: inline-block;
+      background: #0044ff;
+      color: #fff !important;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .email-divider { height: 1px; background: #eee; margin: 20px 0; }
+    .email-foot {
+      background: #f9f9f9;
+      padding: 16px 20px;
+      text-align: center;
+      color: #888;
+      font-size: 11px;
+    }
+    .email-foot a { color: #888; text-decoration: none; margin: 0 4px; }
+
+    /* ===== Alerts ===== */
+    .alert-success {
+      background: rgba(40, 167, 69, 0.15);
+      border: 1px solid rgba(40, 167, 69, 0.4);
+      color: #4ade80;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .alert-danger {
+      background: rgba(220, 53, 69, 0.15);
+      border: 1px solid rgba(220, 53, 69, 0.4);
+      color: #f87171;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    /* ===== Mobile tweaks ===== */
+    @media (max-width: 576px) {
+      .topbar { padding: 12px 14px; }
+      .topbar h2 { font-size: 15px; }
+      .btn-back { padding: 6px 12px; font-size: 12px; }
+      .workspace { padding: 12px; }
+      .card-body { padding: 16px; }
+      .chip .email { max-width: 120px; }
+      .search-results .result { padding: 10px 12px; }
+    }
+
+    /* ===== Spinner ===== */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #666;
+      border-top-color: #6b7aff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div>
+    <h2>📧 Compose Email</h2>
+    <p>Search and select recipients, compose, and send</p>
+  </div>
+  <a href="/admin/dashboard" class="btn-back">← Back</a>
+</div>
+
+<div class="workspace">
+
+  <% if (messages && messages.success && messages.success.length) { %>
+    <div class="alert-success">✓ <%= messages.success[0] %></div>
+  <% } %>
+  <% if (messages && messages.error && messages.error.length) { %>
+    <div class="alert-danger">✗ <%= messages.error[0] %></div>
+  <% } %>
+
+  <div class="layout">
+
+    <!-- ============ LEFT: COMPOSE ============ -->
+    <div>
+
+      <!-- Recipients Card -->
+      <div class="card" id="recipientsCard">
+        <div class="card-header" onclick="toggleCard('recipientsCard')">
+          <h5>👥 Recipients <span id="recipientCount" style="color:#6b7aff;font-size:12px;">(0)</span></h5>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+
+          <!-- Search input -->
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="userSearchInput"
+              class="form-control search-input"
+              placeholder="Search by name or email..."
+              autocomplete="off"
+            >
+          </div>
+          <div class="search-results" id="searchResults"></div>
+
+          <!-- Chips -->
+          <div class="chips-wrapper" id="chipsWrapper"></div>
+
+          <!-- Actions -->
+          <div class="chips-actions">
+            <button type="button" class="btn-mini" onclick="selectAllUsers()">📢 Select All Users</button>
+            <button type="button" class="btn-mini danger" onclick="clearRecipients()">✕ Clear All</button>
+          </div>
+
+          <!-- Hidden field for form submission -->
+          <input type="hidden" name="recipients" id="recipientsInput" form="emailForm">
+
+          <p style="color:#666;font-size:12px;margin-top:12px;line-height:1.4;">
+            Type a name or email to search. Click a result to add as recipient. Use <strong>Select All</strong> to send to everyone.
+          </p>
+        </div>
+      </div>
+
+      <!-- Compose Card -->
+      <div class="card" id="composeCard">
+        <div class="card-header" onclick="toggleCard('composeCard')">
+          <h5>✏️ Compose</h5>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="/admin/send-email" id="emailForm">
+
+            <div class="form-group">
+              <label class="form-label">Subject Line</label>
+              <input type="text" name="subject" id="subject" class="form-control" required placeholder="e.g. Important account update">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Heading <span class="hint">(top of email)</span></label>
+              <input type="text" name="heading" id="heading" class="form-control" required placeholder="e.g. Your account is ready">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Body</label>
+              <div class="editor-wrapper">
+                <div id="quillEditor"></div>
+              </div>
+              <input type="hidden" name="bodyHtml" id="bodyHtml">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Call-to-Action Button <span class="hint">(optional)</span></label>
+              <input type="text" name="ctaText" id="ctaText" class="form-control" placeholder="Button text" style="margin-bottom:8px;">
+              <input type="text" name="ctaUrl" id="ctaUrl" class="form-control" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Signature</label>
+              <input type="text" name="signature" id="signature" class="form-control" value="The QFS Team">
+            </div>
+
+            <button type="submit" class="btn-send" id="sendBtn">
+              📤 Send Email
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ RIGHT: PREVIEW ============ -->
+    <div class="card" id="previewCard">
+      <div class="card-header" onclick="toggleCard('previewCard')">
+        <h5>👁️ Live Preview</h5>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="preview-frame">
+          <div class="email-preview">
+            <div class="email-head">
+              <h1>QFS</h1>
+              <p>Quantum Financial System</p>
+            </div>
+            <div class="email-body">
+              <h2 id="pvHeading">Your heading appears here</h2>
+              <div id="pvBody">
+                <p style="color:#999;">Start typing to see your email preview...</p>
+              </div>
+
+              <div class="cta-box" id="pvCta" style="display:none;">
+                <a href="#" class="cta-btn" id="pvCtaLink">CTA</a>
+              </div>
+
+              <div class="email-divider"></div>
+
+              <p style="font-size:12px;">You're receiving this because you have a QFS account.</p>
+              <p style="font-size:12px;" id="pvSignature"><strong>The QFS Team</strong></p>
+            </div>
+            <div class="email-foot">
+              <p style="margin:0 0 6px;">© <%= new Date().getFullYear() %> Quantum Financial System</p>
+              <p style="margin:0;">
+                <a href="/dashboard">Dashboard</a> |
+                <a href="/profile">Profile</a> |
+                <a href="/support">Support</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+  // ========== STATE ==========
+  let recipients = [];       // array of { _id, email, firstName, lastName }
+  let searchTimeout = null;
+  let allUsersSelected = false;
+
+  // ========== QUILL ==========
+  const quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: 'Write your email body here...',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ align: [] }],
+        ['link', 'image'],
+        ['clean']
+      ]
+    }
+  });
+
+  // ========== CARD TOGGLE (mobile-friendly) ==========
+  function toggleCard(cardId) {
+    const card = document.getElementById(cardId);
+    card.classList.toggle('collapsed');
+  }
+
+  // ========== SEARCH USERS ==========
+  const searchInput = document.getElementById('userSearchInput');
+  const searchResults = document.getElementById('searchResults');
+
+  searchInput.addEventListener('input', function () {
+    const q = this.value.trim();
+    clearTimeout(searchTimeout);
+
+    if (q.length < 2) {
+      searchResults.classList.remove('show');
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    searchResults.classList.add('show');
+    searchResults.innerHTML = '<div style="padding:14px;text-align:center;color:#666;font-size:13px;"><span class="spinner"></span> Searching...</div>';
+
+    searchTimeout = setTimeout(() => doSearch(q), 300);
+  });
+
+  async function doSearch(q) {
+    try {
+      const res = await fetch('/admin/users/search?q=' + encodeURIComponent(q));
+      const data = await res.json();
+
+      if (!data.success || !data.users.length) {
+        searchResults.innerHTML = '<div style="padding:14px;text-align:center;color:#666;font-size:13px;">No users found</div>';
+        return;
+      }
+
+      searchResults.innerHTML = data.users.map(u => {
+        const alreadyAdded = recipients.some(r => r._id === u._id);
+        return `
+          <div class="result ${alreadyAdded ? 'added' : ''}" data-user='${JSON.stringify(u).replace(/'/g, "&apos;")}'>
+            <div>
+              <div class="name">${escapeHtml(u.firstName || '')} ${escapeHtml(u.lastName || '')}</div>
+              <div class="email">${escapeHtml(u.email)}</div>
+            </div>
+            <button type="button" class="add-btn">${alreadyAdded ? 'Added' : '+ Add'}</button>
+          </div>
+        `;
+      }).join('');
+
+      // Attach click handlers
+      searchResults.querySelectorAll('.result').forEach(el => {
+        el.addEventListener('click', function () {
+          const user = JSON.parse(this.dataset.user.replace(/&apos;/g, "'"));
+          addRecipient(user);
+        });
+      });
+    } catch (err) {
+      console.error('Search error:', err);
+      searchResults.innerHTML = '<div style="padding:14px;text-align:center;color:#f87171;font-size:13px;">Search failed</div>';
+    }
+  }
+
+  // ========== RECIPIENT MANAGEMENT ==========
+  function addRecipient(user) {
+    if (recipients.some(r => r._id === user._id)) return;
+    recipients.push(user);
+    renderChips();
+    searchInput.value = '';
+    searchResults.classList.remove('show');
+    searchResults.innerHTML = '';
+  }
+
+  function removeRecipient(userId) {
+    recipients = recipients.filter(r => r._id !== userId);
+    renderChips();
+  }
+
+  function clearRecipients() {
+    recipients = [];
+    allUsersSelected = false;
+    renderChips();
+  }
+
+  function renderChips() {
+    const wrapper = document.getElementById('chipsWrapper');
+    const counter = document.getElementById('recipientCount');
+    const hidden = document.getElementById('recipientsInput');
+
+    counter.textContent = '(' + recipients.length + ')';
+
+    if (recipients.length === 0) {
+      wrapper.innerHTML = '<p style="color:#666;font-size:12px;margin:0;">No recipients selected yet</p>';
+      hidden.value = '';
+      return;
+    }
+
+    wrapper.innerHTML = recipients.map(r => `
+      <div class="chip">
+        <span>${escapeHtml(r.firstName || r.email)}</span>
+        <span class="email">${escapeHtml(r.email)}</span>
+        <button type="button" class="remove" data-id="${r._id}">×</button>
+      </div>
+    `).join('');
+
+    wrapper.querySelectorAll('.remove').forEach(btn => {
+      btn.addEventListener('click', function () {
+        removeRecipient(this.dataset.id);
+      });
+    });
+
+    // Send to backend as JSON array of emails
+    hidden.value = JSON.stringify(recipients.map(r => r.email));
+  }
+
+  // ========== SELECT ALL ==========
+  async function selectAllUsers() {
+    try {
+      const res = await fetch('/admin/users/all');
+      const data = await res.json();
+      if (!data.success) {
+        alert('Failed to load users');
+        return;
+      }
+      recipients = data.users;
+      allUsersSelected = true;
+      renderChips();
+    } catch (err) {
+      alert('Failed to load users');
+    }
+  }
+
+  // ========== PREVIEW ==========
+  function updatePreview() {
+    const heading = document.getElementById('heading').value || 'Your heading appears here';
+    const sig = document.getElementById('signature').value || 'The QFS Team';
+    const ctaText = document.getElementById('ctaText').value;
+    const ctaUrl = document.getElementById('ctaUrl').value;
+
+    document.getElementById('pvHeading').textContent = heading;
+    document.getElementById('pvSignature').innerHTML = '<strong>' + escapeHtml(sig) + '</strong>';
+
+    const bodyHtml = quill.root.innerHTML;
+    const bodyEmpty = bodyHtml.replace(/<[^>]*>/g, '').trim().length === 0;
+    document.getElementById('pvBody').innerHTML = bodyEmpty
+      ? '<p style="color:#999;">Start typing to see your email preview...</p>'
+      : bodyHtml;
+
+    const ctaBox = document.getElementById('pvCta');
+    if (ctaText && ctaUrl) {
+      ctaBox.style.display = 'block';
+      const link = document.getElementById('pvCtaLink');
+      link.textContent = ctaText + ' →';
+      link.href = ctaUrl;
+    } else {
+      ctaBox.style.display = 'none';
+    }
+  }
+
+  // ========== FORM SUBMIT ==========
+  document.getElementById('emailForm').addEventListener('submit', function (e) {
+    // Validate recipients
+    if (recipients.length === 0) {
+      e.preventDefault();
+      alert('Please select at least one recipient before sending.');
+      return;
+    }
+
+    // Confirm bulk
+    if (recipients.length > 5) {
+      const ok = confirm(`⚠️ This will send the email to ${recipients.length} users. Continue?`);
+      if (!ok) { e.preventDefault(); return; }
+    }
+
+    // Sync Quill content
+    document.getElementById('bodyHtml').value = quill.root.innerHTML;
+
+    // Disable button to prevent double submit
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Sending...';
+  });
+
+  // ========== LIVE PREVIEW LISTENERS ==========
+  ['heading', 'ctaText', 'ctaUrl', 'signature'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updatePreview);
+  });
+  quill.on('text-change', updatePreview);
+
+  // ========== HELPERS ==========
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // ========== CLOSE SEARCH ON OUTSIDE CLICK ==========
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.search-wrapper') && !e.target.closest('.search-results')) {
+      searchResults.classList.remove('show');
+    }
+  });
+
+  // ========== INIT ==========
+  renderChips();
+  updatePreview();
+</script>
+</body>
+</html>
